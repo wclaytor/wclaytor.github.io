@@ -1,0 +1,153 @@
+                        <h2 class="mx-auto my-0 text-uppercase">Relax ... Renew ... Regenerate</h2>
+                        <h2 class="mx-auto my-0 text-uppercase">Renew</h2>
+                        <h2 class="mx-auto my-0 text-uppercase">Regenerate</h2>
+
+                ---
+
+
+                        <div class="subsections">
+    
+                            <div class="">
+                                <h4 class="text-white">Group ATV Rides</h2>
+
+                                <p class="text-white-50">
+                                </p>
+                            </div>
+
+                            <div class="">
+                                <h4 class="text-white">Trail Riding</h2>
+
+                                <p class="text-white-50">
+                                </p>
+                            </div>
+
+                            <div class="">
+                                <h4 class="text-white">Hiking</h2>
+
+                                <p class="text-white-50">
+                                </p>
+                            </div>
+
+                            <div class="">
+                                <h4 class="text-white">White Tale & Mule Deer Hunting</h2>
+
+                                <p class="text-white-50">
+                                </p>
+                            </div>
+
+                            <div class="">
+                                <h4 class="text-white">Potluck Dinners</h2>
+
+                                <p class="text-white-50">
+                                </p>
+                            </div>
+
+                            <div class="">
+                                <h4 class="text-white">B-I-N-G-O Night</h2>
+
+                                <p class="text-white-50">
+                                </p>
+                            </div>
+
+                            <div class="">
+                                <h4 class="text-white">Movie & Popcorn Night</h2>
+
+                                <p class="text-white-50">
+                                </p>
+                            </div>
+
+                            <div class="">
+                                <h4 class="text-white">Holiday Dinners</h2>
+
+                                <p class="text-white-50">
+                                </p>
+                            </div>
+
+                            <div class="">
+                                <h4 class="text-white">Dance Nights Featuring The Caballo Loco Drifters</h2>
+
+                                <p class="text-white-50">
+                                </p>
+                            </div>
+
+                            <div class="">
+                                <h4 class="text-white">Acoustic Jam and Singalong Night</h2>
+
+                                <p class="text-white-50">
+                                </p>
+                            </div>
+    
+                        </div>
+
+
+
+---
+
+
+        <!-- Photos -->
+        <section class="about-section text-center" id="photos">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-lg-8">
+
+                        <h1 class="mx-auto my-0 text-white-50">Photos</h1>
+                        <h2 class="mx-auto my-0 text-white-50">Photographers will especially appreciate the awe-inspiring beauty to be found here</h2>
+                        <p class="text-white-50"> 
+                        </p>
+
+                        <div class="subsections">
+    
+                            <div class="full-rv">
+                                <h4 class="text-white"></h2>
+
+                                <div class="">
+                                    <img class="img-fluid mb-3 mb-lg-0" src="" alt="..." />
+                                </div>
+
+                                <p class="text-white-50">
+                                </p>
+                            </div>
+    
+                        </div>
+
+                    </div>
+                </div>
+                
+            </div>
+
+        </section>      
+
+
+--
+
+                            <div class="event">
+
+                                <h4 class="">Sunday 12/31/2023</h4>
+                                <h6 class="">6:30 - 8:45 PM</h6>
+                                <h5 class="">New Year's Eve Party</h5>
+                                <h5 class="">featuring the Caballo Loco Drifters</h5>
+                                <p class="">
+                                    Come celebrate the New Year! Everyone invited! BYOB and snacks.
+                                </p>
+
+                            </div>
+
+
+---
+
+                                <div class="card">
+                                    <div class="card-body">
+                                      <h5 class="card-title"></h5>
+                                      <h6 class="card-subtitle mb-2 text-muted"></h6>
+                                      <p class="card-text">
+                                        
+                                      </p>
+                                    </div>
+                                </div>
+
+            
+---
+
+
+<img src="assets/img/about.png" class="card-img-top" alt="...">
+
