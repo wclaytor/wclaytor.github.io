@@ -1,2 +1,2 @@
-# wclaytor..github.io
+# wclaytor.github.io
 GitHub Pages website
