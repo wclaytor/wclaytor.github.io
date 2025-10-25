@@ -1,2 +1,3 @@
 # wclaytor.github.io
-GitHub Pages website
+
+[GitHub Pages Live Preview](https://wclaytor.github.io/index.html)
