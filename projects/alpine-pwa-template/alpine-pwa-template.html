@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Alpine PWA Template</title>
+
+  <!-- Moderate CSP (tune as needed) -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdn.tailwindcss.com; script-src 'self' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdn.jsdelivr.net/npm; connect-src 'self'; base-uri 'self'; form-action 'self'">
+
+  <!-- Theme colors for PWA -->
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <!-- Icons (filled at runtime) -->
+  <link id="favicon" rel="icon" sizes="64x64" href="data:image/png;base64,iVBORw0KGgo=">
+  <link id="apple-touch-icon" rel="apple-touch-icon" href="">
+
+  <!-- Manifest placeholder (replaced at runtime) -->
+  <link id="manifest-link" rel="manifest" href="">
+
+  <!-- Tailwind (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Alpine.js + focus plugin (for a11y traps if needed) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <!-- Marked (Markdown) + DOMPurify (sanitize) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js"></script>
+
+  <!-- Bootstrap Icons (optional for UI) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+  <style>
+    /* Prefer targeted transitions for perf/accessibility */
+    .transition-theme { transition: background-color .2s ease, border-color .2s ease, color .2s ease; }
+
+    /* Basic container sizing */
+    html, body { height: 100%; }
+    body { background: #f8fafc; }
+
+    @media (prefers-color-scheme: dark) {
+      body { background: #0b1220; }
+    }
+
+    /* Markdown content defaults */
+    .markdown :where(h1,h2,h3,h4,h5,h6){margin-top:1.25rem;margin-bottom:.75rem;font-weight:700}
+    .markdown p{margin:.75rem 0; line-height:1.625}
+    .markdown pre{overflow:auto; padding:1rem; border-radius:.5rem; background: #111827; color:#e5e7eb}
+    .markdown code{background:rgba(0,0,0,.06); padding:.1rem .3rem; border-radius:.25rem}
+    .markdown ul{list-style:disc; padding-left:1.25rem}
+    .markdown ol{list-style:decimal; padding-left:1.25rem}
+    .markdown a{color:#2563eb; text-decoration:underline}
+    .dark .markdown a{color:#93c5fd}
+  </style>
+</head>
+<body class="min-h-full text-slate-900 dark:text-slate-100 transition-theme">
+<div x-data="app()" x-init="init()" class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-6">
+  <!-- Header -->
+  <header class="flex items-center justify-between gap-4 mb-6">
+    <div class="flex items-center gap-3">
+      <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-blue-600 text-white text-xl font-bold">A</span>
+      <div>
+        <h1 class="text-xl sm:text-2xl font-semibold">Alpine.js PWA Template</h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400">Single-file, GitHub Pages–friendly. Loads repo Markdown. Installable PWA.</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button @click="toggleDark()" class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-theme" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <i class="bi" :class="isDark ? 'bi-brightness-high' : 'bi-moon'"></i>
+      </button>
+      <button x-show="installEvent" @click="install()" class="px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-theme">Install</button>
+    </div>
+  </header>
+
+  <!-- Content / Sidebar -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Sidebar: Repo file list -->
+    <aside class="lg:col-span-1">
+      <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-theme">
+        <div class="flex items-center justify-between gap-2 mb-3">
+          <h2 class="font-semibold">Repo Files</h2>
+          <button @click="refreshFiles()" class="text-sm px-2 py-1 rounded-md border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">Reload</button>
+        </div>
+        <input x-model="fileSearch" placeholder="Search files..." class="w-full mb-3 px-3 py-2 rounded-md border border-slate-300 dark:border-slate-700 bg-transparent outline-none" />
+        <div class="space-y-1 max-h-[50vh] overflow-auto">
+          <template x-for="f in filteredFiles" :key="f.path">
+            <button @click="openFile(f)" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-theme">
+              <span class="font-medium" x-text="f.name"></span>
+              <span class="ml-2 text-xs text-slate-500" x-text="f.sizeText"></span>
+            </button>
+          </template>
+          <p x-show="!filteredFiles.length" class="text-sm text-slate-500">No files.</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main: Markdown viewer + Demo data export -->
+    <main class="lg:col-span-2 space-y-6">
+      <!-- Markdown Viewer -->
+      <section class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 transition-theme">
+        <div class="flex items-center justify-between gap-2 mb-4">
+          <h2 class="font-semibold">Markdown Viewer</h2>
+          <div class="text-sm text-slate-500" x-show="currentFile">
+            <span class="font-medium" x-text="currentFile?.name || ''"></span>
+            <span class="ml-2" x-text="currentFile?.sizeText || ''"></span>
+          </div>
+        </div>
+        <div class="markdown prose max-w-none dark:prose-invert" x-html="currentHtml"></div>
+      </section>
+
+      <!-- Demo data + export -->
+      <section class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 transition-theme">
+        <div class="flex items-center justify-between gap-2 mb-4">
+          <h2 class="font-semibold">Demo Tasks</h2>
+          <div class="flex gap-2">
+            <button @click="exportMarkdown()" class="px-3 py-2 rounded-lg bg-slate-800 text-white hover:bg-slate-700">Export MD</button>
+            <button @click="exportCSV()" class="px-3 py-2 rounded-lg bg-slate-800 text-white hover:bg-slate-700">Export CSV</button>
+            <button @click="exportStatsPng()" class="px-3 py-2 rounded-lg bg-slate-800 text-white hover:bg-slate-700">Export PNG</button>
+          </div>
+        </div>
+        <div class="space-y-3">
+          <div class="flex gap-2">
+            <input x-model="newTask" placeholder="New task..." class="flex-1 px-3 py-2 rounded-md border border-slate-300 dark:border-slate-700 bg-transparent outline-none" @keydown.enter="addTask()" />
+            <select x-model="newPriority" class="px-3 py-2 rounded-md border border-slate-300 dark:border-slate-700 bg-transparent outline-none">
+              <option>low</option><option>medium</option><option>high</option>
+            </select>
+            <button @click="addTask()" class="px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">Add</button>
+          </div>
+          <template x-for="t in tasks" :key="t.id">
+            <div class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-800">
+              <input type="checkbox" x-model="t.completed" class="w-5 h-5">
+              <div class="flex-1">
+                <div class="font-medium" x-text="t.title"></div>
+                <div class="text-xs text-slate-500" x-text="'Priority: ' + t.priority"></div>
+              </div>
+              <button @click="removeTask(t.id)" class="text-red-600 hover:underline">Delete</button>
+            </div>
+          </template>
+          <p class="text-sm text-slate-500" x-show="!tasks.length">No tasks yet.</p>
+          <div class="text-sm text-slate-600 dark:text-slate-300">Completed: <span x-text="taskStats.completed"></span> / <span x-text="taskStats.total"></span> (<span x-text="completionPercentage"></span>%)</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-10 text-center text-xs text-slate-500 dark:text-slate-400">
+    <p>Install via the “Install” button or your browser menu. Works well on GitHub Pages.</p>
+  </footer>
+</div>
+
+<script>
+function app(){
+  return {
+    // UI state
+    isDark: window.matchMedia('(prefers-color-scheme: dark)').matches,
+    installEvent: null,
+
+    // Files
+    files: [],
+    fileSearch: '',
+    currentFile: null,
+    currentHtml: '<p class=\\"text-slate-500\\">Select a Markdown file from the left to view its content.</p>',
+
+    // Demo data
+    tasks: JSON.parse(localStorage.getItem('tasks') || '[]'),
+    newTask: '',
+    newPriority: 'medium',
+
+    // Init
+    async init(){
+      // PWA plumbling: icons + manifest + SW + A2HS
+      await this.setupIconsAndManifest();
+      this.registerServiceWorker();
+      window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); this.installEvent = e; });
+
+      // Load repo files list
+      this.refreshFiles();
+    },
+
+    // Dark mode
+    toggleDark(){
+      this.isDark = !this.isDark;
+      document.documentElement.classList.toggle('dark', this.isDark);
+    },
+
+    // File helpers
+    basePath(){
+      return location.pathname.endsWith('/') ? location.pathname : location.pathname.replace(/[^/]+$/, '');
+    },
+    fileUrl(p){ return new URL(p, this.basePath()).toString(); },
+
+    async refreshFiles(){
+      try{
+        const res = await fetch(this.fileUrl('files.json'));
+        if(!res.ok) throw new Error('files.json not found');
+        const arr = await res.json();
+        // Expect: [{ name, path, size? }] OR ["README.md", ...] where path => files/NAME
+        this.files = arr.map((item)=>{
+          if (typeof item === 'string') {
+            const name = item.split('/').pop();
+            return { name, path: this.fileUrl('files/' + name), size: null };
+          }
+          return { name: item.name || (item.path?.split('/').pop() || ''), path: this.fileUrl(item.path || ('files/' + item.name)), size: item.size ?? null };
+        }).map(f => ({ ...f, sizeText: f.size ? '(' + formatBytes(f.size) + ')' : '' }));
+      }catch(err){
+        console.warn('Failed to load files.json:', err);
+        this.files = [];
+      }
+    },
+
+    get filteredFiles(){
+      const q = this.fileSearch.trim().toLowerCase();
+      if(!q) return this.files;
+      return this.files.filter(f => f.name.toLowerCase().includes(q));
+    },
+
+    async openFile(f){
+      try{
+        const res = await fetch(f.path);
+        const markdown = await res.text();
+        const rawHtml = marked.parse(markdown);
+        const safeHtml = DOMPurify.sanitize(rawHtml, { USE_PROFILES: { html: true } });
+        this.currentFile = f;
+        this.currentHtml = safeHtml;
+      }catch(err){
+        this.currentHtml = '<p class=\\"text-red-600\\">Failed to load file.</p>';
+      }
+    },
+
+    // Install
+    async install(){ try{ await this.installEvent?.prompt(); this.installEvent = null; }catch(e){} },
+
+    // Service worker
+    registerServiceWorker(){
+      if (!('serviceWorker' in navigator)) return;
+      const scope = this.basePath();
+      navigator.serviceWorker.register(this.fileUrl('sw.js'), { scope })
+        .then((reg)=>{
+          reg.addEventListener('updatefound', ()=>{
+            const nw = reg.installing;
+            nw?.addEventListener('statechange', ()=>{
+              if(nw.state === 'installed' && navigator.serviceWorker.controller){
+                console.log('Update available — reload to apply.');
+              }
+            });
+          });
+        })
+        .catch(console.error);
+    },
+
+    // Icons + Manifest
+    async setupIconsAndManifest(){
+      // Create a simple icon dynamically
+      const iconPng64 = await createIconPng('A');
+      document.getElementById('favicon').href = iconPng64;
+      document.getElementById('apple-touch-icon').href = iconPng64;
+
+      const base = this.basePath();
+      const manifest = {
+        name: 'Alpine.js PWA Template',
+        short_name: 'Alpine PWA',
+        display: 'standalone',
+        theme_color: '#3b82f6',
+        background_color: '#f9fafb',
+        start_url: base,
+        scope: base,
+        icons: [
+          { src: iconPng64, sizes: '192x192', type: 'image/png' },
+          { src: iconPng64, sizes: '512x512', type: 'image/png' }
+        ]
+      };
+      const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+      const url = URL.createObjectURL(blob);
+      const ml = document.getElementById('manifest-link');
+      ml.href = url;
+    },
+
+    // Demo tasks
+    addTask(){
+      const title = this.newTask.trim();
+      if(!title) return;
+      const id = (crypto.randomUUID && crypto.randomUUID()) || (Date.now().toString(36)+Math.random().toString(36).slice(2));
+      this.tasks.push({ id, title, priority: this.newPriority, completed: false });
+      this.newTask = '';
+      this.persist();
+    },
+    removeTask(id){
+      this.tasks = this.tasks.filter(t => t.id !== id);
+      this.persist();
+    },
+    persist(){
+      localStorage.setItem('tasks', JSON.stringify(this.tasks));
+    },
+    get taskStats(){
+      const total = this.tasks.length;
+      const completed = this.tasks.filter(t=>t.completed).length;
+      return { total, completed, pending: total - completed };
+    },
+    get completionPercentage(){
+      const s = this.taskStats; return s.total ? Math.round((s.completed/s.total)*100) : 0;
+    },
+
+    // Exports
+    exportCSV(){
+      const rows = [['id','title','priority','completed']];
+      this.tasks.forEach(t => rows.push([t.id, t.title, t.priority, t.completed]));
+      const csv = rows.map(r => r.map(v => '\"' + String(v).replace(/\"/g,'\"\"') + '\"').join(',')).join('\\n');
+      const blob = new Blob([csv], {type:'text/csv'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'alpine-tasks-' + new Date().toISOString().slice(0,10) + '.csv';
+      a.click(); URL.revokeObjectURL(a.href);
+    },
+    exportMarkdown(){
+      const md = ['# Tasks','', ...this.tasks.map(t => `- [${t.completed ? 'x':' '}] **${t.title}** _(priority: ${t.priority})_`)].join('\\n');
+      const blob = new Blob([md], {type:'text/markdown'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'alpine-tasks-' + new Date().toISOString().slice(0,10) + '.md';
+      a.click(); URL.revokeObjectURL(a.href);
+    },
+    exportStatsPng(){
+      const c = document.createElement('canvas');
+      c.width = 1024; c.height = 512;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = getComputedStyle(document.body).backgroundColor;
+      ctx.fillRect(0,0,c.width,c.height);
+      ctx.fillStyle = getComputedStyle(document.body).color;
+      ctx.font = 'bold 36px system-ui, -apple-system, Segoe UI, Roboto';
+      ctx.fillText('Alpine Tasks Snapshot', 40, 70);
+      ctx.font = '28px system-ui, -apple-system, Segoe UI, Roboto';
+      const s = this.taskStats;
+      ctx.fillText('Total: ' + s.total, 40, 140);
+      ctx.fillText('Completed: ' + s.completed, 40, 190);
+      ctx.fillText('Pending: ' + s.pending, 40, 240);
+      ctx.fillText('Complete: ' + this.completionPercentage + '%', 40, 290);
+      const a = document.createElement('a');
+      a.href = c.toDataURL('image/png');
+      a.download = 'alpine-tasks-stats-' + new Date().toISOString().slice(0,10) + '.png';
+      a.click();
+    },
+  }
+}
+
+// Helpers
+function formatBytes(bytes, decimals = 1) {
+  if (bytes === 0 || bytes == null) return '';
+  const k = 1024, dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['B','KB','MB','GB','TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
+async function createIconPng(letter='A'){
+  const size = 512;
+  const c = document.createElement('canvas');
+  c.width = size; c.height = size;
+  const ctx = c.getContext('2d');
+  // Background circle
+  ctx.fillStyle = '#3b82f6';
+  ctx.beginPath();
+  ctx.arc(size/2, size/2, size/2, 0, Math.PI*2);
+  ctx.fill();
+  // Letter
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 300px system-ui, -apple-system, Segoe UI, Roboto';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(letter, size/2, size/2 + 20);
+  return c.toDataURL('image/png');
+}
+</script>
+</body>
+</html>
