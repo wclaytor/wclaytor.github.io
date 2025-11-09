@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' fill='%234f46e5'/%3E%3Cpath d='M48 96h96M96 48v96' stroke='white' stroke-width='16' stroke-linecap='round'/%3E%3C/svg%3E" sizes="any" type="image/svg+xml">
+  <title>Presentation Viewer</title>
+  
+  <!-- Prevent FOUC for theme system -->
+  <script>
+    (function() {
+      const theme = localStorage.getItem('theme') || 'auto';
+      const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.classList.add(
+        theme === 'dark' || (theme === 'auto' && dark) 
+          ? 'theme-dark' 
+          : 'theme-light'
+      );
+    })();
+  </script>
+  
+  <style>
+    /* Reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    /* Theme System - CSS Custom Properties */
+    :root {
+      --ON: initial;
+      --OFF: ;
+    }
+    
+    .theme-light { 
+      --light: var(--ON); 
+      --dark: var(--OFF); 
+    }
+    
+    .theme-dark { 
+      --light: var(--OFF); 
+      --dark: var(--ON); 
+    }
+    
+    :root {
+      /* Base colors */
+      --bg-primary: var(--light, #ffffff) var(--dark, #0f172a);
+      --bg-secondary: var(--light, #f8fafc) var(--dark, #1e293b);
+      --text-primary: var(--light, #1e293b) var(--dark, #f1f5f9);
+      --text-secondary: var(--light, #475569) var(--dark, #cbd5e1);
+      --accent: var(--light, #4f46e5) var(--dark, #818cf8);
+      --accent-hover: var(--light, #4338ca) var(--dark, #a5b4fc);
+      --border: var(--light, #e2e8f0) var(--dark, #334155);
+      --shadow: var(--light, rgba(0,0,0,0.1)) var(--dark, rgba(0,0,0,0.3));
+      
+      /* Typography */
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+      
+      /* Fluid typography for presentations */
+      --font-size-sm: clamp(0.875rem, 1.5vw, 1rem);
+      --font-size-base: clamp(1.25rem, 2vw, 1.5rem);
+      --font-size-lg: clamp(1.5rem, 2.5vw, 2rem);
+      --font-size-xl: clamp(2rem, 3.5vw, 3rem);
+      --font-size-2xl: clamp(2.5rem, 4.5vw, 4rem);
+      --font-size-3xl: clamp(3rem, 6vw, 5rem);
+    }
+    
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow: hidden;
+    }
+    
+    /* Upload Screen */
+    .upload-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem;
+      background: var(--bg-primary);
+    }
+    
+    .upload-container {
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+    }
+    
+    .upload-container h1 {
+      font-size: var(--font-size-2xl);
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+    
+    .upload-container p {
+      font-size: var(--font-size-base);
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
+    
+    .upload-area {
+      border: 3px dashed var(--border);
+      border-radius: 12px;
+      padding: 3rem 2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: var(--bg-secondary);
+    }
+    
+    .upload-area:hover {
+      border-color: var(--accent);
+      background: var(--bg-primary);
+    }
+    
+    .upload-area.dragover {
+      border-color: var(--accent);
+      background: var(--accent);
+      opacity: 0.1;
+    }
+    
+    .upload-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+    
+    input[type="file"] {
+      display: none;
+    }
+    
+    /* Buttons */
+    button {
+      font-family: var(--font-sans);
+      font-size: var(--font-size-sm);
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 600;
+    }
+    
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+    
+    .btn-secondary {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 2px solid var(--border);
+    }
+    
+    .btn-secondary:hover {
+      border-color: var(--accent);
+    }
+    
+    /* Presentation Screen */
+    .presentation-screen {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: var(--bg-primary);
+    }
+    
+    /* Slide Container */
+    .slide-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .slide {
+      max-width: 1200px;
+      width: 100%;
+      position: absolute;
+      opacity: 0;
+      transform: translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                  opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0);
+      position: relative;
+    }
+    
+    .slide.prev {
+      transform: translateX(-100%);
+    }
+    
+    /* Slide content styling */
+    .slide h1 {
+      font-size: var(--font-size-3xl);
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+    
+    .slide h2 {
+      font-size: var(--font-size-2xl);
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+    
+    .slide h3 {
+      font-size: var(--font-size-xl);
+      margin-bottom: 0.75rem;
+      color: var(--text-primary);
+    }
+    
+    .slide p {
+      font-size: var(--font-size-base);
+      margin-bottom: 1rem;
+      color: var(--text-secondary);
+    }
+    
+    .slide ul, .slide ol {
+      font-size: var(--font-size-base);
+      margin-bottom: 1rem;
+      padding-left: 2rem;
+      color: var(--text-secondary);
+    }
+    
+    .slide li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .slide code {
+      font-family: var(--font-mono);
+      background: var(--bg-secondary);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+    
+    .slide pre {
+      background: var(--bg-secondary);
+      padding: 1.5rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin-bottom: 1rem;
+    }
+    
+    .slide pre code {
+      background: none;
+      padding: 0;
+    }
+    
+    .slide img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 1rem 0;
+    }
+    
+    .slide blockquote {
+      border-left: 4px solid var(--accent);
+      padding-left: 1.5rem;
+      margin: 1.5rem 0;
+      font-style: italic;
+      color: var(--text-secondary);
+    }
+    
+    /* Controls */
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+    }
+    
+    .controls-left, .controls-right {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    
+    .progress {
+      flex: 1;
+      margin: 0 2rem;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    
+    .progress-bar {
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+    
+    .slide-counter {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      min-width: 80px;
+      text-align: center;
+    }
+    
+    /* Theme Switcher */
+    .theme-switcher {
+      display: flex;
+      gap: 0.25rem;
+      background: var(--bg-primary);
+      padding: 0.25rem;
+      border-radius: 8px;
+    }
+    
+    .theme-btn {
+      padding: 0.5rem;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 1.25rem;
+      transition: background 0.2s ease;
+    }
+    
+    .theme-btn.active {
+      background: var(--accent);
+    }
+    
+    .theme-btn:hover {
+      background: var(--bg-secondary);
+    }
+    
+    /* Keyboard shortcuts help */
+    .shortcuts {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: var(--font-size-sm);
+      box-shadow: 0 4px 6px var(--shadow);
+      z-index: 1000;
+    }
+    
+    .shortcuts h4 {
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+    
+    .shortcuts ul {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .shortcuts li {
+      margin-bottom: 0.25rem;
+      color: var(--text-secondary);
+    }
+    
+    .shortcuts kbd {
+      background: var(--bg-primary);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 0.85em;
+    }
+    
+    /* Loading state */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-size: var(--font-size-lg);
+      color: var(--text-secondary);
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .slide-container {
+        padding: 2rem 1rem;
+      }
+      
+      .controls {
+        padding: 0.75rem 1rem;
+      }
+      
+      .progress {
+        margin: 0 1rem;
+      }
+      
+      .shortcuts {
+        display: none;
+      }
+    }
+    
+    /* Print styles for PDF export */
+    @media print {
+      .controls, .shortcuts {
+        display: none !important;
+      }
+      
+      .slide-container {
+        padding: 0;
+      }
+      
+      .slide {
+        page-break-after: always;
+        position: relative !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div x-data="presentationApp()" x-cloak>
+    <!-- Upload Screen -->
+    <div x-show="!loaded" class="upload-screen">
+      <div class="upload-container">
+        <h1>📊 Presentation Viewer</h1>
+        <p>Upload a Markdown file to create a stunning presentation</p>
+        
+        <div 
+          class="upload-area"
+          @drop.prevent="handleDrop($event)"
+          @dragover.prevent="$el.classList.add('dragover')"
+          @dragleave.prevent="$el.classList.remove('dragover')"
+          @click="$refs.fileInput.click()"
+        >
+          <div class="upload-icon">📄</div>
+          <p><strong>Click to upload</strong> or drag and drop</p>
+          <p style="font-size: var(--font-size-sm);">Markdown (.md) files only</p>
+        </div>
+        
+        <input 
+          type="file" 
+          accept=".md,.markdown,text/markdown"
+          @change="handleFile($event)"
+          x-ref="fileInput"
+        >
+        
+        <div style="margin-top: 2rem;">
+          <button @click="loadSamplePresentation()" class="btn-secondary">
+            Load Sample Presentation
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Presentation Screen -->
+    <div x-show="loaded" class="presentation-screen">
+      <!-- Keyboard Shortcuts Help -->
+      <div x-show="showHelp" class="shortcuts">
+        <h4>⌨️ Keyboard Shortcuts</h4>
+        <ul>
+          <li><kbd>→</kbd> or <kbd>Space</kbd> Next slide</li>
+          <li><kbd>←</kbd> or <kbd>Backspace</kbd> Previous slide</li>
+          <li><kbd>Home</kbd> First slide</li>
+          <li><kbd>End</kbd> Last slide</li>
+          <li><kbd>?</kbd> Toggle this help</li>
+          <li><kbd>Esc</kbd> Exit presentation</li>
+        </ul>
+      </div>
+      
+      <!-- Slide Container -->
+      <div class="slide-container">
+        <template x-for="(slide, index) in slides" :key="index">
+          <div 
+            class="slide"
+            :class="{ 
+              'active': index === currentSlide,
+              'prev': index < currentSlide
+            }"
+            x-html="slide"
+          ></div>
+        </template>
+      </div>
+      
+      <!-- Controls -->
+      <div class="controls">
+        <div class="controls-left">
+          <button @click="prevSlide()" class="btn-secondary" :disabled="currentSlide === 0">
+            ← Previous
+          </button>
+          <button @click="nextSlide()" class="btn-secondary" :disabled="currentSlide === slides.length - 1">
+            Next →
+          </button>
+        </div>
+        
+        <div class="progress">
+          <div class="progress-bar" :style="`width: ${(currentSlide + 1) / slides.length * 100}%`"></div>
+        </div>
+        
+        <div class="slide-counter">
+          <span x-text="currentSlide + 1"></span> / <span x-text="slides.length"></span>
+        </div>
+        
+        <div class="controls-right">
+          <div class="theme-switcher">
+            <button 
+              @click="setTheme('light')" 
+              class="theme-btn"
+              :class="{ 'active': theme === 'light' }"
+              title="Light theme"
+            >☀️</button>
+            <button 
+              @click="setTheme('auto')" 
+              class="theme-btn"
+              :class="{ 'active': theme === 'auto' }"
+              title="Auto theme"
+            >⚙️</button>
+            <button 
+              @click="setTheme('dark')" 
+              class="theme-btn"
+              :class="{ 'active': theme === 'dark' }"
+              title="Dark theme"
+            >🌙</button>
+          </div>
+          
+          <button @click="toggleHelp()" class="btn-secondary" title="Keyboard shortcuts">
+            ?
+          </button>
+          
+          <button @click="exportToPowerPoint()" class="btn-primary">
+            💾 Export PPTX
+          </button>
+          
+          <button @click="resetApp()" class="btn-secondary" title="Load new file">
+            🔄
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- CDN Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  
+  <script>
+    function presentationApp() {
+      return {
+        loaded: false,
+        slides: [],
+        currentSlide: 0,
+        theme: localStorage.getItem('theme') || 'auto',
+        showHelp: false,
+        markdownContent: '',
+        metadata: {},
+        
+        init() {
+          // Configure marked options
+          marked.setOptions({
+            breaks: true,
+            gfm: true
+          });
+          
+          // Register service worker for PWA
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js');
+          }
+          
+          // Keyboard shortcuts
+          window.addEventListener('keydown', (e) => {
+            if (!this.loaded) return;
+            
+            switch(e.key) {
+              case 'ArrowRight':
+              case ' ':
+                e.preventDefault();
+                this.nextSlide();
+                break;
+              case 'ArrowLeft':
+              case 'Backspace':
+                e.preventDefault();
+                this.prevSlide();
+                break;
+              case 'Home':
+                e.preventDefault();
+                this.currentSlide = 0;
+                break;
+              case 'End':
+                e.preventDefault();
+                this.currentSlide = this.slides.length - 1;
+                break;
+              case '?':
+                e.preventDefault();
+                this.toggleHelp();
+                break;
+              case 'Escape':
+                if (this.showHelp) {
+                  this.showHelp = false;
+                } else {
+                  this.resetApp();
+                }
+                break;
+            }
+          });
+          
+          // Touch swipe support
+          let touchStartX = 0;
+          let touchEndX = 0;
+          
+          document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+          });
+          
+          document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            this.handleSwipe();
+          });
+          
+          const handleSwipe = () => {
+            if (touchEndX < touchStartX - 50) this.nextSlide();
+            if (touchEndX > touchStartX + 50) this.prevSlide();
+          };
+          
+          this.handleSwipe = handleSwipe;
+        },
+        
+        handleFile(event) {
+          const file = event.target.files[0];
+          if (file && file.type === 'text/markdown' || file.name.endsWith('.md')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              this.parseMarkdown(e.target.result);
+            };
+            reader.readAsText(file);
+          }
+        },
+        
+        handleDrop(event) {
+          event.currentTarget.classList.remove('dragover');
+          const file = event.dataTransfer.files[0];
+          if (file && (file.type === 'text/markdown' || file.name.endsWith('.md'))) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              this.parseMarkdown(e.target.result);
+            };
+            reader.readAsText(file);
+          }
+        },
+        
+        parseMarkdown(content) {
+          this.markdownContent = content;
+          
+          // Extract metadata if present
+          const metadataMatch = content.match(/^---\n([\s\S]*?)\n---\n/);
+          if (metadataMatch) {
+            const metadataStr = metadataMatch[1];
+            metadataStr.split('\n').forEach(line => {
+              const [key, ...valueParts] = line.split(':');
+              if (key && valueParts.length) {
+                this.metadata[key.trim()] = valueParts.join(':').trim();
+              }
+            });
+            content = content.replace(metadataMatch[0], '');
+          }
+          
+          // Split by slide separator (--- or ---)
+          const slideContents = content.split(/\n---+\n/);
+          
+          // Parse each slide
+          this.slides = slideContents
+            .map(slide => slide.trim())
+            .filter(slide => slide.length > 0)
+            .map(slide => marked.parse(slide));
+          
+          this.loaded = true;
+          this.currentSlide = 0;
+        },
+        
+        loadSamplePresentation() {
+          // Load the example presentation
+          fetch('sample-presentation.md')
+            .then(response => response.text())
+            .then(content => this.parseMarkdown(content))
+            .catch(error => {
+              console.error('Could not load sample:', error);
+              // Fallback inline sample
+              this.parseMarkdown(this.getInlineSample());
+            });
+        },
+        
+        getInlineSample() {
+          return `---
+title: Sample Presentation
+author: Presentation Viewer
+date: ${new Date().toLocaleDateString()}
+theme: default
+---
+
+# Welcome to Presentation Viewer 🎉
+
+A beautiful, offline-capable PWA for Markdown presentations
+
+---
+
+## Features
+
+- 📝 Write slides in simple Markdown
+- 🎨 Beautiful themes with dark mode
+- ⌨️ Keyboard shortcuts
+- 📱 Touch-friendly on mobile
+- 💾 Export to PowerPoint
+- 🔌 Works offline
+
+---
+
+## Easy Markdown Syntax
+
+### Headers
+Use \`#\` for titles
+Use \`##\` for subtitles
+Use \`###\` for sections
+
+### Lists
+- Bullet points
+- Are simple
+- And clean
+
+---
+
+## Code Examples
+
+\`\`\`javascript
+function hello() {
+  console.log("Hello, World!");
+}
+\`\`\`
+
+Inline \`code\` works too!
+
+---
+
+## Images & Quotes
+
+> "The best presentations are simple and clear."
+
+![Sample Image](https://via.placeholder.com/600x300/4f46e5/ffffff?text=Your+Image+Here)
+
+---
+
+## Getting Started
+
+1. Upload your Markdown file
+2. Navigate with arrow keys or buttons
+3. Export to PowerPoint when ready
+4. Share with your team!
+
+---
+
+# Thank You! 🙏
+
+Press **?** for keyboard shortcuts
+
+Use **Esc** to load a new file`;
+        },
+        
+        nextSlide() {
+          if (this.currentSlide < this.slides.length - 1) {
+            this.currentSlide++;
+          }
+        },
+        
+        prevSlide() {
+          if (this.currentSlide > 0) {
+            this.currentSlide--;
+          }
+        },
+        
+        setTheme(newTheme) {
+          this.theme = newTheme;
+          localStorage.setItem('theme', newTheme);
+          
+          const isDark = newTheme === 'dark' || 
+                        (newTheme === 'auto' && 
+                         window.matchMedia('(prefers-color-scheme: dark)').matches);
+          
+          document.documentElement.classList.remove('theme-light', 'theme-dark');
+          document.documentElement.classList.add(isDark ? 'theme-dark' : 'theme-light');
+        },
+        
+        toggleHelp() {
+          this.showHelp = !this.showHelp;
+        },
+        
+        resetApp() {
+          if (confirm('Load a new presentation? Current one will be cleared.')) {
+            this.loaded = false;
+            this.slides = [];
+            this.currentSlide = 0;
+            this.markdownContent = '';
+            this.metadata = {};
+          }
+        },
+        
+        async exportToPowerPoint() {
+          // Lazy load PptxGenJS only when needed
+          if (typeof PptxGenJS === 'undefined') {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js';
+            document.head.appendChild(script);
+            
+            await new Promise((resolve) => {
+              script.onload = resolve;
+            });
+          }
+          
+          const pres = new PptxGenJS();
+          
+          // Set presentation properties
+          pres.author = this.metadata.author || 'Presentation Viewer';
+          pres.title = this.metadata.title || 'Presentation';
+          pres.subject = 'Generated from Markdown';
+          
+          // Create slides
+          this.slides.forEach((slideHtml, index) => {
+            const slide = pres.addSlide();
+            
+            // Create a temporary div to parse HTML
+            const temp = document.createElement('div');
+            temp.innerHTML = slideHtml;
+            
+            let yPosition = 0.5;
+            
+            // Process each element
+            temp.childNodes.forEach(node => {
+              if (node.nodeType === 1) { // Element node
+                const text = node.textContent.trim();
+                if (!text) return;
+                
+                const tagName = node.tagName.toLowerCase();
+                let fontSize = 18;
+                let bold = false;
+                let color = '363636';
+                
+                // Determine styling based on tag
+                switch(tagName) {
+                  case 'h1':
+                    fontSize = 44;
+                    bold = true;
+                    break;
+                  case 'h2':
+                    fontSize = 36;
+                    bold = true;
+                    break;
+                  case 'h3':
+                    fontSize = 28;
+                    bold = true;
+                    break;
+                  case 'ul':
+                  case 'ol':
+                    // Process list items
+                    const items = Array.from(node.querySelectorAll('li'));
+                    items.forEach((li, idx) => {
+                      slide.addText(`• ${li.textContent.trim()}`, {
+                        x: 1,
+                        y: yPosition,
+                        w: 8,
+                        fontSize: 20,
+                        color: color
+                      });
+                      yPosition += 0.4;
+                    });
+                    return;
+                  case 'pre':
+                    fontSize = 14;
+                    break;
+                  case 'blockquote':
+                    color = '4f46e5';
+                    fontSize = 20;
+                    break;
+                }
+                
+                if (tagName !== 'ul' && tagName !== 'ol') {
+                  slide.addText(text, {
+                    x: 0.5,
+                    y: yPosition,
+                    w: 9,
+                    fontSize: fontSize,
+                    bold: bold,
+                    color: color,
+                    wrap: true
+                  });
+                  
+                  yPosition += fontSize > 30 ? 0.8 : 0.5;
+                }
+              }
+            });
+          });
+          
+          // Save the presentation
+          const fileName = this.metadata.title 
+            ? `${this.metadata.title.replace(/[^a-z0-9]/gi, '_')}.pptx`
+            : 'presentation.pptx';
+          
+          pres.writeFile({ fileName });
+        }
+      };
+    }
+  </script>
+</body>
+</html>
