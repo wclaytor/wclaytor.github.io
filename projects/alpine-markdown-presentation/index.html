@@ -692,7 +692,7 @@
         
         loadSamplePresentation() {
           // Load the example presentation
-          fetch('sample-presentation.md')
+          fetch('presentation-sample.md')
             .then(response => response.text())
             .then(content => this.parseMarkdown(content))
             .catch(error => {
