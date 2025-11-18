@@ -1,0 +1,2575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Alpine Resume - A modern, interactive resume Progressive Web App built with Alpine.js">
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Alpine Resume</title>
+  
+  <!-- Web App Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="/icons/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="/icons/favicon-48x48.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+  
+  <!-- Apple Touch Icon -->
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  
+  <!-- iOS Splash Screens -->
+  <link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" href="/icons/splash-640x1136.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/icons/splash-750x1334.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/icons/splash-1242x2208.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/icons/splash-1125x2436.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)" href="/icons/splash-1536x2048.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)" href="/icons/splash-2048x2732.png">
+  
+  <!-- Performance: Resource hints for faster CDN loading -->
+  <link rel="preconnect" href="https://cdn.tailwindcss.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  
+  <!-- Theme Color System -->
+  <link rel="stylesheet" href="styles/theme.css">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Tailwind CSS Configuration -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              300: '#93c5fd',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            },
+            secondary: {
+              50: '#f9fafb',
+              100: '#f3f4f6',
+              200: '#e5e7eb',
+              300: '#d1d5db',
+              400: '#9ca3af',
+              500: '#6b7280',
+              600: '#4b5563',
+              700: '#374151',
+              800: '#1f2937',
+              900: '#111827',
+            },
+            success: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              200: '#a7f3d0',
+              300: '#6ee7b7',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#047857',  // Changed from #059669 to darker green for better contrast
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            },
+            error: {
+              50: '#fef2f2',
+              100: '#fee2e2',
+              200: '#fecaca',
+              300: '#fca5a5',
+              400: '#f87171',
+              500: '#ef4444',
+              600: '#dc2626',
+              700: '#b91c1c',
+              800: '#991b1b',
+              900: '#7f1d1d',
+            },
+            warning: {
+              50: '#fffbeb',
+              100: '#fef3c7',
+              200: '#fde68a',
+              300: '#fcd34d',
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#ca8a04',
+              700: '#a16207',
+              800: '#854d0e',
+              900: '#713f12',
+            },
+            info: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              300: '#93c5fd',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            }
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+            serif: ['Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif'],
+            mono: ['SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', '"Liberation Mono"', '"Courier New"', 'monospace']
+          },
+          spacing: {
+            '18': '4.5rem',
+            '88': '22rem',
+          },
+          maxWidth: {
+            'prose': '65ch',
+          }
+        }
+      },
+      plugins: []
+    }
+  </script>
+  
+  <!-- Bootstrap Icons CDN - non-blocking load -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"></noscript>
+  
+  <!-- Marked.js for Markdown parsing -->
+  <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" crossorigin="anonymous"></script>
+  
+  <!-- DOMPurify for HTML sanitization -->
+  <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js" crossorigin="anonymous"></script>
+  
+  <!-- Alpine.js 3.x CDN (loaded with defer) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js" crossorigin="anonymous"></script>
+  
+  <!-- CDN Error Handling -->
+  <script>
+    // Wait for all deferred scripts to load before checking
+    window.addEventListener('load', function() {
+      // Check if critical libraries loaded successfully
+      setTimeout(function() {
+        const requiredLibraries = {
+          'Alpine.js': typeof window.Alpine !== 'undefined',
+          'Marked.js': typeof window.marked !== 'undefined',
+          'DOMPurify': typeof window.DOMPurify !== 'undefined'
+        };
+        
+        const missing = Object.entries(requiredLibraries)
+          .filter(([name, loaded]) => !loaded)
+          .map(([name]) => name);
+        
+        if (missing.length > 0) {
+          const errorContainer = document.createElement('div');
+          errorContainer.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;background:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;z-index:9999;';
+          
+          errorContainer.innerHTML = '<div style="max-width:500px;padding:2rem;text-align:center;"><div style="font-size:3rem;margin-bottom:1rem;">⚠️</div><h1 style="font-size:1.5rem;font-weight:bold;color:#111827;margin-bottom:1rem;">Failed to Load Application</h1><p style="color:#6b7280;margin-bottom:1rem;">Required libraries failed to load: <strong>' + missing.join(', ') + '</strong></p><p style="color:#6b7280;margin-bottom:1.5rem;">Please check your internet connection and try refreshing the page.</p><button onclick="location.reload()" style="padding:0.75rem 1.5rem;background:#3b82f6;color:white;border:none;border-radius:0.5rem;font-size:1rem;cursor:pointer;font-weight:500;">Retry</button></div>';
+          
+          document.body.innerHTML = '';
+          document.body.appendChild(errorContainer);
+        }
+      }, 100);
+    });
+  </script>
+  
+  <!-- Theme Initialization - Must run before Alpine.js to prevent FOUC -->
+  <script>
+    (function() {
+      /**
+       * Initialize theme before first paint to prevent FOUC
+       * Priority order:
+       * 1. Check unified appState in localStorage
+       * 2. Check legacy 'theme' key for backward compatibility
+       * 3. If not found, check system preference (matchMedia)
+       * 4. Default to light theme if neither available
+       */
+      function getInitialTheme() {
+        try {
+          // Try to get theme from unified appState
+          const appStateStr = localStorage.getItem('appState');
+          if (appStateStr) {
+            const appState = JSON.parse(appStateStr);
+            if (appState.theme === 'dark' || appState.theme === 'light') {
+              return appState.theme;
+            }
+          }
+          
+          // Fall back to legacy theme key for migration
+          const legacyTheme = localStorage.getItem('theme');
+          if (legacyTheme === 'dark' || legacyTheme === 'light') {
+            return legacyTheme;
+          }
+        } catch (e) {
+          // localStorage unavailable (private mode, disabled, etc.) or JSON parse error
+          console.warn('Theme persistence unavailable:', e.message);
+        }
+        
+        // Fall back to system preference
+        try {
+          if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            return 'dark';
+          }
+        } catch (e) {
+          // matchMedia not supported
+          console.warn('System theme detection unavailable:', e.message);
+        }
+        
+        // Default to light theme
+        return 'light';
+      }
+      
+      // Apply theme immediately to prevent FOUC
+      const theme = getInitialTheme();
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  
+  <!-- Prevent flash of unstyled content -->
+  <style>
+    [x-cloak] { display: none !important; }
+    
+    /* iOS Safe Area Insets for Standalone Mode (Issue S4-002) */
+    :root {
+      --safe-area-inset-top: env(safe-area-inset-top, 0px);
+      --safe-area-inset-right: env(safe-area-inset-right, 0px);
+      --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-area-inset-left: env(safe-area-inset-left, 0px);
+    }
+    
+    /* Global body styling with theme variables */
+    body {
+      background-color: var(--color-bg-secondary);
+      color: var(--color-text-primary);
+      /* Apply safe area padding for standalone mode */
+      padding-top: var(--safe-area-inset-top);
+      padding-right: var(--safe-area-inset-right);
+      padding-bottom: var(--safe-area-inset-bottom);
+      padding-left: var(--safe-area-inset-left);
+    }
+    
+    /* Standalone Mode Optimizations (Issue S4-002) */
+    /* Apply optimizations when app is running in standalone mode */
+    .standalone-mode {
+      /* Optimize body spacing for standalone (no browser chrome) */
+      --standalone-extra-padding: 0.5rem;
+    }
+    
+    /* Main header styling */
+    header {
+      background-color: var(--color-bg-primary);
+      border-bottom: 1px solid var(--color-border-primary);
+      /* Account for safe area in standalone mode */
+      padding-top: calc(var(--safe-area-inset-top) + 0.5rem);
+    }
+    
+    /* Sticky navigation optimizations for standalone mode */
+    .standalone-mode nav[aria-label="Resume sections"] {
+      /* Add extra padding to account for potential notch/status bar */
+      top: var(--safe-area-inset-top);
+    }
+    
+    header h1 {
+      color: var(--color-heading-primary);
+    }
+    
+    /* Main content article card */
+    article {
+      background-color: var(--color-bg-primary);
+    }
+    
+    /* Footer styling with safe area support */
+    footer {
+      background-color: var(--color-bg-primary);
+      border-top: 1px solid var(--color-border-primary);
+      color: var(--color-text-tertiary);
+      /* Account for safe area in standalone mode (iOS home indicator) */
+      padding-bottom: calc(1rem + var(--safe-area-inset-bottom));
+    }
+    
+    /* Skip link for keyboard accessibility */
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: var(--color-primary);
+      color: var(--color-text-inverse);
+      padding: 8px 16px;
+      text-decoration: none;
+      border-radius: 0 0 4px 0;
+      z-index: 100;
+      font-weight: 500;
+    }
+    
+    .skip-link:focus {
+      top: 0;
+    }
+    
+    /* Resume styling with responsive typography following Design.md specs */
+    
+    /* H1: Resume name - Primary heading (36-48px, Bold) */
+    .resume-content h1 {
+      font-size: 1.875rem;
+      font-weight: 700;
+      color: var(--color-heading-primary);
+      margin-bottom: 1rem;
+      line-height: 1.25;
+    }
+    
+    @media (min-width: 640px) {
+      .resume-content h1 {
+        font-size: 2.25rem;
+      }
+    }
+    
+    /* H2: Section headings (24-30px, Semi-bold) */
+    .resume-content h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--color-heading-primary);
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--color-primary);
+    }
+    
+    /* H3: Subsection headings (20-24px, Medium) */
+    .resume-content h3 {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: var(--color-heading-secondary);
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    /* H4: Minor headings (18px, Medium) */
+    .resume-content h4 {
+      font-size: 1.125rem;
+      font-weight: 500;
+      color: var(--color-heading-tertiary);
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    /* Body text - Regular (16px, line-height 1.6) */
+    .resume-content p {
+      font-size: 1rem;
+      color: var(--color-text-secondary);
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+    
+    /* Lists with proper spacing */
+    .resume-content ul, .resume-content ol {
+      margin-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .resume-content ul li {
+      list-style-type: disc;
+      margin-top: 0.5rem;
+    }
+    
+    .resume-content ol li {
+      list-style-type: decimal;
+      margin-top: 0.5rem;
+    }
+    
+    /* List items with optimized readability */
+    .resume-content li {
+      font-size: 1rem;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+    }
+    
+    /* Links with primary color and semantic styling */
+    .resume-content a {
+      color: var(--color-link);
+      text-decoration: underline;
+      word-wrap: break-word;
+    }
+    
+    .resume-content a:hover {
+      color: var(--color-link-hover);
+    }
+    
+    /* Strong text with proper emphasis */
+    .resume-content strong {
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+    
+    /* Emphasis (italic) text */
+    .resume-content em {
+      font-style: italic;
+      color: var(--color-heading-tertiary);
+    }
+    
+    /* Code inline with semantic background */
+    .resume-content code {
+      background-color: var(--color-code-bg);
+      color: var(--color-code-text);
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.875rem;
+      font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      word-wrap: break-word;
+    }
+    
+    /* Code blocks with semantic styling */
+    .resume-content pre {
+      background-color: var(--color-pre-bg);
+      border: 1px solid var(--color-pre-border);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      overflow-x: auto;
+      margin-bottom: 1rem;
+    }
+    
+    .resume-content pre code {
+      background-color: transparent;
+      padding: 0;
+      color: var(--color-text-primary);
+    }
+    
+    /* Horizontal rules with subtle styling */
+    .resume-content hr {
+      margin: 2rem 0;
+      border-color: var(--color-border-primary);
+    }
+    
+    /* Blockquotes with visual distinction */
+    .resume-content blockquote {
+      border-left: 4px solid var(--color-primary);
+      padding-left: 1rem;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+      margin: 1rem 0;
+      font-style: italic;
+      color: var(--color-heading-tertiary);
+    }
+    
+    /* Prevent horizontal overflow on mobile */
+    body {
+      overflow-x: hidden;
+    }
+    
+    /* Ensure minimum touch target size */
+    button, a, input[type="file"] + label {
+      min-height: 44px;
+      min-width: 44px;
+    }
+    
+    /* Theme toggle button styling */
+    .theme-toggle {
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .theme-toggle:hover {
+      transform: scale(1.05);
+    }
+    
+    .theme-toggle:active {
+      transform: scale(0.95);
+    }
+    
+    /* Smooth icon transitions */
+    .theme-toggle i {
+      transition: opacity 0.2s ease-in-out;
+    }
+    
+    /* Collapsible section styles */
+    .collapsible-section {
+      margin-bottom: 1rem;
+    }
+    
+    .section-header-wrapper {
+      outline: none;
+    }
+    
+    .section-header-wrapper:focus {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+    
+    .section-header-wrapper:hover h2 {
+      color: var(--color-primary);
+    }
+    
+    .rotate-90 {
+      transform: rotate(90deg);
+    }
+    
+    /* ========================================
+       Search Highlighting Styles (Issue S5-001)
+       ======================================== */
+    .search-highlight {
+      background-color: rgba(251, 191, 36, 0.4); /* Yellow highlight */
+      color: inherit;
+      padding: 0.125rem 0.25rem;
+      border-radius: 0.25rem;
+      font-weight: 500;
+      transition: background-color 0.2s ease;
+    }
+    
+    /* Dark theme highlight */
+    [data-theme="dark"] .search-highlight {
+      background-color: rgba(251, 191, 36, 0.3);
+    }
+    
+    /* Highlight on hover for better visibility */
+    .search-highlight:hover {
+      background-color: rgba(251, 191, 36, 0.6);
+    }
+    
+    [data-theme="dark"] .search-highlight:hover {
+      background-color: rgba(251, 191, 36, 0.4);
+    }
+    
+    /* Smooth transition for search input */
+    input[type="search"] {
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    
+    /* Remove default search cancel button on WebKit */
+    input[type="search"]::-webkit-search-cancel-button {
+      display: none;
+    }
+    
+    /* Keyboard shortcut kbd styling */
+    kbd {
+      display: inline-block;
+      font-family: monospace;
+    }
+    
+    /* ========================================
+       Print Styles for Professional Resume Printing
+       ======================================== */
+    @media print {
+      /* Page setup */
+      @page {
+        size: letter;
+        margin: 0.5in 0.75in;
+      }
+      
+      /* Hide UI elements */
+      header,
+      nav,
+      button,
+      .no-print,
+      input,
+      label[for="resume-upload"],
+      footer,
+      [role="alert"] {
+        display: none !important;
+      }
+      
+      /* Reset colors and backgrounds for print - preserve light theme */
+      * {
+        color: #000 !important;
+        background: #fff !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+      }
+      
+      /* Body and layout optimization */
+      body {
+        font-size: 12pt;
+        line-height: 1.5;
+        color: #000 !important;
+        background: #fff !important;
+      }
+      
+      /* Main content container */
+      main {
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      
+      article {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+      }
+      
+      /* Typography for print */
+      .resume-content h1 {
+        font-size: 24pt;
+        margin-bottom: 8pt;
+        margin-top: 0;
+        color: #000 !important;
+        border: none !important;
+      }
+      
+      .resume-content h2 {
+        font-size: 16pt;
+        margin-top: 16pt;
+        margin-bottom: 8pt;
+        border-bottom: 1pt solid #000 !important;
+        padding-bottom: 4pt;
+        color: #000 !important;
+        page-break-after: avoid;
+      }
+      
+      .resume-content h3 {
+        font-size: 13pt;
+        margin-top: 12pt;
+        margin-bottom: 4pt;
+        color: #000 !important;
+        page-break-after: avoid;
+      }
+      
+      .resume-content h4 {
+        font-size: 12pt;
+        margin-top: 8pt;
+        margin-bottom: 4pt;
+        color: #000 !important;
+        page-break-after: avoid;
+      }
+      
+      .resume-content p {
+        font-size: 11pt;
+        line-height: 1.5;
+        margin-bottom: 8pt;
+        color: #000 !important;
+      }
+      
+      /* Lists in print */
+      .resume-content ul,
+      .resume-content ol {
+        margin-left: 20pt;
+        margin-bottom: 8pt;
+      }
+      
+      .resume-content li {
+        font-size: 11pt;
+        line-height: 1.5;
+        margin-bottom: 4pt;
+        color: #000 !important;
+      }
+      
+      /* Links in print */
+      .resume-content a {
+        color: #000 !important;
+        text-decoration: underline;
+      }
+      
+      /* Display URLs for external links */
+      .resume-content a[href^="http"]:after,
+      .resume-content a[href^="https"]:after {
+        content: " (" attr(href) ")";
+        font-size: 9pt;
+        color: #666 !important;
+      }
+      
+      /* Don't show URLs for internal links */
+      .resume-content a[href^="#"]:after,
+      .resume-content a[href^="javascript:"]:after {
+        content: "";
+      }
+      
+      /* Code formatting in print */
+      .resume-content code {
+        background: #f5f5f5 !important;
+        border: 1pt solid #ddd !important;
+        padding: 2pt 4pt;
+        font-size: 10pt;
+        color: #000 !important;
+      }
+      
+      .resume-content pre {
+        background: #f5f5f5 !important;
+        border: 1pt solid #ddd !important;
+        padding: 8pt;
+        font-size: 10pt;
+        page-break-inside: avoid;
+      }
+      
+      .resume-content pre code {
+        background: transparent !important;
+        border: none !important;
+        padding: 0;
+      }
+      
+      /* Strong and emphasis */
+      .resume-content strong {
+        font-weight: bold;
+        color: #000 !important;
+      }
+      
+      .resume-content em {
+        font-style: italic;
+        color: #000 !important;
+      }
+      
+      /* Blockquotes */
+      .resume-content blockquote {
+        border-left: 2pt solid #000 !important;
+        padding-left: 8pt;
+        margin: 8pt 0;
+        font-style: italic;
+        color: #000 !important;
+      }
+      
+      /* Horizontal rules */
+      .resume-content hr {
+        border: none;
+        border-top: 1pt solid #000 !important;
+        margin: 12pt 0;
+      }
+      
+      /* Page break control */
+      h1, h2, h3, h4, h5, h6 {
+        page-break-after: avoid;
+      }
+      
+      section, .collapsible-section {
+        page-break-inside: avoid;
+      }
+      
+      /* Ensure all sections are expanded in print */
+      .section-content {
+        display: block !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      
+      /* Hide collapse icons in print */
+      .section-header-wrapper .bi-chevron-right {
+        display: none !important;
+      }
+      
+      p, ul, ol {
+        page-break-inside: avoid;
+      }
+      
+      /* Avoid breaking after headings */
+      h1, h2, h3, h4, h5, h6 {
+        page-break-after: avoid;
+      }
+      
+      /* Avoid orphans and widows */
+      p {
+        orphans: 3;
+        widows: 3;
+      }
+      
+      /* Performance info and debug sections - hide in print */
+      aside,
+      details {
+        display: none !important;
+      }
+      
+      /* Hide skip link in print */
+      .skip-link {
+        display: none !important;
+      }
+    }
+  </style>
+  
+  <!-- Respect user motion preferences - WCAG 2.3.3 -->
+  <style>
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+    
+    /* Smooth scrolling for anchor links */
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    /* Override smooth scrolling for users who prefer reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+    }
+  </style>
+  
+  <!-- Alpine.js Resume Component -->
+  <script>
+    // Configure Marked.js before Alpine initializes
+    if (typeof marked !== 'undefined') {
+      marked.setOptions({
+        breaks: true,           // Convert line breaks to <br>
+        gfm: true,             // GitHub Flavored Markdown
+        headerIds: true,       // Add IDs to headings
+        mangle: false,         // Don't mangle email addresses
+        pedantic: false,       // Don't use original markdown.pl
+        sanitize: false,       // We'll use DOMPurify for sanitization
+        smartLists: true,      // Smarter list behavior
+        smartypants: true,     // Fancy quotes and dashes
+        xhtml: false          // Don't output XHTML
+      });
+    }
+    
+    // Alpine.js component for resume rendering
+    document.addEventListener('alpine:init', () => {
+      // Unified State Management Store
+      Alpine.store('appState', {
+        version: '1.0',
+        theme: 'light',
+        sectionStates: {},
+        scrollPosition: null,
+        
+        /**
+         * Load application state from localStorage
+         * Handles versioning and migration
+         */
+        load() {
+          try {
+            const stored = localStorage.getItem('appState');
+            if (stored) {
+              const state = JSON.parse(stored);
+              
+              // Check version and migrate if needed
+              if (state.version !== this.version) {
+                console.log(`Migrating state from version ${state.version} to ${this.version}`);
+                return this.migrate(state);
+              }
+              
+              // Load state
+              this.theme = state.theme || this.getDefaultTheme();
+              this.sectionStates = state.sectionStates || {};
+              this.scrollPosition = state.scrollPosition || null;
+              
+              console.log('Application state loaded:', {
+                version: this.version,
+                theme: this.theme,
+                sectionCount: Object.keys(this.sectionStates).length,
+                scrollPosition: this.scrollPosition
+              });
+              
+              return true;
+            } else {
+              // Try to migrate from old individual keys
+              return this.migrateFromLegacy();
+            }
+          } catch (e) {
+            console.warn('Failed to load application state:', e);
+            // Return defaults on error
+            this.theme = this.getDefaultTheme();
+            this.sectionStates = {};
+            this.scrollPosition = null;
+            return false;
+          }
+        },
+        
+        /**
+         * Save current application state to localStorage
+         */
+        save() {
+          try {
+            const state = {
+              version: this.version,
+              theme: this.theme,
+              sectionStates: this.sectionStates,
+              scrollPosition: this.scrollPosition
+            };
+            
+            localStorage.setItem('appState', JSON.stringify(state));
+            console.log('Application state saved');
+            return true;
+          } catch (e) {
+            console.warn('Failed to save application state:', e);
+            return false;
+          }
+        },
+        
+        /**
+         * Clear all application state and reload page
+         */
+        clear() {
+          try {
+            localStorage.removeItem('appState');
+            // Also clear legacy keys for clean slate
+            localStorage.removeItem('theme');
+            localStorage.removeItem('sectionStates');
+            console.log('Application state cleared');
+            location.reload();
+          } catch (e) {
+            console.warn('Failed to clear application state:', e);
+          }
+        },
+        
+        /**
+         * Migrate state from older versions
+         */
+        migrate(oldState) {
+          console.log('Migrating state structure...');
+          
+          // For now, just copy relevant fields
+          // In future versions, add specific migration logic here
+          this.theme = oldState.theme || this.getDefaultTheme();
+          this.sectionStates = oldState.sectionStates || {};
+          this.scrollPosition = oldState.scrollPosition || null;
+          
+          // Save migrated state
+          this.save();
+          return true;
+        },
+        
+        /**
+         * Migrate from legacy separate localStorage keys
+         */
+        migrateFromLegacy() {
+          try {
+            console.log('Attempting to migrate from legacy localStorage keys...');
+            
+            // Migrate theme
+            const legacyTheme = localStorage.getItem('theme');
+            if (legacyTheme === 'dark' || legacyTheme === 'light') {
+              this.theme = legacyTheme;
+              console.log('Migrated theme:', legacyTheme);
+            } else {
+              this.theme = this.getDefaultTheme();
+            }
+            
+            // Migrate section states
+            const legacySectionStates = localStorage.getItem('sectionStates');
+            if (legacySectionStates) {
+              this.sectionStates = JSON.parse(legacySectionStates);
+              console.log('Migrated section states:', Object.keys(this.sectionStates).length, 'sections');
+            }
+            
+            // Save unified state
+            if (legacyTheme || legacySectionStates) {
+              this.save();
+              
+              // Remove legacy keys
+              localStorage.removeItem('theme');
+              localStorage.removeItem('sectionStates');
+              console.log('Legacy keys removed, migration complete');
+              
+              return true;
+            }
+            
+            return false;
+          } catch (e) {
+            console.warn('Failed to migrate from legacy state:', e);
+            return false;
+          }
+        },
+        
+        /**
+         * Get default theme based on system preference
+         */
+        getDefaultTheme() {
+          try {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+              return 'dark';
+            }
+          } catch (e) {
+            console.warn('System theme detection unavailable:', e);
+          }
+          return 'light';
+        },
+        
+        /**
+         * Update theme in state and save
+         */
+        updateTheme(theme) {
+          this.theme = theme;
+          this.save();
+        },
+        
+        /**
+         * Update section state and save
+         */
+        updateSectionState(sectionId, isExpanded) {
+          this.sectionStates[sectionId] = isExpanded;
+          this.save();
+        },
+        
+        /**
+         * Get section state (default to expanded)
+         */
+        getSectionState(sectionId) {
+          return this.sectionStates[sectionId] !== false;
+        },
+        
+        /**
+         * Save current scroll position
+         */
+        saveScrollPosition() {
+          try {
+            this.scrollPosition = window.scrollY || window.pageYOffset || 0;
+            this.save();
+          } catch (e) {
+            console.warn('Failed to save scroll position:', e);
+          }
+        },
+        
+        /**
+         * Restore saved scroll position
+         */
+        restoreScrollPosition() {
+          try {
+            if (this.scrollPosition !== null && this.scrollPosition > 0) {
+              window.scrollTo({
+                top: this.scrollPosition,
+                behavior: 'smooth'
+              });
+              console.log('Scroll position restored:', this.scrollPosition);
+            }
+          } catch (e) {
+            console.warn('Failed to restore scroll position:', e);
+          }
+        }
+      });
+      
+      Alpine.data('resume', () => ({
+        markdownContent: '',
+        htmlContent: '',
+        isLoading: false,
+        parseError: null,
+        parseTime: 0,
+        hasResume: false,
+        sections: [],
+        activeSection: '',
+        mobileMenuOpen: false,
+        observer: null,
+        // Search functionality state
+        searchQuery: '',
+        searchResults: [],
+        isSearching: false,
+        searchDebounceTimer: null,
+        
+        async init() {
+          // Don't auto-load any resume, wait for user to upload
+          console.log('Alpine Resume initialized. Ready for file upload.');
+          
+          // Setup scroll position tracking (optional feature)
+          this.setupScrollTracking();
+        },
+        
+        setupScrollTracking() {
+          let scrollTimeout;
+          
+          window.addEventListener('scroll', () => {
+            // Clear existing timeout
+            clearTimeout(scrollTimeout);
+            
+            // Set new timeout to save scroll position after scrolling stops
+            scrollTimeout = setTimeout(() => {
+              if (this.hasResume) {
+                this.$store.appState.saveScrollPosition();
+              }
+            }, 500); // Save 500ms after scrolling stops
+          });
+          
+          // Restore scroll position when resume is loaded
+          this.$watch('hasResume', (value) => {
+            if (value) {
+              // Small delay to ensure DOM is rendered
+              this.$nextTick(() => {
+                setTimeout(() => {
+                  this.$store.appState.restoreScrollPosition();
+                }, 300);
+              });
+            }
+          });
+        },
+        
+        async handleFileUpload(event) {
+          const file = event.target.files[0];
+          
+          if (!file) {
+            return;
+          }
+          
+          // Validate file type
+          if (!file.name.endsWith('.md') && !file.name.endsWith('.markdown')) {
+            this.parseError = 'Please upload a Markdown file (.md or .markdown)';
+            return;
+          }
+          
+          this.isLoading = true;
+          this.parseError = null;
+          const startTime = performance.now();
+          
+          try {
+            // Read file content
+            const content = await this.readFile(file);
+            this.markdownContent = content;
+            
+            // Parse to HTML
+            if (this.markdownContent) {
+              this.htmlContent = this.parseMarkdown(this.markdownContent);
+              this.hasResume = true;
+              
+              // Calculate parse time
+              this.parseTime = performance.now() - startTime;
+              
+              // Log performance
+              console.log(`Resume parsed in ${this.parseTime.toFixed(2)}ms`);
+              
+              // Check performance requirement (<100ms)
+              if (this.parseTime > 100) {
+                console.warn(`Parse time exceeded target: ${this.parseTime.toFixed(2)}ms > 100ms`);
+              }
+              
+              // Extract sections and setup navigation
+              this.$nextTick(() => {
+                this.extractSections();
+                this.setupIntersectionObserver();
+              });
+            }
+          } catch (error) {
+            this.parseError = error.message;
+            console.error('Error loading/parsing resume:', error);
+          } finally {
+            this.isLoading = false;
+          }
+        },
+        
+        readFile(file) {
+          return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            
+            reader.onload = (e) => {
+              resolve(e.target.result);
+            };
+            
+            reader.onerror = (e) => {
+              reject(new Error('Failed to read file'));
+            };
+            
+            reader.readAsText(file);
+          });
+        },
+        
+        clearResume() {
+          this.markdownContent = '';
+          this.htmlContent = '';
+          this.hasResume = false;
+          this.parseError = null;
+          this.parseTime = 0;
+          this.sections = [];
+          this.activeSection = '';
+          this.closeMobileMenu();
+          
+          // Cleanup Intersection Observer
+          if (this.observer) {
+            this.observer.disconnect();
+            this.observer = null;
+          }
+          
+          // Reset file input
+          const fileInput = document.getElementById('resume-upload');
+          if (fileInput) {
+            fileInput.value = '';
+          }
+        },
+        
+        parseMarkdown(markdown) {
+          try {
+            // Handle edge case: empty content
+            if (!markdown || markdown.trim() === '') {
+              return '<p class="text-secondary-500 dark:text-secondary-400 italic">No resume content available.</p>';
+            }
+            
+            // Parse Markdown to HTML
+            const rawHtml = marked.parse(markdown);
+            
+            // Sanitize HTML to prevent XSS attacks
+            const sanitizedHtml = DOMPurify.sanitize(rawHtml, {
+              ALLOWED_TAGS: [
+                'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+                'p', 'br', 'hr',
+                'strong', 'em', 'b', 'i',
+                'ul', 'ol', 'li',
+                'a', 'code', 'pre',
+                'blockquote'
+              ],
+              ALLOWED_ATTR: ['href', 'id', 'class'],
+              ALLOW_DATA_ATTR: false
+            });
+            
+            return sanitizedHtml;
+          } catch (error) {
+            console.error('Error parsing Markdown:', error);
+            return `<p class="text-error-600 dark:text-error-400 font-medium">Error parsing resume content: ${error.message}</p>`;
+          }
+        },
+        
+        extractSections() {
+          // Find all h2 elements in the resume content (main sections)
+          const contentDiv = document.querySelector('.resume-content');
+          if (!contentDiv) return;
+          
+          const h2Elements = contentDiv.querySelectorAll('h2');
+          console.log(`Found ${h2Elements.length} H2 elements initially`);
+          
+          // Convert NodeList to Array to avoid issues with live DOM updates
+          const h2Array = Array.from(h2Elements);
+          this.sections = [];
+          
+          // First pass: collect all section info and assign IDs
+          h2Array.forEach((heading, index) => {
+            // Generate or use existing ID
+            let id = heading.id;
+            if (!id) {
+              // Create ID from heading text
+              id = heading.textContent
+                .toLowerCase()
+                .trim()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/\s+/g, '-');
+              heading.id = id;
+            }
+            
+            console.log(`Found section ${index + 1}: "${heading.textContent.trim()}" (id: ${id})`);
+            
+            // Store section info (without element reference, since it will be replaced)
+            this.sections.push({
+              id: id,
+              title: heading.textContent.trim()
+            });
+          });
+          
+          // Second pass: wrap each section with collapsible functionality
+          // Process in reverse order to avoid DOM mutation issues
+          for (let i = h2Array.length - 1; i >= 0; i--) {
+            const heading = h2Array[i];
+            if (!heading.parentNode) {
+              console.warn(`Heading at index ${i} is no longer in DOM, skipping wrap`);
+              continue;
+            }
+            
+            console.log(`Wrapping section ${i + 1}: "${heading.textContent.trim()}"`);
+            this.wrapSectionWithCollapsible(heading, heading.id);
+          }
+          
+          // Set first section as active by default
+          if (this.sections.length > 0) {
+            this.activeSection = this.sections[0].id;
+          }
+          
+          console.log(`Extracted ${this.sections.length} sections:`, this.sections.map(s => s.title));
+        },
+        
+        wrapSectionWithCollapsible(heading, sectionId) {
+          // Find all content until the next h2 or end of content
+          const contentElements = [];
+          let nextElement = heading.nextElementSibling;
+          
+          while (nextElement && nextElement.tagName !== 'H2') {
+            console.log(`  Collecting element: ${nextElement.tagName} - "${nextElement.textContent ? nextElement.textContent.substring(0, 50) : 'N/A'}"`);
+            contentElements.push(nextElement);
+            nextElement = nextElement.nextElementSibling;
+          }
+          
+          console.log(`Wrapping section "${sectionId}": found ${contentElements.length} content elements`);
+          if (nextElement && nextElement.tagName === 'H2') {
+            console.log(`  Next section starts with: "${nextElement.textContent.trim()}"`);
+          } else {
+            console.log(`  This is the last section (no next H2 found)`);
+          }
+          
+          // Create wrapper div for collapsible section
+          const sectionWrapper = document.createElement('div');
+          sectionWrapper.setAttribute('x-data', `collapsibleSection('${sectionId}')`);
+          sectionWrapper.className = 'collapsible-section';
+          
+          // Create header wrapper with toggle functionality
+          const headerWrapper = document.createElement('div');
+          headerWrapper.className = 'section-header-wrapper cursor-pointer select-none';
+          headerWrapper.setAttribute('@click', 'toggle()');
+          headerWrapper.setAttribute('@keydown', 'handleKeydown($event)');
+          headerWrapper.setAttribute('tabindex', '0');
+          headerWrapper.setAttribute('role', 'button');
+          headerWrapper.setAttribute(':aria-expanded', 'isExpanded.toString()');
+          headerWrapper.setAttribute(':aria-label', `'Toggle ' + '${heading.textContent.trim()}' + ' section'`);
+          
+          // Create icon container
+          const iconSpan = document.createElement('span');
+          iconSpan.className = 'inline-flex items-center mr-2 transition-transform duration-200';
+          iconSpan.setAttribute(':class', "{ 'rotate-90': isExpanded }");
+          iconSpan.setAttribute('aria-hidden', 'true');
+          iconSpan.innerHTML = '<i class="bi bi-chevron-right text-primary-600 dark:text-primary-400"></i>';
+          
+          // Insert icon before heading text
+          const headingClone = heading.cloneNode(true);
+          headingClone.insertBefore(iconSpan, headingClone.firstChild);
+          headingClone.className = heading.className + ' flex items-center';
+          // Preserve the ID for navigation and intersection observer
+          headingClone.id = heading.id;
+          
+          headerWrapper.appendChild(headingClone);
+          
+          // Create content wrapper with transition
+          const contentWrapper = document.createElement('div');
+          contentWrapper.setAttribute('x-show', 'isExpanded');
+          contentWrapper.setAttribute('x-transition:enter', 'transition ease-out duration-300');
+          contentWrapper.setAttribute('x-transition:enter-start', 'opacity-0 -translate-y-2');
+          contentWrapper.setAttribute('x-transition:enter-end', 'opacity-100 translate-y-0');
+          contentWrapper.setAttribute('x-transition:leave', 'transition ease-in duration-200');
+          contentWrapper.setAttribute('x-transition:leave-start', 'opacity-100 translate-y-0');
+          contentWrapper.setAttribute('x-transition:leave-end', 'opacity-0 -translate-y-2');
+          contentWrapper.setAttribute('x-cloak', '');
+          contentWrapper.className = 'section-content';
+          
+          // Move content elements into the content wrapper
+          contentElements.forEach(el => {
+            contentWrapper.appendChild(el);
+          });
+          
+          // Build the structure
+          sectionWrapper.appendChild(headerWrapper);
+          sectionWrapper.appendChild(contentWrapper);
+          
+          // Replace the original heading with the wrapper
+          heading.parentNode.insertBefore(sectionWrapper, heading);
+          heading.remove();
+        },
+        
+        setupIntersectionObserver() {
+          // Cleanup existing observer
+          if (this.observer) {
+            this.observer.disconnect();
+          }
+          
+          // Create new observer to detect visible sections
+          const options = {
+            root: null,
+            rootMargin: '-20% 0px -70% 0px',
+            threshold: 0
+          };
+          
+          this.observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                this.activeSection = entry.target.id;
+              }
+            });
+          }, options);
+          
+          // Observe all section headings (now inside wrappers)
+          this.sections.forEach(section => {
+            // Find the h2 element with the section ID (now inside the wrapper)
+            const headingElement = document.getElementById(section.id);
+            if (headingElement) {
+              this.observer.observe(headingElement);
+            }
+          });
+        },
+        
+        scrollToSection(sectionId) {
+          const element = document.getElementById(sectionId);
+          if (element) {
+            element.scrollIntoView({ 
+              behavior: 'smooth',
+              block: 'start'
+            });
+            
+            // Close mobile menu if open
+            this.closeMobileMenu();
+            
+            // Update active section immediately for better UX
+            this.activeSection = sectionId;
+          }
+        },
+        
+        toggleMobileMenu() {
+          this.mobileMenuOpen = !this.mobileMenuOpen;
+          
+          // Prevent body scroll when menu is open
+          if (this.mobileMenuOpen) {
+            document.body.style.overflow = 'hidden';
+          } else {
+            document.body.style.overflow = '';
+          }
+        },
+        
+        closeMobileMenu() {
+          if (this.mobileMenuOpen) {
+            this.mobileMenuOpen = false;
+            document.body.style.overflow = '';
+          }
+        },
+        
+        /**
+         * Handle search input with debouncing
+         * Debounces search to ≤300ms to meet performance requirements
+         */
+        handleSearchInput(event) {
+          const query = event.target.value;
+          this.searchQuery = query;
+          
+          // Clear existing timer
+          if (this.searchDebounceTimer) {
+            clearTimeout(this.searchDebounceTimer);
+          }
+          
+          // Debounce search to meet <300ms requirement
+          this.searchDebounceTimer = setTimeout(() => {
+            this.performSearch(query);
+          }, 250); // 250ms provides good balance between responsiveness and performance
+        },
+        
+        /**
+         * Perform the actual search operation
+         * Filters and highlights content based on search query
+         */
+        performSearch(query) {
+          const startTime = performance.now();
+          
+          // Clear search if query is empty
+          if (!query || query.trim() === '') {
+            this.clearSearch();
+            return;
+          }
+          
+          this.isSearching = true;
+          
+          try {
+            // Get the resume content container
+            const contentDiv = document.querySelector('.resume-content');
+            if (!contentDiv) {
+              console.warn('Resume content container not found');
+              this.isSearching = false;
+              return;
+            }
+            
+            // Remove any existing highlights
+            this.removeHighlights(contentDiv);
+            
+            // Case-insensitive search
+            const searchRegex = new RegExp(this.escapeRegex(query), 'gi');
+            let matchCount = 0;
+            
+            // Walk through all text nodes and highlight matches
+            this.highlightTextNodes(contentDiv, searchRegex, (match) => {
+              matchCount++;
+            });
+            
+            // Update search results count
+            this.searchResults = { count: matchCount, query: query };
+            
+            // Log performance
+            const searchTime = performance.now() - startTime;
+            console.log(`Search completed in ${searchTime.toFixed(2)}ms, found ${matchCount} matches`);
+            
+            // Validate performance requirement (<300ms)
+            if (searchTime > 300) {
+              console.warn(`Search time exceeded target: ${searchTime.toFixed(2)}ms > 300ms`);
+            }
+            
+            // Scroll to first match if found
+            if (matchCount > 0) {
+              const firstHighlight = contentDiv.querySelector('.search-highlight');
+              if (firstHighlight) {
+                firstHighlight.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+            }
+          } catch (error) {
+            console.error('Error performing search:', error);
+          } finally {
+            this.isSearching = false;
+          }
+        },
+        
+        /**
+         * Clear search and remove all highlights
+         */
+        clearSearch() {
+          this.searchQuery = '';
+          this.searchResults = [];
+          this.isSearching = false;
+          
+          // Clear debounce timer
+          if (this.searchDebounceTimer) {
+            clearTimeout(this.searchDebounceTimer);
+            this.searchDebounceTimer = null;
+          }
+          
+          // Remove highlights from content
+          const contentDiv = document.querySelector('.resume-content');
+          if (contentDiv) {
+            this.removeHighlights(contentDiv);
+          }
+          
+          console.log('Search cleared');
+        },
+        
+        /**
+         * Escape special regex characters in search query
+         */
+        escapeRegex(string) {
+          return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        },
+        
+        /**
+         * Walk through text nodes and highlight matches
+         */
+        highlightTextNodes(element, regex, onMatch) {
+          // Skip script and style elements
+          if (element.tagName === 'SCRIPT' || element.tagName === 'STYLE') {
+            return;
+          }
+          
+          // If this is a text node, check for matches
+          if (element.nodeType === Node.TEXT_NODE) {
+            const text = element.textContent;
+            if (regex.test(text)) {
+              // Reset regex
+              regex.lastIndex = 0;
+              
+              // Create a span wrapper with highlighted text
+              const span = document.createElement('span');
+              let lastIndex = 0;
+              let match;
+              
+              while ((match = regex.exec(text)) !== null) {
+                // Add text before match
+                if (match.index > lastIndex) {
+                  span.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
+                }
+                
+                // Add highlighted match
+                const highlight = document.createElement('mark');
+                highlight.className = 'search-highlight';
+                highlight.textContent = match[0];
+                span.appendChild(highlight);
+                
+                lastIndex = regex.lastIndex;
+                onMatch(match);
+              }
+              
+              // Add remaining text
+              if (lastIndex < text.length) {
+                span.appendChild(document.createTextNode(text.substring(lastIndex)));
+              }
+              
+              // Replace text node with highlighted span
+              element.parentNode.replaceChild(span, element);
+            }
+          } else {
+            // Recursively process child nodes
+            // Convert to array to avoid live collection issues
+            Array.from(element.childNodes).forEach(child => {
+              this.highlightTextNodes(child, regex, onMatch);
+            });
+          }
+        },
+        
+        /**
+         * Remove all search highlights
+         */
+        removeHighlights(element) {
+          // Find all highlight spans
+          const highlights = element.querySelectorAll('.search-highlight');
+          
+          highlights.forEach(highlight => {
+            // Replace highlight with its text content
+            const text = document.createTextNode(highlight.textContent);
+            highlight.parentNode.replaceChild(text, highlight);
+          });
+          
+          // Normalize text nodes to merge adjacent text nodes
+          element.normalize();
+        }
+      }));
+      
+      // Alpine.js component for collapsible sections
+      Alpine.data('collapsibleSection', (sectionId) => ({
+        isExpanded: true,
+        sectionId: sectionId,
+        
+        init() {
+          // Load state from unified appState store
+          this.isExpanded = this.$store.appState.getSectionState(this.sectionId);
+        },
+        
+        toggle() {
+          this.isExpanded = !this.isExpanded;
+          this.persist();
+        },
+        
+        persist() {
+          // Save to unified appState store
+          this.$store.appState.updateSectionState(this.sectionId, this.isExpanded);
+        },
+        
+        handleKeydown(event) {
+          // Toggle on Enter or Space
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            this.toggle();
+          }
+        }
+      }));
+      
+      // Alpine.js theme store for dark/light mode toggle
+      Alpine.store('theme', {
+        current: 'light',
+        
+        init() {
+          // Load appState first
+          Alpine.store('appState').load();
+          
+          // Sync with the theme that was already applied to prevent FOUC
+          // The theme was set by inline script before Alpine loaded
+          const preAppliedTheme = document.documentElement.getAttribute('data-theme');
+          if (preAppliedTheme) {
+            this.current = preAppliedTheme;
+            // Sync to appState if different
+            if (Alpine.store('appState').theme !== preAppliedTheme) {
+              Alpine.store('appState').theme = preAppliedTheme;
+            }
+          } else {
+            // Use theme from appState
+            this.current = Alpine.store('appState').theme;
+            this.apply();
+          }
+          
+          console.log(`Theme initialized: ${this.current}`);
+          
+          // Listen for system preference changes (optional feature)
+          this.watchSystemPreference();
+        },
+        
+        /**
+         * Watch for system theme preference changes
+         * Only applies system preference if user hasn't set an explicit preference
+         */
+        watchSystemPreference() {
+          // Check if matchMedia is supported
+          if (!window.matchMedia) {
+            return;
+          }
+          
+          try {
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            
+            // Handler for system preference change
+            const handleChange = (e) => {
+              // Only apply system preference if user hasn't saved a preference
+              // Check unified appState instead of individual key
+              try {
+                const stored = localStorage.getItem('appState');
+                if (!stored) {
+                  const newTheme = e.matches ? 'dark' : 'light';
+                  this.current = newTheme;
+                  this.apply();
+                  console.log(`System theme preference changed to: ${newTheme}`);
+                }
+              } catch (err) {
+                console.warn('Failed to check stored state:', err);
+              }
+            };
+            
+            // Add event listener (with fallback for older browsers)
+            if (mediaQuery.addEventListener) {
+              mediaQuery.addEventListener('change', handleChange);
+            } else if (mediaQuery.addListener) {
+              // Deprecated but needed for older Safari
+              mediaQuery.addListener(handleChange);
+            }
+          } catch (e) {
+            console.warn('System preference change detection unavailable:', e.message);
+          }
+        },
+        
+        toggle() {
+          this.current = this.current === 'light' ? 'dark' : 'light';
+          this.apply();
+          this.persist();
+          console.log(`Theme toggled to: ${this.current}`);
+        },
+        
+        apply() {
+          document.documentElement.setAttribute('data-theme', this.current);
+        },
+        
+        persist() {
+          // Save to unified appState store
+          Alpine.store('appState').updateTheme(this.current);
+        }
+      });
+      
+      // Alpine.js network store for online/offline detection (Issue S3-006)
+      Alpine.store('network', {
+        isOnline: navigator.onLine,
+        
+        init() {
+          console.log(`Network status initialized: ${this.isOnline ? 'online' : 'offline'}`);
+          
+          // Listen for online event
+          window.addEventListener('online', () => {
+            this.isOnline = true;
+            console.log('Network status: Back online');
+          });
+          
+          // Listen for offline event
+          window.addEventListener('offline', () => {
+            this.isOnline = false;
+            console.log('Network status: Gone offline');
+          });
+        }
+      });
+      
+      // Alpine.js PWA install store for install prompt handling (Issue S4-001)
+      Alpine.store('pwaInstall', {
+        deferredPrompt: null,
+        canInstall: false,
+        isInstalled: false,
+        
+        init() {
+          console.log('PWA install store initialized');
+          
+          // Check if app is already installed (standalone mode)
+          this.checkInstallStatus();
+          
+          // Capture the beforeinstallprompt event
+          window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('beforeinstallprompt event captured');
+            // Prevent the default browser install prompt
+            e.preventDefault();
+            // Store the event for later use
+            this.deferredPrompt = e;
+            // Show custom install button
+            this.canInstall = true;
+          });
+          
+          // Listen for successful installation
+          window.addEventListener('appinstalled', () => {
+            console.log('PWA installed successfully');
+            this.isInstalled = true;
+            this.canInstall = false;
+            this.deferredPrompt = null;
+          });
+        },
+        
+        /**
+         * Check if app is already installed
+         * Uses display-mode media query to detect standalone mode
+         */
+        checkInstallStatus() {
+          // Check if running in standalone mode (installed PWA)
+          const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+          const isIOSStandalone = window.navigator.standalone === true;
+          
+          this.isInstalled = isStandalone || isIOSStandalone;
+          
+          if (this.isInstalled) {
+            console.log('PWA is already installed');
+          }
+        },
+        
+        /**
+         * Show the browser's native install prompt
+         * Returns a promise that resolves when user makes a choice
+         */
+        async promptInstall() {
+          if (!this.deferredPrompt) {
+            console.warn('Install prompt not available');
+            return { outcome: 'unavailable', platform: null };
+          }
+          
+          console.log('Showing install prompt');
+          
+          // Show the install prompt
+          this.deferredPrompt.prompt();
+          
+          // Wait for user choice
+          const choiceResult = await this.deferredPrompt.userChoice;
+          
+          console.log(`User choice: ${choiceResult.outcome}`);
+          
+          // Clear the deferred prompt
+          this.deferredPrompt = null;
+          
+          // Update state based on user choice
+          if (choiceResult.outcome === 'accepted') {
+            this.canInstall = false;
+          } else {
+            // User dismissed, but can install later
+            this.canInstall = false;
+          }
+          
+          return choiceResult;
+        }
+      });
+      
+      // Alpine.js standalone mode store for display mode detection (Issue S4-002)
+      Alpine.store('standalone', {
+        isStandalone: false,
+        displayMode: 'browser',
+        
+        init() {
+          console.log('Standalone mode store initialized');
+          
+          // Detect standalone mode using multiple methods
+          this.detectStandaloneMode();
+          
+          // Listen for display mode changes (if supported)
+          this.watchDisplayModeChanges();
+        },
+        
+        /**
+         * Detect if app is running in standalone mode
+         * Uses multiple detection methods for cross-platform support
+         */
+        detectStandaloneMode() {
+          // Method 1: Check display-mode media query (most reliable, works on Chrome/Edge)
+          const isStandaloneMedia = window.matchMedia('(display-mode: standalone)').matches;
+          
+          // Method 2: Check iOS standalone mode (Safari)
+          const isIOSStandalone = window.navigator.standalone === true;
+          
+          // Method 3: Check if launched from home screen (fallback)
+          const isFullscreen = window.matchMedia('(display-mode: fullscreen)').matches;
+          const isMinimalUI = window.matchMedia('(display-mode: minimal-ui)').matches;
+          
+          // Determine standalone status
+          this.isStandalone = isStandaloneMedia || isIOSStandalone;
+          
+          // Determine display mode for more granular control
+          if (isStandaloneMedia || isIOSStandalone) {
+            this.displayMode = 'standalone';
+          } else if (isFullscreen) {
+            this.displayMode = 'fullscreen';
+          } else if (isMinimalUI) {
+            this.displayMode = 'minimal-ui';
+          } else {
+            this.displayMode = 'browser';
+          }
+          
+          console.log('Display mode detected:', this.displayMode);
+          console.log('Is standalone:', this.isStandalone);
+          
+          // Apply body class for CSS targeting
+          if (this.isStandalone) {
+            document.body.classList.add('standalone-mode');
+            console.log('Applied standalone-mode class to body');
+          }
+        },
+        
+        /**
+         * Watch for display mode changes (when app is installed/uninstalled)
+         */
+        watchDisplayModeChanges() {
+          // Check if matchMedia is supported
+          if (!window.matchMedia) {
+            return;
+          }
+          
+          try {
+            const standaloneQuery = window.matchMedia('(display-mode: standalone)');
+            
+            // Handler for display mode change
+            const handleChange = (e) => {
+              console.log('Display mode changed:', e.matches ? 'standalone' : 'browser');
+              this.detectStandaloneMode();
+            };
+            
+            // Add event listener (with fallback for older browsers)
+            if (standaloneQuery.addEventListener) {
+              standaloneQuery.addEventListener('change', handleChange);
+            } else if (standaloneQuery.addListener) {
+              // Deprecated but needed for older Safari
+              standaloneQuery.addListener(handleChange);
+            }
+          } catch (e) {
+            console.warn('Display mode change detection unavailable:', e.message);
+          }
+        }
+      });
+      
+      // Alpine.js service worker update store for update detection (Issue S4-003)
+      Alpine.store('swUpdate', {
+        updateAvailable: false,
+        isUpdating: false,
+        registration: null,
+        newWorker: null,
+        
+        init() {
+          console.log('Service worker update store initialized');
+          
+          // Store will be populated by service worker registration
+          // See service worker registration script at bottom of page
+        },
+        
+        /**
+         * Called when a service worker update is detected
+         * @param {ServiceWorkerRegistration} registration - The registration with the update
+         * @param {ServiceWorker} newWorker - The new service worker
+         */
+        setUpdateAvailable(registration, newWorker) {
+          console.log('Service worker update available');
+          this.updateAvailable = true;
+          this.registration = registration;
+          this.newWorker = newWorker;
+        },
+        
+        /**
+         * Trigger the update manually
+         * Sends SKIP_WAITING message to new worker and reloads when ready
+         */
+        async triggerUpdate() {
+          if (!this.newWorker) {
+            console.warn('No new service worker available to update');
+            return;
+          }
+          
+          console.log('User triggered service worker update');
+          this.isUpdating = true;
+          
+          try {
+            // Send SKIP_WAITING message to new worker
+            if (this.newWorker.state === 'installed') {
+              this.newWorker.postMessage({ type: 'SKIP_WAITING' });
+              console.log('SKIP_WAITING message sent to new service worker');
+            }
+            
+            // Wait for controller change, then reload
+            // This ensures the new worker takes control before reload
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+              console.log('New service worker now controlling, reloading page');
+              window.location.reload();
+            }, { once: true });
+            
+          } catch (error) {
+            console.error('Error triggering service worker update:', error);
+            this.isUpdating = false;
+          }
+        },
+        
+        /**
+         * Dismiss the update notification without updating
+         */
+        dismissUpdate() {
+          console.log('User dismissed service worker update');
+          this.updateAvailable = false;
+        }
+      });
+      
+      // Alpine.js version management store (Issue S4-004)
+      Alpine.store('appVersion', {
+        current: '1.0.0',
+        showChangelog: false,
+        changelogHtml: '',
+        changelogLoading: false,
+        changelogError: null,
+        
+        async init() {
+          console.log('App version store initialized');
+          
+          // Fetch version from version.json
+          try {
+            const response = await fetch('/version.json');
+            if (response.ok) {
+              const versionData = await response.json();
+              this.current = versionData.version;
+              console.log(`App version: ${this.current}`);
+            }
+          } catch (error) {
+            console.warn('Failed to load version.json:', error);
+            // Keep default version
+          }
+        },
+        
+        /**
+         * Load and parse changelog from CHANGELOG.md
+         */
+        async loadChangelog() {
+          if (this.changelogHtml && !this.changelogLoading) {
+            // Already loaded
+            return;
+          }
+          
+          this.changelogLoading = true;
+          this.changelogError = null;
+          
+          try {
+            const response = await fetch('/CHANGELOG.md');
+            if (!response.ok) {
+              throw new Error('Failed to load changelog');
+            }
+            
+            const changelogMarkdown = await response.text();
+            
+            // Parse Markdown to HTML using marked
+            if (typeof marked !== 'undefined') {
+              this.changelogHtml = marked.parse(changelogMarkdown);
+              
+              // Sanitize HTML if DOMPurify is available
+              if (typeof DOMPurify !== 'undefined') {
+                this.changelogHtml = DOMPurify.sanitize(this.changelogHtml, {
+                  ALLOWED_TAGS: [
+                    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+                    'p', 'br', 'hr',
+                    'strong', 'em', 'b', 'i',
+                    'ul', 'ol', 'li',
+                    'a', 'code', 'pre',
+                    'blockquote'
+                  ],
+                  ALLOWED_ATTR: ['href', 'id', 'class'],
+                  ALLOW_DATA_ATTR: false
+                });
+              }
+            } else {
+              // Fallback: display as plain text
+              this.changelogHtml = `<pre>${changelogMarkdown}</pre>`;
+            }
+          } catch (error) {
+            console.error('Error loading changelog:', error);
+            this.changelogError = 'Failed to load changelog. Please try again later.';
+          } finally {
+            this.changelogLoading = false;
+          }
+        }
+      });
+      
+      // Watch for changelog modal open to load content
+      Alpine.effect(() => {
+        const versionStore = Alpine.store('appVersion');
+        if (versionStore && versionStore.showChangelog && !versionStore.changelogHtml && !versionStore.changelogLoading) {
+          versionStore.loadChangelog();
+        }
+      });
+    });
+  </script>
+</head>
+<body class="bg-secondary-50 dark:bg-secondary-900 transition-colors duration-300" x-data="resume" x-init="$store.theme.init(); $store.network.init(); $store.pwaInstall.init(); $store.standalone.init(); $store.swUpdate.init(); $store.appVersion.init()">
+  <!-- Skip to main content link for keyboard accessibility -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <!-- Header -->
+  <header role="banner" class="bg-white dark:bg-secondary-900 shadow-sm border-b border-secondary-200 dark:border-secondary-700 transition-colors duration-300">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
+      <div class="flex items-center justify-between">
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">Alpine Resume</h1>
+        
+        <!-- Controls Group -->
+        <div class="flex items-center gap-2">
+          <!-- PWA Install Button (Issue S4-001) -->
+          <button 
+            x-show="$store.pwaInstall.canInstall && !$store.pwaInstall.isInstalled"
+            x-cloak
+            @click="$store.pwaInstall.promptInstall()" 
+            aria-label="Install app"
+            title="Install this app on your device"
+            class="p-2 rounded-lg bg-primary-600 dark:bg-primary-500 hover:bg-primary-700 dark:hover:bg-primary-600 text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-secondary-900 min-h-[44px] min-w-[44px] flex items-center justify-center shadow-sm"
+            type="button">
+            <i class="bi bi-download text-xl" aria-hidden="true"></i>
+          </button>
+          
+          <!-- Clear State Button -->
+          <button 
+            @click="$store.appState.clear()" 
+            aria-label="Clear all saved settings and reload"
+            title="Clear all saved settings"
+            class="p-2 rounded-lg bg-secondary-100 dark:bg-secondary-800 hover:bg-secondary-200 dark:hover:bg-secondary-700 text-secondary-700 dark:text-secondary-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-secondary-900 min-h-[44px] min-w-[44px] flex items-center justify-center"
+            type="button">
+            <i class="bi bi-arrow-clockwise text-xl" aria-hidden="true"></i>
+          </button>
+          
+          <!-- Theme Toggle Button -->
+          <button 
+            @click="$store.theme.toggle()" 
+            :aria-label="$store.theme.current === 'light' ? 'Switch to dark mode' : 'Switch to light mode'"
+            class="theme-toggle p-2 rounded-lg bg-secondary-100 dark:bg-secondary-800 hover:bg-secondary-200 dark:hover:bg-secondary-700 text-secondary-700 dark:text-secondary-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-secondary-900 min-h-[44px] min-w-[44px] flex items-center justify-center"
+            type="button">
+          <i x-show="$store.theme.current === 'light'" class="bi bi-sun text-xl" aria-hidden="true"></i>
+          <i x-show="$store.theme.current === 'dark'" class="bi bi-moon-stars text-xl" aria-hidden="true"></i>
+        </button>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Combined Search and Navigation Bar (shown when resume is loaded) -->
+  <nav 
+    x-show="hasResume && sections.length > 0" 
+    x-cloak
+    aria-label="Resume sections and search"
+    class="sticky top-0 z-50 bg-white dark:bg-secondary-900 border-b border-secondary-200 dark:border-secondary-700 shadow-sm transition-colors duration-300">
+    
+    <!-- Combined Search and Menu Button Row -->
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
+      <div class="flex items-center gap-3">
+        <!-- Search Icon -->
+        <i class="bi bi-search text-secondary-500 dark:text-secondary-400 text-lg flex-shrink-0" aria-hidden="true"></i>
+        
+        <!-- Search Input -->
+        <div class="relative flex-1">
+          <input
+            type="search"
+            x-model="searchQuery"
+            @input="handleSearchInput($event)"
+            @keydown.escape="clearSearch()"
+            placeholder="Search resume..."
+            aria-label="Search resume content"
+            inputmode="search"
+            autocomplete="off"
+            autocapitalize="none"
+            autocorrect="off"
+            spellcheck="false"
+            class="w-full px-4 py-2 pr-10 rounded-lg border border-secondary-300 dark:border-secondary-600 bg-white dark:bg-secondary-800 text-gray-900 dark:text-gray-100 placeholder-secondary-500 dark:placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-200 min-h-[44px]"
+          />
+          
+          <!-- Clear Button (shown when there's a search query) -->
+          <button
+            x-show="searchQuery.length > 0"
+            @click="clearSearch()"
+            type="button"
+            aria-label="Clear search"
+            class="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 rounded hover:bg-secondary-100 dark:hover:bg-secondary-700 text-secondary-500 dark:text-secondary-400 transition-colors duration-200"
+          >
+            <i class="bi bi-x-lg text-lg" aria-hidden="true"></i>
+          </button>
+        </div>
+        
+        <!-- Search Results Count (hidden on small screens) -->
+        <div 
+          x-show="searchResults.count !== undefined"
+          x-cloak
+          class="flex-shrink-0 text-sm text-secondary-600 dark:text-secondary-400 whitespace-nowrap hidden sm:block"
+        >
+          <span x-show="searchResults.count > 0">
+            <span x-text="searchResults.count"></span>
+            <span x-text="searchResults.count === 1 ? 'match' : 'matches'"></span>
+          </span>
+          <span x-show="searchResults.count === 0" class="text-warning-600 dark:text-warning-400">
+            No results
+          </span>
+        </div>
+        
+        <!-- Navigation Menu Button -->
+        <button
+          @click="toggleMobileMenu()"
+          :aria-label="mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'"
+          :aria-expanded="mobileMenuOpen"
+          class="p-2 rounded-lg bg-secondary-100 dark:bg-secondary-800 hover:bg-secondary-200 dark:hover:bg-secondary-700 text-secondary-700 dark:text-secondary-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-secondary-900 min-h-[44px] min-w-[44px] flex items-center justify-center flex-shrink-0"
+          type="button">
+          <i :class="mobileMenuOpen ? 'bi-x-lg' : 'bi-list'" class="bi text-xl" aria-hidden="true"></i>
+        </button>
+      </div>
+      
+      <!-- Keyboard Shortcut Hint (optional, shown below search on all screens) -->
+      <div 
+        x-show="!searchQuery && !isSearching"
+        class="mt-2 text-xs text-secondary-500 dark:text-secondary-400"
+      >
+        Press <kbd class="px-2 py-1 bg-secondary-100 dark:bg-secondary-800 rounded border border-secondary-300 dark:border-secondary-600 font-mono">Esc</kbd> to clear search
+      </div>
+    </div>
+    
+    <!-- Menu Overlay -->
+    <div
+      x-show="mobileMenuOpen"
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="opacity-0"
+      x-transition:enter-end="opacity-100"
+      x-transition:leave="transition ease-in duration-200"
+      x-transition:leave-start="opacity-100"
+      x-transition:leave-end="opacity-0"
+      @click="toggleMobileMenu()"
+      class="fixed inset-0 bg-black bg-opacity-50 z-40"
+      aria-hidden="true">
+    </div>
+    
+    <!-- Menu Panel -->
+    <div
+      x-show="mobileMenuOpen"
+      x-transition:enter="transition ease-out duration-300 transform"
+      x-transition:enter-start="translate-x-full"
+      x-transition:enter-end="translate-x-0"
+      x-transition:leave="transition ease-in duration-200 transform"
+      x-transition:leave-start="translate-x-0"
+      x-transition:leave-end="translate-x-full"
+      @keydown.escape.window="closeMobileMenu()"
+      class="fixed top-0 right-0 bottom-0 w-64 bg-white dark:bg-secondary-800 shadow-xl z-50 overflow-y-auto">
+      
+      <!-- Close Button -->
+      <div class="flex items-center justify-between p-4 border-b border-secondary-200 dark:border-secondary-700">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Sections</h2>
+        <button
+          @click="toggleMobileMenu()"
+          aria-label="Close navigation menu"
+          class="p-2 rounded-lg hover:bg-secondary-100 dark:hover:bg-secondary-700 text-secondary-700 dark:text-secondary-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 min-h-[44px] min-w-[44px] flex items-center justify-center"
+          type="button">
+          <i class="bi bi-x-lg text-xl" aria-hidden="true"></i>
+        </button>
+      </div>
+      
+      <!-- Menu Links -->
+      <nav class="py-2">
+        <template x-for="section in sections" :key="section.id">
+          <a
+            :href="`#${section.id}`"
+            @click.prevent="scrollToSection(section.id)"
+            :class="{
+              'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 border-l-4 border-primary-600 dark:border-primary-400': activeSection === section.id,
+              'text-secondary-700 dark:text-secondary-300 hover:bg-secondary-50 dark:hover:bg-secondary-700 border-l-4 border-transparent': activeSection !== section.id
+            }"
+            class="block px-6 py-3 text-base font-medium transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 min-h-[48px] flex items-center"
+            :aria-current="activeSection === section.id ? 'location' : null"
+            x-text="section.title">
+          </a>
+        </template>
+      </nav>
+    </div>
+  </nav>
+  
+  <!-- Main Content -->
+  <main role="main" id="main-content" class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <article class="bg-white dark:bg-secondary-800 rounded-lg shadow-md p-4 sm:p-6 md:p-8 lg:p-10 max-w-4xl mx-auto transition-colors duration-300">
+      
+      <!-- File Upload Interface (shown when no resume loaded) -->
+      <div x-show="!isLoading && !hasResume" x-cloak class="text-center py-8 sm:py-12">
+        <div class="mb-4 sm:mb-6">
+          <i class="bi bi-file-earmark-text text-5xl sm:text-6xl text-secondary-300 dark:text-secondary-600" aria-hidden="true"></i>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-2 px-4">Upload Your Resume</h2>
+        <p class="text-base text-secondary-600 dark:text-secondary-400 mb-6 px-4">Select a Markdown (.md) file to render your resume</p>
+        
+        <div class="flex flex-col items-center gap-4">
+          <label for="resume-upload" class="cursor-pointer inline-flex items-center px-6 py-3 sm:px-8 sm:py-4 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white text-base sm:text-lg font-medium rounded-lg transition-colors duration-150 min-h-[44px] min-w-[44px] shadow-sm hover:shadow-md">
+            <i class="bi bi-upload mr-2" aria-hidden="true"></i>
+            Choose File
+          </label>
+          <input 
+            type="file" 
+            id="resume-upload" 
+            accept=".md,.markdown" 
+            @change="handleFileUpload($event)"
+            class="hidden"
+          />
+          
+          <p class="text-sm text-secondary-500 dark:text-secondary-400">
+            Need an example? Check out our 
+            <a href="docs/resume/resume-example.md" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 underline">sample resume</a>
+          </p>
+        </div>
+      </div>
+      
+      <!-- Loading State -->
+      <div x-show="isLoading" x-cloak class="text-center py-8 sm:py-12">
+        <div class="inline-block animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-primary-600 dark:border-primary-400"></div>
+        <p class="mt-4 text-base text-secondary-600 dark:text-secondary-400">Loading resume...</p>
+      </div>
+      
+      <!-- Error State -->
+      <div x-show="!isLoading && parseError" x-cloak class="bg-error-50 dark:bg-error-900/20 border border-error-200 dark:border-error-800 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6" role="alert" aria-live="assertive">
+        <div class="flex items-start flex-col sm:flex-row gap-3">
+          <i class="bi bi-exclamation-triangle-fill text-error-600 dark:text-error-400 text-xl sm:text-2xl" aria-hidden="true"></i>
+          <div class="flex-1">
+            <h2 class="text-base sm:text-lg font-semibold text-error-900 dark:text-error-200 mb-2">Error Loading Resume</h2>
+            <p class="text-sm sm:text-base text-error-700 dark:text-error-300 mb-4" x-text="parseError"></p>
+            <button 
+              @click="clearResume()" 
+              class="inline-flex items-center px-4 py-2 bg-white dark:bg-secondary-800 border border-error-300 dark:border-error-700 text-error-700 dark:text-error-300 text-sm sm:text-base rounded hover:bg-error-50 dark:hover:bg-error-900/30 transition-colors min-h-[44px]">
+              <i class="bi bi-arrow-left mr-2" aria-hidden="true"></i>
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Resume Content with Clear Button -->
+      <div x-show="!isLoading && !parseError && hasResume" x-cloak>
+        <div class="flex justify-end mb-4">
+          <button 
+            @click="clearResume()" 
+            class="inline-flex items-center px-4 py-2 text-sm sm:text-base bg-secondary-100 dark:bg-secondary-700 text-secondary-700 dark:text-secondary-300 rounded hover:bg-secondary-200 dark:hover:bg-secondary-600 transition-colors min-h-[44px]"
+            aria-label="Clear resume and upload a new file">
+            <i class="bi bi-x-circle mr-2" aria-hidden="true"></i>
+            Clear Resume
+          </button>
+        </div>
+        
+        <div class="resume-content prose prose-sm sm:prose-base max-w-none" x-html="htmlContent"></div>
+        
+        <!-- Debug Info (only in development) -->
+        <aside x-show="parseTime > 0" class="mt-8 pt-6 border-t border-secondary-200 dark:border-secondary-700">
+          <details class="text-sm">
+            <summary class="cursor-pointer text-secondary-600 dark:text-secondary-400 hover:text-gray-900 dark:hover:text-gray-100 font-medium">
+              Performance Info
+            </summary>
+            <div class="mt-2 space-y-1 text-secondary-600 dark:text-secondary-400">
+              <p>Parse time: <span x-text="`${parseTime.toFixed(2)}ms`"></span></p>
+              <p>Status: <span :class="parseTime < 100 ? 'text-success-600 dark:text-success-400' : 'text-error-600 dark:text-error-400'" x-text="parseTime < 100 ? '✓ Meets target (<100ms)' : '✗ Exceeds target (>100ms)'"></span></p>
+              <p>Content length: <span x-text="`${markdownContent.length} characters`"></span></p>
+            </div>
+          </details>
+        </aside>
+      </div>
+      
+    </article>
+  </main>
+  
+  <!-- Changelog Modal (Issue S4-004) -->
+  <div 
+    x-show="$store.appVersion.showChangelog"
+    x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+    @click="$store.appVersion.showChangelog = false"
+    @keydown.escape.window="$store.appVersion.showChangelog = false"
+    class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+    role="dialog"
+    aria-labelledby="changelog-title"
+    aria-modal="true">
+    <div 
+      @click.stop
+      class="bg-white dark:bg-secondary-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between p-4 sm:p-6 border-b border-secondary-200 dark:border-secondary-700">
+        <h2 id="changelog-title" class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
+          Changelog
+        </h2>
+        <button
+          @click="$store.appVersion.showChangelog = false"
+          aria-label="Close changelog"
+          class="p-2 rounded-lg hover:bg-secondary-100 dark:hover:bg-secondary-700 text-secondary-700 dark:text-secondary-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 min-h-[44px] min-w-[44px] flex items-center justify-center"
+          type="button">
+          <i class="bi bi-x-lg text-xl" aria-hidden="true"></i>
+        </button>
+      </div>
+      
+      <!-- Modal Content -->
+      <div class="p-4 sm:p-6 overflow-y-auto flex-1">
+        <div x-show="$store.appVersion.changelogLoading" class="text-center py-8">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 dark:border-primary-400"></div>
+          <p class="mt-2 text-sm text-secondary-600 dark:text-secondary-400">Loading changelog...</p>
+        </div>
+        
+        <div 
+          x-show="!$store.appVersion.changelogLoading && $store.appVersion.changelogError"
+          class="text-center py-8">
+          <i class="bi bi-exclamation-triangle text-4xl text-error-600 dark:text-error-400 mb-4"></i>
+          <p class="text-error-600 dark:text-error-400" x-text="$store.appVersion.changelogError"></p>
+        </div>
+        
+        <div 
+          x-show="!$store.appVersion.changelogLoading && !$store.appVersion.changelogError"
+          x-html="$store.appVersion.changelogHtml"
+          class="prose prose-sm sm:prose dark:prose-invert max-w-none">
+        </div>
+      </div>
+      
+      <!-- Modal Footer -->
+      <div class="p-4 sm:p-6 border-t border-secondary-200 dark:border-secondary-700 flex justify-end">
+        <button
+          @click="$store.appVersion.showChangelog = false"
+          class="px-4 py-2 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-secondary-800 min-h-[44px]"
+          type="button">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Footer -->
+  <footer role="contentinfo" class="bg-white dark:bg-secondary-900 mt-6 sm:mt-8 py-4 sm:py-6 border-t border-secondary-200 dark:border-secondary-700 transition-colors duration-300">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-secondary-600 dark:text-secondary-400">
+      <p class="text-sm sm:text-base">&copy; 2025 Alpine Resume. Built with Alpine.js, Tailwind CSS, and Marked.js.</p>
+      <p class="text-xs sm:text-sm mt-2">
+        Version <span x-text="$store.appVersion.current"></span>
+        <button 
+          @click="$store.appVersion.showChangelog = !$store.appVersion.showChangelog"
+          class="ml-2 text-primary-600 dark:text-primary-400 hover:underline focus:outline-none focus:underline"
+          type="button">
+          <span x-show="!$store.appVersion.showChangelog">View Changelog</span>
+          <span x-show="$store.appVersion.showChangelog" x-cloak>Hide Changelog</span>
+        </button>
+      </p>
+    </div>
+  </footer>
+  
+  <!-- Offline Indicator (Issue S3-006) -->
+  <div 
+    x-show="!$store.network.isOnline"
+    x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="opacity-0 translate-y-4"
+    x-transition:enter-end="opacity-100 translate-y-0"
+    x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100 translate-y-0"
+    x-transition:leave-end="opacity-0 translate-y-4"
+    role="alert"
+    aria-live="polite"
+    aria-atomic="true"
+    style="bottom: calc(1rem + var(--safe-area-inset-bottom));"
+    class="fixed left-4 right-4 sm:left-auto sm:right-4 sm:max-w-md z-50 bg-warning-100 dark:bg-warning-900/90 border-l-4 border-warning-500 dark:border-warning-400 rounded-lg shadow-lg backdrop-blur-sm">
+    <div class="flex items-start gap-3 p-4">
+      <!-- Icon -->
+      <div class="flex-shrink-0">
+        <i class="bi bi-wifi-off text-xl text-warning-700 dark:text-warning-300" aria-hidden="true"></i>
+      </div>
+      
+      <!-- Content -->
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-medium text-warning-900 dark:text-warning-100">
+          You're offline
+        </p>
+        <p class="text-sm text-warning-800 dark:text-warning-200 mt-1">
+          The app continues to work! Your changes are saved locally.
+        </p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Service Worker Update Notification (Issue S4-003) -->
+  <div 
+    x-show="$store.swUpdate.updateAvailable && !$store.swUpdate.isUpdating"
+    x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="opacity-0 translate-y-4"
+    x-transition:enter-end="opacity-100 translate-y-0"
+    x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100 translate-y-0"
+    x-transition:leave-end="opacity-0 translate-y-4"
+    role="alert"
+    aria-live="polite"
+    aria-atomic="true"
+    style="bottom: calc(1rem + var(--safe-area-inset-bottom));"
+    class="fixed left-4 right-4 sm:left-auto sm:right-4 sm:max-w-md z-50 bg-info-100 dark:bg-info-900/90 border-l-4 border-info-500 dark:border-info-400 rounded-lg shadow-lg backdrop-blur-sm">
+    <div class="flex items-start gap-3 p-4">
+      <!-- Icon -->
+      <div class="flex-shrink-0">
+        <i class="bi bi-arrow-clockwise text-xl text-info-700 dark:text-info-300" aria-hidden="true"></i>
+      </div>
+      
+      <!-- Content -->
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-medium text-info-900 dark:text-info-100">
+          Update Available
+        </p>
+        <p class="text-sm text-info-800 dark:text-info-200 mt-1 mb-3">
+          A new version of the app is ready to install.
+        </p>
+        
+        <!-- Action Buttons -->
+        <div class="flex items-center gap-2">
+          <button
+            @click="$store.swUpdate.triggerUpdate()"
+            class="inline-flex items-center px-3 py-1.5 bg-info-600 dark:bg-info-500 hover:bg-info-700 dark:hover:bg-info-600 text-white text-sm font-medium rounded transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-info-500 focus:ring-offset-2 dark:focus:ring-offset-info-900 min-h-[36px]"
+            type="button">
+            Update Now
+          </button>
+          <button
+            @click="$store.swUpdate.dismissUpdate()"
+            class="inline-flex items-center px-3 py-1.5 bg-white dark:bg-info-800 border border-info-300 dark:border-info-700 text-info-700 dark:text-info-300 text-sm font-medium rounded hover:bg-info-50 dark:hover:bg-info-900/50 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-info-500 focus:ring-offset-2 dark:focus:ring-offset-info-900 min-h-[36px]"
+            type="button">
+            Later
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Update In Progress Indicator (Issue S4-003) -->
+  <div 
+    x-show="$store.swUpdate.isUpdating"
+    x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="opacity-0 translate-y-4"
+    x-transition:enter-end="opacity-100 translate-y-0"
+    role="alert"
+    aria-live="polite"
+    aria-atomic="true"
+    style="bottom: calc(1rem + var(--safe-area-inset-bottom));"
+    class="fixed left-4 right-4 sm:left-auto sm:right-4 sm:max-w-md z-50 bg-primary-100 dark:bg-primary-900/90 border-l-4 border-primary-500 dark:border-primary-400 rounded-lg shadow-lg backdrop-blur-sm">
+    <div class="flex items-start gap-3 p-4">
+      <!-- Loading Icon -->
+      <div class="flex-shrink-0">
+        <i class="bi bi-arrow-clockwise text-xl text-primary-700 dark:text-primary-300 animate-spin" aria-hidden="true"></i>
+      </div>
+      
+      <!-- Content -->
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-medium text-primary-900 dark:text-primary-100">
+          Updating...
+        </p>
+        <p class="text-sm text-primary-800 dark:text-primary-200 mt-1">
+          Installing the new version. The page will reload automatically.
+        </p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Service Worker Registration -->
+  <script>
+    /**
+     * Register Service Worker for PWA functionality (Issue S3-004)
+     * Enhanced with update detection (Issue S4-003)
+     * Registers on window load to avoid blocking initial page render
+     */
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(registration => {
+            console.log('SW registered:', registration);
+            console.log('SW scope:', registration.scope);
+            
+            // Check for updates immediately
+            registration.update();
+            
+            // Check for updates periodically (every hour)
+            setInterval(() => {
+              registration.update();
+            }, 60 * 60 * 1000);
+            
+            // Listen for updates
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              console.log('SW update found');
+              
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  console.log('New SW available - update ready');
+                  
+                  // Notify Alpine.js store about the update
+                  // Wait for Alpine to be available
+                  const notifyAlpine = () => {
+                    if (window.Alpine && window.Alpine.store('swUpdate')) {
+                      window.Alpine.store('swUpdate').setUpdateAvailable(registration, newWorker);
+                    } else {
+                      // Alpine not ready yet, wait a bit
+                      setTimeout(notifyAlpine, 100);
+                    }
+                  };
+                  notifyAlpine();
+                }
+              });
+            });
+          })
+          .catch(error => {
+            console.error('SW registration failed:', error);
+          });
+      });
+    } else {
+      console.warn('Service Worker not supported in this browser');
+    }
+  </script>
+</body>
+</html>
