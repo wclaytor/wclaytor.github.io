@@ -31,15 +31,19 @@
   <link rel="apple-touch-startup-image" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)" href="/icons/splash-2048x2732.png">
   
   <!-- Performance: Resource hints for faster CDN loading -->
-  <link rel="preconnect" href="https://cdn.tailwindcss.com">
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
-  <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
-  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <!-- preconnect includes DNS resolution, TCP handshake, and TLS negotiation -->
+  <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  
+  <!-- Preload critical theme CSS for faster initial paint -->
+  <link rel="preload" href="styles/theme.css" as="style">
   
   <!-- Theme Color System -->
   <link rel="stylesheet" href="styles/theme.css">
   
   <!-- Tailwind CSS CDN -->
+  <!-- Note: Tailwind must load synchronously to prevent FOUC and ensure styles are available when content renders -->
+  <!-- This is an intentional trade-off: slightly slower FCP for better UX (no flash of unstyled content) -->
   <script src="https://cdn.tailwindcss.com"></script>
   
   <!-- Tailwind CSS Configuration -->
@@ -141,16 +145,19 @@
   </script>
   
   <!-- Bootstrap Icons CDN - non-blocking load -->
+  <!-- Load with media="print" then switch to "all" after load to avoid render blocking -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"></noscript>
   
   <!-- Marked.js for Markdown parsing -->
+  <!-- defer maintains execution order while allowing HTML parsing to continue -->
   <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" crossorigin="anonymous"></script>
   
   <!-- DOMPurify for HTML sanitization -->
   <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js" crossorigin="anonymous"></script>
   
   <!-- Alpine.js 3.x CDN (loaded with defer) -->
+  <!-- Must load last in defer order to ensure dependencies are available -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js" crossorigin="anonymous"></script>
   
   <!-- CDN Error Handling -->
@@ -173,7 +180,7 @@
           const errorContainer = document.createElement('div');
           errorContainer.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;background:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;z-index:9999;';
           
-          errorContainer.innerHTML = '<div style="max-width:500px;padding:2rem;text-align:center;"><div style="font-size:3rem;margin-bottom:1rem;">⚠️</div><h1 style="font-size:1.5rem;font-weight:bold;color:#111827;margin-bottom:1rem;">Failed to Load Application</h1><p style="color:#6b7280;margin-bottom:1rem;">Required libraries failed to load: <strong>' + missing.join(', ') + '</strong></p><p style="color:#6b7280;margin-bottom:1.5rem;">Please check your internet connection and try refreshing the page.</p><button onclick="location.reload()" style="padding:0.75rem 1.5rem;background:#3b82f6;color:white;border:none;border-radius:0.5rem;font-size:1rem;cursor:pointer;font-weight:500;">Retry</button></div>';
+          errorContainer.innerHTML = '<div style="max-width:500px;padding:2rem;text-align:center;"><div style="font-size:3rem;margin-bottom:1rem;">⚠️</div><h1 style="font-size:1.5rem;font-weight:bold;color:#111827;margin-bottom:1rem;">Failed to Load Application</h1><p style="color:#6b7280;margin-bottom:1rem;">Required libraries failed to load: <strong>' + missing.join(', ') + '</strong></p><p style="color:#6b7280;margin-bottom:1.5rem;">Please check your internet connection and try refreshing the page.</p><button onclick="location.reload()" style="padding:0.75rem 1.5rem;background:#2563eb;color:white;border:none;border-radius:0.5rem;font-size:1rem;cursor:pointer;font-weight:500;">Retry</button></div>';
           
           document.body.innerHTML = '';
           document.body.appendChild(errorContainer);
@@ -231,6 +238,12 @@
       // Apply theme immediately to prevent FOUC
       const theme = getInitialTheme();
       document.documentElement.setAttribute('data-theme', theme);
+      // Add/remove dark class for Tailwind CSS compatibility
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
     })();
   </script>
   
@@ -1592,6 +1605,318 @@
           
           // Normalize text nodes to merge adjacent text nodes
           element.normalize();
+        },
+        
+        /**
+         * Export resume as PDF using browser's print functionality
+         * Triggers print dialog which can save as PDF
+         * Requirement: FR-2.2 - PDF Export Functionality
+         */
+        exportToPDF() {
+          try {
+            // Use browser's native print functionality
+            // The @media print styles will be applied automatically
+            window.print();
+            
+            console.log('Print dialog opened for PDF export');
+          } catch (error) {
+            console.error('Error opening print dialog:', error);
+            // Show user-friendly error message
+            alert('Unable to open print dialog. Please try again or use your browser\'s print function (Ctrl+P or Cmd+P).');
+          }
+        },
+        
+        /**
+         * Export resume as standalone HTML file
+         * Creates a complete HTML document with embedded styles
+         * Requirement: FR-6.2 - Resume Data Export (HTML format)
+         */
+        exportToHTML() {
+          try {
+            if (!this.hasResume) {
+              console.warn('No resume loaded to export');
+              return;
+            }
+            
+            // Get current theme
+            const currentTheme = this.$store.theme.current;
+            
+            // Get the resume content HTML
+            const resumeContent = this.htmlContent;
+            
+            // Build standalone HTML document with embedded styles
+            const htmlDocument = this.buildStandaloneHTML(resumeContent, currentTheme);
+            
+            // Create blob and download
+            const blob = new Blob([htmlDocument], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            
+            // Create download link
+            const link = document.createElement('a');
+            link.href = url;
+            
+            // Generate filename from first H1 or use default
+            let filename = 'resume.html';
+            const contentDiv = document.querySelector('.resume-content');
+            if (contentDiv) {
+              const h1 = contentDiv.querySelector('h1');
+              if (h1 && h1.textContent.trim()) {
+                // Extract name from H1, clean for filename
+                const name = h1.textContent.trim()
+                  .replace(/[^a-zA-Z0-9\s-]/g, '')
+                  .replace(/\s+/g, '_')
+                  .toLowerCase();
+                filename = `${name}_resume.html`;
+              }
+            }
+            
+            link.download = filename;
+            
+            // Trigger download
+            document.body.appendChild(link);
+            link.click();
+            
+            // Cleanup
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            console.log(`HTML export complete: ${filename}`);
+          } catch (error) {
+            console.error('Error exporting HTML:', error);
+            alert('Unable to export HTML. Please try again.');
+          }
+        },
+        
+        /**
+         * Build standalone HTML document with embedded styles
+         * @param {string} content - The resume HTML content
+         * @param {string} theme - Current theme ('light' or 'dark')
+         * @returns {string} Complete HTML document
+         */
+        buildStandaloneHTML(content, theme) {
+          // Inline critical CSS for resume display
+          const inlineStyles = `
+    <style>
+      /* Base styles and theme variables */
+      :root {
+        --color-bg-primary: #ffffff;
+        --color-bg-secondary: #f9fafb;
+        --color-text-primary: #111827;
+        --color-text-secondary: #4b5563;
+        --color-text-tertiary: #6b7280;
+        --color-heading-primary: #111827;
+        --color-heading-secondary: #1f2937;
+        --color-heading-tertiary: #374151;
+        --color-primary: #3b82f6;
+        --color-link: #2563eb;
+        --color-link-hover: #1d4ed8;
+        --color-border-primary: #e5e7eb;
+        --color-code-bg: #f3f4f6;
+        --color-code-text: #1f2937;
+        --color-pre-bg: #f9fafb;
+        --color-pre-border: #e5e7eb;
+      }
+      
+      ${theme === 'dark' ? `
+      :root {
+        --color-bg-primary: #1f2937;
+        --color-bg-secondary: #111827;
+        --color-text-primary: #f9fafb;
+        --color-text-secondary: #d1d5db;
+        --color-text-tertiary: #9ca3af;
+        --color-heading-primary: #f9fafb;
+        --color-heading-secondary: #e5e7eb;
+        --color-heading-tertiary: #d1d5db;
+        --color-primary: #60a5fa;
+        --color-link: #93c5fd;
+        --color-link-hover: #bfdbfe;
+        --color-border-primary: #374151;
+        --color-code-bg: #374151;
+        --color-code-text: #f9fafb;
+        --color-pre-bg: #1f2937;
+        --color-pre-border: #4b5563;
+      }
+      ` : ''}
+      
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        line-height: 1.6;
+        color: var(--color-text-primary);
+        background-color: var(--color-bg-secondary);
+        margin: 0;
+        padding: 2rem;
+      }
+      
+      .resume-container {
+        max-width: 65ch;
+        margin: 0 auto;
+        background-color: var(--color-bg-primary);
+        padding: 3rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+      
+      /* Typography */
+      h1 {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: var(--color-heading-primary);
+        margin-bottom: 1rem;
+        line-height: 1.25;
+      }
+      
+      h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--color-heading-primary);
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--color-primary);
+      }
+      
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: var(--color-heading-secondary);
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+      }
+      
+      h4 {
+        font-size: 1.125rem;
+        font-weight: 500;
+        color: var(--color-heading-tertiary);
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      p {
+        font-size: 1rem;
+        color: var(--color-text-secondary);
+        margin-bottom: 1rem;
+      }
+      
+      /* Links */
+      a {
+        color: var(--color-link);
+        text-decoration: underline;
+        word-wrap: break-word;
+      }
+      
+      a:hover {
+        color: var(--color-link-hover);
+      }
+      
+      /* Lists */
+      ul, ol {
+        margin-left: 1.5rem;
+        margin-bottom: 1rem;
+      }
+      
+      li {
+        font-size: 1rem;
+        color: var(--color-text-secondary);
+        margin-top: 0.5rem;
+      }
+      
+      ul li {
+        list-style-type: disc;
+      }
+      
+      ol li {
+        list-style-type: decimal;
+      }
+      
+      /* Text formatting */
+      strong {
+        font-weight: 600;
+        color: var(--color-text-primary);
+      }
+      
+      em {
+        font-style: italic;
+        color: var(--color-heading-tertiary);
+      }
+      
+      /* Code */
+      code {
+        background-color: var(--color-code-bg);
+        color: var(--color-code-text);
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.875rem;
+        font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        word-wrap: break-word;
+      }
+      
+      pre {
+        background-color: var(--color-pre-bg);
+        border: 1px solid var(--color-pre-border);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        margin-bottom: 1rem;
+      }
+      
+      pre code {
+        background-color: transparent;
+        padding: 0;
+        color: var(--color-text-primary);
+      }
+      
+      /* Blockquotes */
+      blockquote {
+        border-left: 4px solid var(--color-primary);
+        padding-left: 1rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        margin: 1rem 0;
+        font-style: italic;
+        color: var(--color-heading-tertiary);
+      }
+      
+      /* Horizontal rules */
+      hr {
+        margin: 2rem 0;
+        border: 0;
+        border-top: 1px solid var(--color-border-primary);
+      }
+      
+      /* Print styles */
+      @media print {
+        body {
+          background-color: white;
+          padding: 0;
+        }
+        
+        .resume-container {
+          box-shadow: none;
+          padding: 0;
+        }
+        
+        * {
+          color: #000 !important;
+          background: #fff !important;
+        }
+      }
+    </style>`;
+          
+          // Build complete HTML document
+          return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resume</title>
+  ${inlineStyles}
+</head>
+<body>
+  <div class="resume-container">
+    ${content}
+  </div>
+</body>
+</html>`;
         }
       }));
       
@@ -1704,6 +2029,12 @@
         
         apply() {
           document.documentElement.setAttribute('data-theme', this.current);
+          // Add/remove dark class for Tailwind CSS compatibility
+          if (this.current === 'dark') {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
         },
         
         persist() {
@@ -2078,6 +2409,30 @@
             class="p-2 rounded-lg bg-primary-600 dark:bg-primary-500 hover:bg-primary-700 dark:hover:bg-primary-600 text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-secondary-900 min-h-[44px] min-w-[44px] flex items-center justify-center shadow-sm"
             type="button">
             <i class="bi bi-download text-xl" aria-hidden="true"></i>
+          </button>
+          
+          <!-- Export as PDF Button (Issue S6-001) -->
+          <button 
+            x-show="hasResume"
+            x-cloak
+            @click="exportToPDF()" 
+            aria-label="Export resume as PDF"
+            title="Export your resume as PDF"
+            class="p-2 rounded-lg bg-secondary-100 dark:bg-secondary-800 hover:bg-secondary-200 dark:hover:bg-secondary-700 text-secondary-700 dark:text-secondary-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-secondary-900 min-h-[44px] min-w-[44px] flex items-center justify-center"
+            type="button">
+            <i class="bi bi-printer text-xl" aria-hidden="true"></i>
+          </button>
+          
+          <!-- Export as HTML Button (Issue S6-003) -->
+          <button 
+            x-show="hasResume"
+            x-cloak
+            @click="exportToHTML()" 
+            aria-label="Export resume as HTML"
+            title="Export your resume as standalone HTML"
+            class="p-2 rounded-lg bg-secondary-100 dark:bg-secondary-800 hover:bg-secondary-200 dark:hover:bg-secondary-700 text-secondary-700 dark:text-secondary-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-secondary-900 min-h-[44px] min-w-[44px] flex items-center justify-center"
+            type="button">
+            <i class="bi bi-file-earmark-code text-xl" aria-hidden="true"></i>
           </button>
           
           <!-- Clear State Button -->
