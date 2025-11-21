@@ -3,97 +3,447 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>wclaytor.github.io</title>
+        <meta name="description" content="William Claytor - Full-stack developer and creative technologist specializing in modern web applications, interactive experiences, and algorithmic art. Explore projects featuring Alpine.js, Progressive Web Apps, and creative coding." />
+        <meta name="author" content="William Claytor" />
+        <meta name="keywords" content="web developer, full-stack, Alpine.js, progressive web apps, creative coding, algorithmic art, JavaScript, portfolio" />
+        
+        <!-- Open Graph Meta Tags -->
+        <meta property="og:title" content="William Claytor - Developer & Creative Technologist" />
+        <meta property="og:description" content="Full-stack developer specializing in modern web applications, PWAs, and interactive experiences." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://wclaytor.github.io/" />
+        <meta property="og:image" content="https://wclaytor.github.io/assets/img/og-image.jpg" />
+        
+        <!-- Twitter Card Meta Tags -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="William Claytor - Developer & Creative Technologist" />
+        <meta name="twitter:description" content="Full-stack developer specializing in modern web applications, PWAs, and interactive experiences." />
+        
+        <title>William Claytor - Developer & Creative Technologist</title>
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-        <!-- Font Awesome icons (free version)-->
-        <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+        
+        <!-- Font Awesome icons -->
+        <script src="https://use.fontawesome.com/releases/v6.5.1/js/all.js" crossorigin="anonymous"></script>
+        
         <!-- Google fonts-->
-        <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+        
+        <!-- Alpine.js -->
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+        
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="css/styles.css" rel="stylesheet" />
+        
+        <!-- Structured Data -->
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "Person",
+          "name": "William Claytor",
+          "url": "https://wclaytor.github.io",
+          "sameAs": [
+            "https://www.linkedin.com/in/billclaytor/",
+            "https://github.com/wclaytor"
+          ],
+          "jobTitle": "Full-Stack Developer",
+          "description": "Full-stack developer and creative technologist specializing in modern web applications and interactive experiences."
+        }
+        </script>
     </head>
-    <body id="page-top">
+    <body id="page-top" x-data="{ darkMode: window.matchMedia('(prefers-color-scheme: dark)').matches, mobileMenuOpen: false }" :class="{ 'dark-mode': darkMode }">
 
         <!-- Navigation-->
-        <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav" role="navigation">
             <div class="container px-4 px-lg-5">
-                <a class="navbar-brand" href="#page-top">wclaytor.github.io</a>
-                <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                    Menu
-                    <i class="fas fa-bars"></i>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarResponsive">
+                <a class="navbar-brand" href="#page-top" aria-label="Home">
+                    <span class="brand-icon">WC</span>
+                </a>
+                <div class="d-flex align-items-center">
+                    <!-- Theme Toggle -->
+                    <button 
+                        @click="darkMode = !darkMode" 
+                        class="theme-toggle me-3" 
+                        aria-label="Toggle dark mode"
+                        type="button">
+                        <i class="fas" :class="darkMode ? 'fa-sun' : 'fa-moon'"></i>
+                    </button>
+                    
+                    <button 
+                        class="navbar-toggler navbar-toggler-right" 
+                        type="button" 
+                        @click="mobileMenuOpen = !mobileMenuOpen"
+                        :aria-expanded="mobileMenuOpen"
+                        aria-controls="navbarResponsive" 
+                        aria-label="Toggle navigation">
+                        <i class="fas" :class="mobileMenuOpen ? 'fa-times' : 'fa-bars'"></i>
+                    </button>
+                </div>
+                <div class="collapse navbar-collapse" id="navbarResponsive" :class="{ 'show': mobileMenuOpen }">
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-                        <li class="nav-item"><a class="nav-link" href="projects/index.html">Projects</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#about" @click="mobileMenuOpen = false">About</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#skills" @click="mobileMenuOpen = false">Skills</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#projects" @click="mobileMenuOpen = false">Projects</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#contact" @click="mobileMenuOpen = false">Contact</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
 
-        <!-- Masthead-->
-        <header class="masthead">
+        <!-- Hero Section -->
+        <header class="masthead" role="banner">
             <div class="container px-4 px-lg-5 d-flex h-100 align-items-center justify-content-center">
-                <div class="d-flex justify-content-center">
-                    <div class="text-center">
-                        <h1 class="mx-auto my-0 text-uppercase">william claytor</h1>
-                        
+                <div class="text-center" x-data="{ visible: false }" x-init="setTimeout(() => visible = true, 100)">
+                    <div x-show="visible" x-transition:enter="transition ease-out duration-700" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0">
+                        <p class="hero-greeting mb-3">Hello, I'm</p>
+                        <h1 class="hero-name mb-4">William Claytor</h1>
+                        <p class="hero-tagline mb-5">
+                            Full-Stack Developer & Creative Technologist
+                        </p>
+                        <p class="hero-description mb-5">
+                            Building modern web experiences with clean code, thoughtful design,<br class="d-none d-lg-block" />
+                            and a passion for interactive storytelling.
+                        </p>
+                        <div class="hero-cta">
+                            <a href="#projects" class="btn btn-primary me-3">View Projects</a>
+                            <a href="#contact" class="btn btn-outline">Get in Touch</a>
+                        </div>
                     </div>
                 </div>
             </div>
+            <div class="scroll-indicator">
+                <a href="#about" aria-label="Scroll to about section">
+                    <i class="fas fa-chevron-down"></i>
+                </a>
+            </div>
         </header>
+
+        <!-- About Section -->
+        <section class="about-section" id="about">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-lg-8">
+                        <h2 class="section-title text-center mb-5">About Me</h2>
+                        <div class="about-content">
+                            <p class="lead">
+                                I'm a full-stack developer with a passion for creating elegant solutions to complex problems. 
+                                My work bridges the gap between technical functionality and creative expression.
+                            </p>
+                            <p>
+                                With expertise spanning modern JavaScript frameworks, progressive web applications, and 
+                                creative coding, I specialize in building fast, accessible, and delightful user experiences. 
+                                I'm particularly drawn to projects that combine technical innovation with artistic expression.
+                            </p>
+                            <p>
+                                When I'm not coding, you'll find me exploring algorithmic art, experimenting with generative 
+                                music systems, or contributing to open-source projects that make the web more accessible and 
+                                creative.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section class="skills-section" id="skills">
+            <div class="container px-4 px-lg-5">
+                <h2 class="section-title text-center mb-5">Skills & Expertise</h2>
+                <div class="row gx-4 gx-lg-5">
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="skill-card h-100">
+                            <div class="skill-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <h3 class="skill-title">Frontend Development</h3>
+                            <ul class="skill-list">
+                                <li>Alpine.js, React, Vue.js</li>
+                                <li>HTML5, CSS3, JavaScript (ES6+)</li>
+                                <li>Tailwind CSS, Bootstrap</li>
+                                <li>Responsive & Mobile-First Design</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="skill-card h-100">
+                            <div class="skill-icon">
+                                <i class="fas fa-server"></i>
+                            </div>
+                            <h3 class="skill-title">Backend & APIs</h3>
+                            <ul class="skill-list">
+                                <li>Node.js, Express</li>
+                                <li>RESTful API Design</li>
+                                <li>Database Design & SQL</li>
+                                <li>Authentication & Security</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="skill-card h-100">
+                            <div class="skill-icon">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <h3 class="skill-title">Progressive Web Apps</h3>
+                            <ul class="skill-list">
+                                <li>Service Workers</li>
+                                <li>Offline Functionality</li>
+                                <li>Web Performance Optimization</li>
+                                <li>Lighthouse Best Practices</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="skill-card h-100">
+                            <div class="skill-icon">
+                                <i class="fas fa-palette"></i>
+                            </div>
+                            <h3 class="skill-title">Creative Coding</h3>
+                            <ul class="skill-list">
+                                <li>p5.js, Three.js</li>
+                                <li>Generative Art & Design</li>
+                                <li>Audio Visualization</li>
+                                <li>Interactive Experiences</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Projects Section -->
+        <section class="projects-section" id="projects">
+            <div class="container px-4 px-lg-5">
+                <h2 class="section-title text-center mb-5">Featured Projects</h2>
+                
+                <!-- Project 1: Alpine Markdown Presentation -->
+                <div class="row gx-0 mb-5 mb-lg-0 justify-content-center project-row">
+                    <div class="col-lg-6">
+                        <div class="project-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <div class="project-overlay">
+                                <i class="fas fa-presentation fa-3x"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="project-content">
+                            <div class="project-text">
+                                <h3 class="project-title">Alpine Markdown Presentation</h3>
+                                <p class="mb-4">
+                                    A beautiful, offline-capable Progressive Web App for creating and presenting 
+                                    Markdown-based slide decks. Features keyboard shortcuts, mobile swipe support, 
+                                    dark mode, and PowerPoint export functionality.
+                                </p>
+                                <div class="project-tags mb-4">
+                                    <span class="tag">Alpine.js</span>
+                                    <span class="tag">PWA</span>
+                                    <span class="tag">Markdown</span>
+                                    <span class="tag">Tailwind CSS</span>
+                                </div>
+                                <div class="project-links">
+                                    <a href="projects/alpine-markdown-presentation/index.html" class="btn btn-sm btn-primary me-2">
+                                        <i class="fas fa-external-link-alt me-1"></i> View Demo
+                                    </a>
+                                    <a href="https://github.com/wclaytor/wclaytor.github.io/tree/main/projects/alpine-markdown-presentation" class="btn btn-sm btn-outline">
+                                        <i class="fab fa-github me-1"></i> Source Code
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2: Ambient Beat Nexus -->
+                <div class="row gx-0 mb-5 mb-lg-0 justify-content-center project-row flex-row-reverse">
+                    <div class="col-lg-6">
+                        <div class="project-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                            <div class="project-overlay">
+                                <i class="fas fa-music fa-3x"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="project-content">
+                            <div class="project-text">
+                                <h3 class="project-title">Ambient Beat Nexus</h3>
+                                <p class="mb-4">
+                                    An immersive algorithmic art and ambient texture generator featuring chill, dub, 
+                                    and lo-fi beats. Experience mesmerizing 3D visualizations powered by Three.js that 
+                                    respond to generative audio patterns.
+                                </p>
+                                <div class="project-tags mb-4">
+                                    <span class="tag">Three.js</span>
+                                    <span class="tag">Web Audio API</span>
+                                    <span class="tag">Generative Art</span>
+                                    <span class="tag">JavaScript</span>
+                                </div>
+                                <div class="project-links">
+                                    <a href="projects/ambient-beat-nexus/index.html" class="btn btn-sm btn-primary me-2">
+                                        <i class="fas fa-external-link-alt me-1"></i> View Demo
+                                    </a>
+                                    <a href="https://github.com/wclaytor/wclaytor.github.io/tree/main/projects/ambient-beat-nexus" class="btn btn-sm btn-outline">
+                                        <i class="fab fa-github me-1"></i> Source Code
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- More Projects Link -->
+                <div class="row gx-0 justify-content-center mt-5">
+                    <div class="col-lg-8 text-center">
+                        <a href="projects/index.html" class="btn btn-lg btn-primary">
+                            View All Projects <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
 
 
 
 
 
         <!-- Contact-->
-        <section class="contact-section bg-black" id="contact">
+        <section class="contact-section" id="contact">
             <div class="container px-4 px-lg-5">
-                <div class="row gx-4 gx-lg-5">
-
-                    <div class="col-md-4 mb-3 mb-md-0">
-
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-lg-8 text-center">
+                        <h2 class="section-title mb-4">Let's Connect</h2>
+                        <p class="lead mb-5">
+                            I'm always interested in hearing about new projects, collaborations, or opportunities. 
+                            Feel free to reach out!
+                        </p>
                     </div>
-
-                    <div class="col-md-4 mb-3 mb-md-0">
-                        <div class="card py-4 h-100">
+                </div>
+                
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-4 mb-4 mb-md-0">
+                        <div class="contact-card h-100">
                             <div class="card-body text-center">
-                                <i class="fas fa-envelope text-primary mb-2"></i>
-                                <h4 class="text-uppercase m-0">Email</h4>
-                                <hr class="my-4 mx-auto" />
-                                <div class="small text-black-50"><a href="mailto:wclaytor@github.com">wclaytor@github.com</a></div>
+                                <div class="contact-icon mb-3">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <h4 class="contact-title">Email</h4>
+                                <hr class="contact-divider mx-auto" />
+                                <div class="contact-info">
+                                    <a href="mailto:wclaytor@github.com">wclaytor@github.com</a>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-4 mb-3 mb-md-0">
-
+                    <div class="col-md-4 mb-4 mb-md-0">
+                        <div class="contact-card h-100">
+                            <div class="card-body text-center">
+                                <div class="contact-icon mb-3">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </div>
+                                <h4 class="contact-title">LinkedIn</h4>
+                                <hr class="contact-divider mx-auto" />
+                                <div class="contact-info">
+                                    <a href="https://www.linkedin.com/in/billclaytor/" target="_blank" rel="noopener noreferrer">Connect with me</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
+                    <div class="col-md-4 mb-4 mb-md-0">
+                        <div class="contact-card h-100">
+                            <div class="card-body text-center">
+                                <div class="contact-icon mb-3">
+                                    <i class="fab fa-github"></i>
+                                </div>
+                                <h4 class="contact-title">GitHub</h4>
+                                <hr class="contact-divider mx-auto" />
+                                <div class="contact-info">
+                                    <a href="https://github.com/wclaytor" target="_blank" rel="noopener noreferrer">View my work</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="social d-flex justify-content-center">
-                    <a class="mx-2" href="https://www.linkedin.com/in/billclaytor/"><i class="fab fa-linkedin-in"></i></a>
-                    <a class="mx-2" href="https://github.com/wclaytor"><i class="fab fa-github"></i></a>
+
+                <div class="social-links d-flex justify-content-center mt-5">
+                    <a href="https://www.linkedin.com/in/billclaytor/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile" class="social-link">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="https://github.com/wclaytor" target="_blank" rel="noopener noreferrer" aria-label="GitHub Profile" class="social-link">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="mailto:wclaytor@github.com" aria-label="Email" class="social-link">
+                        <i class="fas fa-envelope"></i>
+                    </a>
                 </div>
             </div>
         </section>
 
         <!-- Footer-->
-        <footer class="footer bg-black small text-center text-white-50"><div class="container px-4 px-lg-5">Copyright &copy; William Claytor 2023</div></footer>
+        <footer class="footer" role="contentinfo">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 align-items-center">
+                    <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
+                        <p class="footer-text mb-0">
+                            Built with <i class="fas fa-heart text-primary"></i> using Alpine.js
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-center mb-3 mb-md-0">
+                        <p class="footer-text mb-0" x-data="{ year: new Date().getFullYear() }">
+                            Copyright &copy; William Claytor <span x-text="year"></span>
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-center text-md-end">
+                        <a href="#page-top" class="back-to-top" aria-label="Back to top">
+                            <i class="fas fa-arrow-up"></i> Back to Top
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
         
         <!-- Bootstrap core JS-->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Core theme JS-->
         <script src="js/scripts.js"></script>
-        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-        <!-- * *                               SB Forms JS                               * *-->
-        <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
-        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+        
+        <!-- Smooth scroll behavior -->
+        <script>
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    if (href !== '#' && href !== '') {
+                        e.preventDefault();
+                        const target = document.querySelector(href);
+                        if (target) {
+                            target.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    }
+                });
+            });
+
+            // Navbar shrink on scroll
+            const navbarShrink = function() {
+                const navbarCollapsible = document.getElementById('mainNav');
+                if (!navbarCollapsible) {
+                    return;
+                }
+                if (window.scrollY === 0) {
+                    navbarCollapsible.classList.remove('navbar-shrink');
+                } else {
+                    navbarCollapsible.classList.add('navbar-shrink');
+                }
+            };
+
+            // Shrink navbar on page load
+            navbarShrink();
+
+            // Shrink navbar when scrolling
+            document.addEventListener('scroll', navbarShrink);
+        </script>
     </body>
 </html>
