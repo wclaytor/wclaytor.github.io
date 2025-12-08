@@ -471,34 +471,12 @@
       color: var(--color-heading-tertiary);
     }
     
-    /* ========================================
-       Mobile Browser Optimizations (S7-006)
-       ======================================== */
-    
     /* Prevent horizontal overflow on mobile */
     body {
       overflow-x: hidden;
     }
     
-    /* Remove tap highlight on mobile devices for cleaner UX */
-    * {
-      -webkit-tap-highlight-color: transparent;
-      tap-highlight-color: transparent;
-    }
-    
-    /* Prevent text size adjustment on iOS devices & ensure smooth scrolling */
-    html {
-      -webkit-text-size-adjust: 100%;
-      text-size-adjust: 100%;
-      scroll-behavior: smooth;
-    }
-    
-    /* Optimize overscroll behavior for mobile */
-    body {
-      overscroll-behavior-y: contain;
-    }
-    
-    /* Ensure minimum touch target size (WCAG 2.1 AA) */
+    /* Ensure minimum touch target size */
     button, a, input[type="file"] + label {
       min-height: 44px;
       min-width: 44px;
@@ -523,6 +501,29 @@
     /* Smooth icon transitions */
     .theme-toggle i {
       transition: opacity 0.2s ease-in-out;
+    }
+    
+    /* Collapsible section styles */
+    .collapsible-section {
+      margin-bottom: 1rem;
+    }
+    
+    .section-header-wrapper {
+      outline: none;
+    }
+    
+    .section-header-wrapper:focus {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+    
+    .section-header-wrapper:hover h2 {
+      color: var(--color-primary);
+    }
+    
+    .rotate-90 {
+      transform: rotate(90deg);
     }
     
     /* ========================================
@@ -560,11 +561,6 @@
     /* Remove default search cancel button on WebKit */
     input[type="search"]::-webkit-search-cancel-button {
       display: none;
-    }
-    
-    /* Prevent iOS zoom on input focus by ensuring minimum 16px font size */
-    input, textarea, select {
-      font-size: 16px;
     }
     
     /* Keyboard shortcut kbd styling */
@@ -756,8 +752,20 @@
         page-break-after: avoid;
       }
       
-      section {
+      section, .collapsible-section {
         page-break-inside: avoid;
+      }
+      
+      /* Ensure all sections are expanded in print */
+      .section-content {
+        display: block !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      
+      /* Hide collapse icons in print */
+      .section-header-wrapper .bi-chevron-right {
+        display: none !important;
       }
       
       p, ul, ol {
@@ -837,6 +845,7 @@
       Alpine.store('appState', {
         version: '1.0',
         theme: 'light',
+        sectionStates: {},
         scrollPosition: null,
         
         /**
@@ -857,11 +866,13 @@
               
               // Load state
               this.theme = state.theme || this.getDefaultTheme();
+              this.sectionStates = state.sectionStates || {};
               this.scrollPosition = state.scrollPosition || null;
               
               console.log('Application state loaded:', {
                 version: this.version,
                 theme: this.theme,
+                sectionCount: Object.keys(this.sectionStates).length,
                 scrollPosition: this.scrollPosition
               });
               
@@ -874,6 +885,7 @@
             console.warn('Failed to load application state:', e);
             // Return defaults on error
             this.theme = this.getDefaultTheme();
+            this.sectionStates = {};
             this.scrollPosition = null;
             return false;
           }
@@ -887,6 +899,7 @@
             const state = {
               version: this.version,
               theme: this.theme,
+              sectionStates: this.sectionStates,
               scrollPosition: this.scrollPosition
             };
             
@@ -907,6 +920,7 @@
             localStorage.removeItem('appState');
             // Also clear legacy keys for clean slate
             localStorage.removeItem('theme');
+            localStorage.removeItem('sectionStates');
             console.log('Application state cleared');
             location.reload();
           } catch (e) {
@@ -923,6 +937,7 @@
           // For now, just copy relevant fields
           // In future versions, add specific migration logic here
           this.theme = oldState.theme || this.getDefaultTheme();
+          this.sectionStates = oldState.sectionStates || {};
           this.scrollPosition = oldState.scrollPosition || null;
           
           // Save migrated state
@@ -946,12 +961,20 @@
               this.theme = this.getDefaultTheme();
             }
             
+            // Migrate section states
+            const legacySectionStates = localStorage.getItem('sectionStates');
+            if (legacySectionStates) {
+              this.sectionStates = JSON.parse(legacySectionStates);
+              console.log('Migrated section states:', Object.keys(this.sectionStates).length, 'sections');
+            }
+            
             // Save unified state
-            if (legacyTheme) {
+            if (legacyTheme || legacySectionStates) {
               this.save();
               
               // Remove legacy keys
               localStorage.removeItem('theme');
+              localStorage.removeItem('sectionStates');
               console.log('Legacy keys removed, migration complete');
               
               return true;
@@ -984,6 +1007,21 @@
         updateTheme(theme) {
           this.theme = theme;
           this.save();
+        },
+        
+        /**
+         * Update section state and save
+         */
+        updateSectionState(sectionId, isExpanded) {
+          this.sectionStates[sectionId] = isExpanded;
+          this.save();
+        },
+        
+        /**
+         * Get section state (default to expanded)
+         */
+        getSectionState(sectionId) {
+          return this.sectionStates[sectionId] !== false;
         },
         
         /**
@@ -1089,10 +1127,29 @@
           try {
             // Read file content
             const content = await this.readFile(file);
+            this.markdownContent = content;
             
-            // Process and render the resume
-            if (content) {
-              this.processResumeContent(content, startTime);
+            // Parse to HTML
+            if (this.markdownContent) {
+              this.htmlContent = this.parseMarkdown(this.markdownContent);
+              this.hasResume = true;
+              
+              // Calculate parse time
+              this.parseTime = performance.now() - startTime;
+              
+              // Log performance
+              console.log(`Resume parsed in ${this.parseTime.toFixed(2)}ms`);
+              
+              // Check performance requirement (<100ms)
+              if (this.parseTime > 100) {
+                console.warn(`Parse time exceeded target: ${this.parseTime.toFixed(2)}ms > 100ms`);
+              }
+              
+              // Extract sections and setup navigation
+              this.$nextTick(() => {
+                this.extractSections();
+                this.setupIntersectionObserver();
+              });
             }
           } catch (error) {
             this.parseError = error.message;
@@ -1141,165 +1198,6 @@
           }
         },
         
-        processResumeContent(content, startTime) {
-          // Validate content parameter
-          if (content == null || typeof content !== 'string' || content.trim() === '') {
-            console.error('Invalid content provided to processResumeContent');
-            this.parseError = 'Invalid resume content';
-            return;
-          }
-          
-          this.markdownContent = content;
-          this.htmlContent = this.parseMarkdown(this.markdownContent);
-          this.hasResume = true;
-          
-          // Calculate parse time
-          this.parseTime = performance.now() - startTime;
-          
-          // Log performance
-          console.log(`Resume parsed in ${this.parseTime.toFixed(2)}ms`);
-          
-          // Check performance requirement (<100ms)
-          if (this.parseTime > 100) {
-            console.warn(`Parse time exceeded target: ${this.parseTime.toFixed(2)}ms > 100ms`);
-          }
-          
-          // Extract sections and setup navigation
-          this.$nextTick(() => {
-            this.extractSections();
-            this.setupIntersectionObserver();
-          });
-        },
-        
-        async loadExampleResume() {
-          this.isLoading = true;
-          this.parseError = null;
-          const startTime = performance.now();
-          
-          try {
-            // Try to fetch the example resume from file
-            const response = await fetch('docs/resume/resume-example.md');
-            
-            let content;
-            if (response.ok) {
-              content = await response.text();
-              console.log('Example resume loaded from file');
-            } else {
-              // Fallback to inline example if file not found
-              console.warn('Could not load example resume file, using inline fallback');
-              content = this.getInlineExampleResume();
-            }
-            
-            // Process and render the resume
-            if (content) {
-              this.processResumeContent(content, startTime);
-            }
-          } catch (error) {
-            console.error('Error loading example resume:', error);
-            // Use inline fallback on any error
-            try {
-              const content = this.getInlineExampleResume();
-              this.processResumeContent(content, startTime);
-            } catch (fallbackError) {
-              this.parseError = 'Failed to load example resume. Please try uploading your own file.';
-              console.error('Fallback also failed:', fallbackError);
-            }
-          } finally {
-            this.isLoading = false;
-          }
-        },
-        
-        getInlineExampleResume() {
-          return `# Jane Developer
-
-San Francisco, CA  
-jane.developer@email.com  
-(555) 123-4567
-
-## Links
-
-- GitHub: https://github.com/janedeveloper
-- LinkedIn: https://linkedin.com/in/janedeveloper
-- Portfolio: https://janedeveloper.dev
-
-## Summary
-
-Experienced Full Stack Developer with 5+ years building modern web applications. Passionate about creating accessible, performant, and user-friendly software. Strong expertise in JavaScript, React, Node.js, and cloud technologies.
-
-## Skills
-
-### Frontend Development
-- React, Vue.js, Alpine.js
-- Modern CSS, Tailwind CSS
-- Responsive & Accessible Design
-- Progressive Web Apps (PWA)
-
-### Backend Development
-- Node.js, Express
-- RESTful APIs
-- Database Design (SQL & NoSQL)
-- Authentication & Security
-
-### DevOps & Tools
-- Git, GitHub Actions
-- Docker, Kubernetes
-- AWS, Cloud Infrastructure
-- CI/CD Pipelines
-
-## Work Experience
-
-### Senior Software Engineer
-**Tech Solutions Inc**  
-San Francisco, CA  
-01/2021 – Present
-
-- Led development of customer-facing web applications serving 100K+ users
-- Implemented PWA features improving mobile engagement by 40%
-- Mentored junior developers and conducted code reviews
-- Optimized application performance reducing load times by 60%
-
-### Software Engineer
-**StartUp Co**  
-San Francisco, CA  
-06/2019 – 12/2020
-
-- Built responsive web applications using React and Node.js
-- Developed RESTful APIs handling 10K+ requests per hour
-- Implemented automated testing achieving 90% code coverage
-- Collaborated with designers to create accessible user interfaces
-
-## Education
-
-### Bachelor of Science in Computer Science
-**University of California, Berkeley**  
-Berkeley, CA  
-Graduated: 2019
-
-**Relevant Coursework:** Data Structures, Algorithms, Web Development, Software Engineering
-
-## Projects
-
-### Alpine Resume
-*Open Source PWA Resume Builder*
-
-- Built progressive web app using Alpine.js and modern web standards
-- Implemented offline-first architecture with service workers
-- Achieved 100/100 Lighthouse accessibility score
-- Features include theme switching, responsive design, and PDF export
-
-### Personal Portfolio
-*Developer Portfolio Website*
-
-- Responsive single-page application showcasing projects and skills
-- Optimized for performance and SEO
-- Features dynamic content loading and smooth animations
-
-## Certifications
-
-- **AWS Certified Solutions Architect** – Amazon Web Services (2022)
-- **Professional Scrum Master I** – Scrum.org (2021)`;
-        },
-        
         parseMarkdown(markdown) {
           try {
             // Handle edge case: empty content
@@ -1337,12 +1235,14 @@ Graduated: 2019
           if (!contentDiv) return;
           
           const h2Elements = contentDiv.querySelectorAll('h2');
-          console.log(`Found ${h2Elements.length} H2 elements`);
+          console.log(`Found ${h2Elements.length} H2 elements initially`);
           
+          // Convert NodeList to Array to avoid issues with live DOM updates
+          const h2Array = Array.from(h2Elements);
           this.sections = [];
           
-          // Collect all section info and assign IDs for navigation
-          h2Elements.forEach((heading, index) => {
+          // First pass: collect all section info and assign IDs
+          h2Array.forEach((heading, index) => {
             // Generate or use existing ID
             let id = heading.id;
             if (!id) {
@@ -1357,12 +1257,25 @@ Graduated: 2019
             
             console.log(`Found section ${index + 1}: "${heading.textContent.trim()}" (id: ${id})`);
             
-            // Store section info for navigation
+            // Store section info (without element reference, since it will be replaced)
             this.sections.push({
               id: id,
               title: heading.textContent.trim()
             });
           });
+          
+          // Second pass: wrap each section with collapsible functionality
+          // Process in reverse order to avoid DOM mutation issues
+          for (let i = h2Array.length - 1; i >= 0; i--) {
+            const heading = h2Array[i];
+            if (!heading.parentNode) {
+              console.warn(`Heading at index ${i} is no longer in DOM, skipping wrap`);
+              continue;
+            }
+            
+            console.log(`Wrapping section ${i + 1}: "${heading.textContent.trim()}"`);
+            this.wrapSectionWithCollapsible(heading, heading.id);
+          }
           
           // Set first section as active by default
           if (this.sections.length > 0) {
@@ -1370,6 +1283,81 @@ Graduated: 2019
           }
           
           console.log(`Extracted ${this.sections.length} sections:`, this.sections.map(s => s.title));
+        },
+        
+        wrapSectionWithCollapsible(heading, sectionId) {
+          // Find all content until the next h2 or end of content
+          const contentElements = [];
+          let nextElement = heading.nextElementSibling;
+          
+          while (nextElement && nextElement.tagName !== 'H2') {
+            console.log(`  Collecting element: ${nextElement.tagName} - "${nextElement.textContent ? nextElement.textContent.substring(0, 50) : 'N/A'}"`);
+            contentElements.push(nextElement);
+            nextElement = nextElement.nextElementSibling;
+          }
+          
+          console.log(`Wrapping section "${sectionId}": found ${contentElements.length} content elements`);
+          if (nextElement && nextElement.tagName === 'H2') {
+            console.log(`  Next section starts with: "${nextElement.textContent.trim()}"`);
+          } else {
+            console.log(`  This is the last section (no next H2 found)`);
+          }
+          
+          // Create wrapper div for collapsible section
+          const sectionWrapper = document.createElement('div');
+          sectionWrapper.setAttribute('x-data', `collapsibleSection('${sectionId}')`);
+          sectionWrapper.className = 'collapsible-section';
+          
+          // Create header wrapper with toggle functionality
+          const headerWrapper = document.createElement('div');
+          headerWrapper.className = 'section-header-wrapper cursor-pointer select-none';
+          headerWrapper.setAttribute('@click', 'toggle()');
+          headerWrapper.setAttribute('@keydown', 'handleKeydown($event)');
+          headerWrapper.setAttribute('tabindex', '0');
+          headerWrapper.setAttribute('role', 'button');
+          headerWrapper.setAttribute(':aria-expanded', 'isExpanded.toString()');
+          headerWrapper.setAttribute(':aria-label', `'Toggle ' + '${heading.textContent.trim()}' + ' section'`);
+          
+          // Create icon container
+          const iconSpan = document.createElement('span');
+          iconSpan.className = 'inline-flex items-center mr-2 transition-transform duration-200';
+          iconSpan.setAttribute(':class', "{ 'rotate-90': isExpanded }");
+          iconSpan.setAttribute('aria-hidden', 'true');
+          iconSpan.innerHTML = '<i class="bi bi-chevron-right text-primary-600 dark:text-primary-400"></i>';
+          
+          // Insert icon before heading text
+          const headingClone = heading.cloneNode(true);
+          headingClone.insertBefore(iconSpan, headingClone.firstChild);
+          headingClone.className = heading.className + ' flex items-center';
+          // Preserve the ID for navigation and intersection observer
+          headingClone.id = heading.id;
+          
+          headerWrapper.appendChild(headingClone);
+          
+          // Create content wrapper with transition
+          const contentWrapper = document.createElement('div');
+          contentWrapper.setAttribute('x-show', 'isExpanded');
+          contentWrapper.setAttribute('x-transition:enter', 'transition ease-out duration-300');
+          contentWrapper.setAttribute('x-transition:enter-start', 'opacity-0 -translate-y-2');
+          contentWrapper.setAttribute('x-transition:enter-end', 'opacity-100 translate-y-0');
+          contentWrapper.setAttribute('x-transition:leave', 'transition ease-in duration-200');
+          contentWrapper.setAttribute('x-transition:leave-start', 'opacity-100 translate-y-0');
+          contentWrapper.setAttribute('x-transition:leave-end', 'opacity-0 -translate-y-2');
+          contentWrapper.setAttribute('x-cloak', '');
+          contentWrapper.className = 'section-content';
+          
+          // Move content elements into the content wrapper
+          contentElements.forEach(el => {
+            contentWrapper.appendChild(el);
+          });
+          
+          // Build the structure
+          sectionWrapper.appendChild(headerWrapper);
+          sectionWrapper.appendChild(contentWrapper);
+          
+          // Replace the original heading with the wrapper
+          heading.parentNode.insertBefore(sectionWrapper, heading);
+          heading.remove();
         },
         
         setupIntersectionObserver() {
@@ -1393,8 +1381,9 @@ Graduated: 2019
             });
           }, options);
           
-          // Observe all section headings
+          // Observe all section headings (now inside wrappers)
           this.sections.forEach(section => {
+            // Find the h2 element with the section ID (now inside the wrapper)
             const headingElement = document.getElementById(section.id);
             if (headingElement) {
               this.observer.observe(headingElement);
@@ -1405,15 +1394,9 @@ Graduated: 2019
         scrollToSection(sectionId) {
           const element = document.getElementById(sectionId);
           if (element) {
-            // Calculate offset for sticky navigation (nav bar height + small padding)
-            // Nav bar is approximately 76px, add 8px padding for visual breathing room
-            const offset = 103;
-            const elementPosition = element.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - offset;
-            
-            window.scrollTo({
-              top: offsetPosition,
-              behavior: 'smooth'
+            element.scrollIntoView({ 
+              behavior: 'smooth',
+              block: 'start'
             });
             
             // Close mobile menu if open
@@ -1421,22 +1404,6 @@ Graduated: 2019
             
             // Update active section immediately for better UX
             this.activeSection = sectionId;
-          }
-        },
-        
-        scrollToTop() {
-          // Scroll to top of page smoothly
-          window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-          });
-          
-          // Close mobile menu if open
-          this.closeMobileMenu();
-          
-          // Clear active section when at top
-          if (this.sections.length > 0) {
-            this.activeSection = this.sections[0].id;
           }
         },
         
@@ -1781,7 +1748,7 @@ Graduated: 2019
       }
       
       .resume-container {
-        max-width: 56rem;
+        max-width: 65ch;
         margin: 0 auto;
         background-color: var(--color-bg-primary);
         padding: 3rem;
@@ -1950,6 +1917,35 @@ Graduated: 2019
   </div>
 </body>
 </html>`;
+        }
+      }));
+      
+      // Alpine.js component for collapsible sections
+      Alpine.data('collapsibleSection', (sectionId) => ({
+        isExpanded: true,
+        sectionId: sectionId,
+        
+        init() {
+          // Load state from unified appState store
+          this.isExpanded = this.$store.appState.getSectionState(this.sectionId);
+        },
+        
+        toggle() {
+          this.isExpanded = !this.isExpanded;
+          this.persist();
+        },
+        
+        persist() {
+          // Save to unified appState store
+          this.$store.appState.updateSectionState(this.sectionId, this.isExpanded);
+        },
+        
+        handleKeydown(event) {
+          // Toggle on Enter or Space
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            this.toggle();
+          }
         }
       }));
       
@@ -2580,17 +2576,6 @@ Graduated: 2019
       
       <!-- Menu Links -->
       <nav class="py-2">
-        <!-- Home Link -->
-        <a
-          href="#top"
-          @click.prevent="scrollToTop()"
-          class="block px-6 py-3 text-base font-medium transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 min-h-[48px] flex items-center text-secondary-700 dark:text-secondary-300 hover:bg-secondary-50 dark:hover:bg-secondary-700 border-l-4 border-transparent"
-          aria-label="Go to top of page">
-          <i class="bi bi-house-door mr-2" aria-hidden="true"></i>
-          Home
-        </a>
-        
-        <!-- Section Links -->
         <template x-for="section in sections" :key="section.id">
           <a
             :href="`#${section.id}`"
@@ -2633,16 +2618,10 @@ Graduated: 2019
             class="hidden"
           />
           
-          <p class="text-sm text-secondary-500 dark:text-secondary-400">or</p>
-          
-          <button 
-            @click="loadExampleResume()" 
-            class="inline-flex items-center px-6 py-3 sm:px-8 sm:py-4 bg-secondary-100 hover:bg-secondary-200 dark:bg-secondary-700 dark:hover:bg-secondary-600 text-secondary-700 dark:text-secondary-300 text-base sm:text-lg font-medium rounded-lg transition-colors duration-150 min-h-[44px] shadow-sm hover:shadow-md"
-            type="button"
-            aria-label="Load example resume to see how it works">
-            <i class="bi bi-file-earmark-text mr-2" aria-hidden="true"></i>
-            Load Example Resume
-          </button>
+          <p class="text-sm text-secondary-500 dark:text-secondary-400">
+            Need an example? Check out our 
+            <a href="docs/resume/resume-example.md" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 underline">sample resume</a>
+          </p>
         </div>
       </div>
       
