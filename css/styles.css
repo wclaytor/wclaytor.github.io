@@ -11717,3 +11717,33 @@ body {
 .footer {
   padding: 5rem 0;
 }
+
+/* Mobile Responsive Fixes */
+html {
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Fix masthead h1 overflow on mobile */
+@media (max-width: 767px) {
+  .masthead h1, .masthead .h1 {
+    font-size: 2.5rem !important;
+    line-height: 2.8rem !important;
+    letter-spacing: 0.2rem !important;
+    word-wrap: break-word;
+    max-width: 100%;
+  }
+}
+
+/* Ensure proper scaling on small devices */
+@media (max-width: 575px) {
+  .masthead h1, .masthead .h1 {
+    font-size: 2rem !important;
+    line-height: 2.3rem !important;
+    letter-spacing: 0.15rem !important;
+  }
+}
