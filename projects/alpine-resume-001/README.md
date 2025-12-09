@@ -39,14 +39,10 @@ Alpine Resume transforms a traditional Markdown-formatted resume into a beautifu
 
 ### For Resume Authors
 
-**📖 [Read the User Guide](./docs/guides/USER-GUIDE.md)** - Complete guide for creating and using your resume
-
-**Quick Steps:**
-
 1. Copy `docs/resume/resume-template.md`
 2. Fill in your information following the template structure
 3. Save your resume in Markdown format
-4. Upload to the application and it will render beautifully
+4. The application will render it beautifully
 
 ### For Developers
 
@@ -85,48 +81,20 @@ This project uses a structured seven-role development approach:
 - **Build**: TBD (minimal build process preferred)
 - **Hosting**: TBD (static hosting compatible)
 
-### Key Features
+### Key Features (Planned)
 
 - ✅ **Resume Display**: Render Markdown resumes with professional styling
-- ✅ **Progressive Web App**: Offline support and installability
-- ✅ **Responsive Design**: Mobile-first, works on all devices
-- ✅ **Accessibility**: WCAG 2.1 AA compliant (Lighthouse score: 100/100)
-- ✅ **Theme Support**: Light and dark modes with persistence
-- ✅ **Print Styles**: Professional PDF generation
-- ✅ **Interactive Elements**: Expandable sections, filtering, search
-
-### Accessibility
-
-Alpine Resume is **fully accessible** and meets **WCAG 2.1 Level AA standards**:
-
-- ✅ **Lighthouse Accessibility Score: 100/100**
-- ✅ **Keyboard Navigation**: 100% keyboard accessible
-- ✅ **Screen Reader Optimized**: Works with NVDA, JAWS, VoiceOver
-- ✅ **High Contrast**: Meets WCAG AA contrast ratios (4.5:1+)
-- ✅ **Responsive**: Touch targets ≥44×44px, works on all devices
-- ✅ **Reduced Motion**: Respects user motion preferences
-
-📖 **Learn More**: 
-- [Accessibility Guide](./docs/guides/ACCESSIBILITY-GUIDE.md) - User and developer guide
-- [Accessibility Documentation](./docs/testing/accessibility/README.md) - Complete compliance documentation
+- 🔄 **Progressive Web App**: Offline support and installability
+- 🔄 **Responsive Design**: Mobile-first, works on all devices
+- 🔄 **Accessibility**: WCAG 2.1 AA compliance
+- 🔄 **Theme Support**: Customizable color schemes and branding
+- 🔄 **Print Styles**: Professional PDF generation
+- 🔄 **Interactive Elements**: Expandable sections, filtering, search
 
 ## 📚 Documentation Structure
 
 ```
 docs/
-├── guides/              # User and developer guides
-│   ├── GETTING-STARTED.md
-│   ├── ACCESSIBILITY-GUIDE.md         # Accessibility best practices
-│   ├── PERFORMANCE-BENCHMARKING.md
-│   └── Responsive-Design-Patterns.md
-├── testing/             # Testing documentation and reports
-│   ├── accessibility/   # Accessibility compliance documentation
-│   │   ├── README.md    # Comprehensive accessibility documentation
-│   │   ├── KEYBOARD-NAVIGATION-GUIDE.md
-│   │   ├── SCREEN-READER-OPTIMIZATION.md
-│   │   └── S7-001-COMPREHENSIVE-AUDIT-FINAL.md
-│   ├── cross-browser-test-plan.md
-│   └── README.md
 ├── resume/              # Resume templates and examples
 │   ├── resume-template.md
 │   └── resume-example.md
@@ -244,19 +212,11 @@ Coordinate complex features across roles:
 - [ ] Cross-browser testing
 - [ ] Performance testing
 - [ ] Documentation completion
-- [x] Deployment guide
+- [ ] Deployment
 
 ## 🤝 Contributing
 
-We welcome contributions! Please read our [Contributing Guide](./CONTRIBUTING.md) for details on:
-
-- Development setup and workflow
-- Code standards and testing requirements
-- Pull request and issue guidelines
-- Role-based development approach
-- Community guidelines
-
-**Quick Start for Contributors:**
+When contributing to Alpine Resume:
 
 1. **Review open issues** to understand current priorities
 2. **Follow role patterns** based on the type of contribution
@@ -264,19 +224,9 @@ We welcome contributions! Please read our [Contributing Guide](./CONTRIBUTING.md
 4. **Use skills** to guide implementation approaches
 5. **Test thoroughly** before submitting PRs
 
-For detailed information, see [CONTRIBUTING.md](./CONTRIBUTING.md)
-
 ## 📖 Project Resources
 
-### For Users
-- **User Guide**: [docs/guides/USER-GUIDE.md](./docs/guides/USER-GUIDE.md) - Complete guide for end users
-- **Resume Template**: [docs/resume/resume-template.md](./docs/resume/resume-template.md)
-- **Accessibility Guide**: [docs/guides/ACCESSIBILITY-GUIDE.md](./docs/guides/ACCESSIBILITY-GUIDE.md) - User and developer guide
-- **Deployment Guide**: [docs/guides/DEPLOYMENT-GUIDE.md](./docs/guides/DEPLOYMENT-GUIDE.md) - Comprehensive deployment instructions
-
-### For Developers
-- **Contributing Guide**: [CONTRIBUTING.md](./CONTRIBUTING.md) - **Start here for contributing**
-- **Getting Started**: [docs/guides/GETTING-STARTED.md](./docs/guides/GETTING-STARTED.md)
+- **Getting Started**: [GETTING-STARTED.md](./GETTING-STARTED.md)
 - **Role Documentation**: [`/docs/roles/`](./docs/roles/)
 - **Collaboration Guide**: [`/docs/roles/Roles-Collaboration.md`](./docs/roles/Roles-Collaboration.md)
 - **Skills System**: [`/skills/README.md`](./skills/README.md)
@@ -285,25 +235,13 @@ For detailed information, see [CONTRIBUTING.md](./CONTRIBUTING.md)
 - **Agent Guide**: [AGENTS.md](./AGENTS.md)
 - **Claude Guide**: [CLAUDE.md](./CLAUDE.md)
 
-### Testing & Quality
-- **Accessibility Documentation**: [docs/testing/accessibility/README.md](./docs/testing/accessibility/README.md) - Complete compliance docs
-- **Keyboard Navigation**: [docs/testing/accessibility/KEYBOARD-NAVIGATION-GUIDE.md](./docs/testing/accessibility/KEYBOARD-NAVIGATION-GUIDE.md)
-- **Screen Reader Guide**: [docs/testing/accessibility/SCREEN-READER-OPTIMIZATION.md](./docs/testing/accessibility/SCREEN-READER-OPTIMIZATION.md)
-
 ## 📄 License
 
 MIT License - See [LICENSE.md](./LICENSE.md) for details
 
 ## 🙋 Getting Help
 
-### For Users
-- **New to Alpine Resume?** Read the [User Guide](./docs/guides/USER-GUIDE.md)
-- **Creating a resume?** Use the [resume template](./docs/resume/resume-template.md)
-- **Accessibility questions?** Check the [Accessibility Guide](./docs/guides/ACCESSIBILITY-GUIDE.md)
-
-### For Developers
-- **Want to contribute?** Start with the [Contributing Guide](./CONTRIBUTING.md)
-- **New to the project?** Read this README and [Getting Started Guide](./docs/guides/GETTING-STARTED.md)
+- **New to the project?** Start with this README and the resume template documentation
 - Review the [role documentation](./docs/roles/) for development guidance
 - Check [open issues](https://github.com/wclaytor/alpine-resume/issues) for current work
 - Explore the [skills system](./skills/README.md) for implementation guides
