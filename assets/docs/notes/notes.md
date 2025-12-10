@@ -244,3 +244,41 @@ Basically, if there is any reason that we should not merge the current PR and go
 But we are also about to present this site to the world as a demonstration of our experience, skill, abilities, focus on quality, and good judgement. Before we update the URL in the LinkedIn profile to point to this site, we need to be absolutely sure that it is up to standards and will get us hired rather than round-filed over some issue we should have caught and fixed. Heaven forbid we are using any third-party libraries that could become compromised and then harm viewers of our site. We absolutely can not have that happen.
 
 So we need a promt file to assemble the panel with that mission.
+
+---
+
+All right! The PR looks good, all the comments are there... we are just about set... but...
+
+When we present these reviews in the PR, we need to be ABSOULUTELY CLEAR that we are not getting actual reviews from these actual living people. These are "inspired-by" personas informed by Markdown files with some basic limited information we have gathered about these folks. We use them because we think they help to inform our work and the context of our discussions about it. 
+
+We know they are not real people actually thinking about the questions we are asking them. Rather, we hypothesize that adding the context of their Persona profiles to the context helps to guide the model into the "contextual spaces" that we want to explore. It seems to work, we have gotten lots of great feedback, and implemented it, and seen the acknowledgement in subsequent reviews performed with a fresh context. 
+
+Maybe this is a good time to create five Personas with their own unique identity that is inspired by their original namesake / profile doc but that can be a living document that can grow and expand to include other ideas and perspectives beyond these static characterizations.
+
+In our other projects we have implemented this as Roles which you can read about in the README files of the projects in the projects folder. For example, see `projects/alpine-resume/README.md` where it talks about the seven roles.
+
+We want to explore that same approach with this public-facing project, but in a more fluid and less regimented way.
+
+After working through the epics to get the current featured projects to their present state, we have encountered some friction that is perfectly fine and good for those projects but not for this one where we need to work in the timeframe of hours and not seasons. We need to get important things done now, and less important things can wait but should not be forgotten.
+
+Let us ponder how to proceed, and if there is anything else we should do before going live.
+
+---
+
+A simple first step would be to create an alias for each of our advisors so it doesn't look like we are claiming to be them. In the alias file it can reference the persona doc of the mentor.
+
+Please create an alias persona for our first advisor and we will refine it, approve it, and then use that process for the others.
+
+I have provided an example of an advisor file. But in our case the advisor should be informed by the persona, so let's do that for steve-krug.md and create a corresponding advisor file that is inspired by Steve but is not claiming to be Steve.
+
+-
+
+Yes, I can dig it! I do like the name - well done! Let us do the same for each of the others, one at a time, so that we can review each before proceeding to the next.
+
+---
+
+Yes, that is great! Please continue with the next.
+
+---
+
+So we have the persona-based versions of our review and go-live prompts. Let us create alternate versions of these that refernece the advisors rather than referening the personas.
