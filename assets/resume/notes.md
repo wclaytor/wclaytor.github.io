@@ -120,3 +120,10 @@ scripts/utility/md2html/md2html.py projects/alpine-markdown-presentation/README.
 
 Nice! These project repos are currently private, so instead of 'source' buttons let us replace those with 'view readme' buttons that link to our new README.html files.
 
+---
+
+Nice, thanks! Having read the entire review, the first thing we should tackle is the icon issue. The recommendation to use SVG icons sounds great and will allow us to eliminate dependencies. Please create a plan to replace all of our icons with SVG icons.
+
+-
+
+Nice! Let's go!
