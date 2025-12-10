@@ -156,3 +156,9 @@ Very nice! We are definitely keeping that! The art director and the UX designer 
 Nice! We would like each of the sections to feel like a page, but with the ability to scroll between them. However, the Contact section is only about a half page tall, so the illusion is somewhat broken when you click the contact link and see half of the projects section sticking out.
 
 What can we do to subtly and tastefully give the Contacts section enough vertical space to seem like a full page when we navigate to that section?
+
+---
+
+Another nice one, thanks! Users are very interested in our background image theming system and how it is used on each page. 
+
+This makes me think it is time to update our README.md file with some juicy info on everything about how our site is designed and our layout process, including our background image filtering system.
