@@ -11866,3 +11866,41 @@ body {
   width: 1.25rem;
   height: 1.25rem;
 }
+
+/* Masthead tagline styling */
+.masthead-tagline {
+  font-size: 1.25rem;
+  font-weight: 300;
+  letter-spacing: 0.15rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 1.5rem;
+  text-transform: uppercase;
+  animation: fadeIn 1.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive tagline sizing */
+@media (max-width: 767px) {
+  .masthead-tagline {
+    font-size: 1rem;
+    letter-spacing: 0.1rem;
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 575px) {
+  .masthead-tagline {
+    font-size: 0.875rem;
+    letter-spacing: 0.08rem;
+  }
+}

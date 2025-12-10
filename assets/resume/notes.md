@@ -127,3 +127,22 @@ Nice, thanks! Having read the entire review, the first thing we should tackle is
 -
 
 Nice! Let's go!
+
+---
+
+What should we do about the copyright issue mentioned in the review. We currently have:
+```
+Copyright &copy; William Claytor 2023 | 2025
+```
+
+What should we use instead?
+
+---
+
+Ok! On to next steps:
+
+1. **Enhance the masthead** — Add a compelling tagline below the name (e.g., "Senior Software Engineer | Building Reliable Systems for 25 Years") to immediately communicate value
+
+We really like the minimal landing page. We are hoping that folks will be intrigued and want to learn more by scrolling down or clicking / tapping the about link.
+
+We are willing to try adding the tagline "Senior Software Engineer" and if it fits with the current design and looks great we will consider keeping it. Please implement the tagline and make us love it!
