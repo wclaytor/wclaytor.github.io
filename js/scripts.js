@@ -51,4 +51,10 @@ window.addEventListener('DOMContentLoaded', event => {
         });
     });
 
+    // Dynamic copyright year
+    const currentYearElement = document.getElementById('current-year');
+    if (currentYearElement) {
+        currentYearElement.textContent = new Date().getFullYear();
+    }
+
 });
