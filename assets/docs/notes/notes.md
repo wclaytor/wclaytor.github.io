@@ -223,4 +223,10 @@ Let us start with the Immediate Fixes!
 
 ---
 
+Well that is pretty freaking awesome! Thanks! We are going to run with that. In fact, we have already pushed the commit.
 
+One thing that has been nagging at us through this process is that the professional work experience starts in 1998, and it is 2025, so that is not 25 years of experience. That is over 25 years of experience. How should we pitch this?
+
+--
+
+Yes, let us go with "over 25 years" and we will (hopefully) update it when it needs to be "over 30 years". ;?
