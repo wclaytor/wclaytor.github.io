@@ -75,3 +75,17 @@ We are creating a review panel with five esteemed members to provide feedback on
 - etc...
 
 I have assembled the Persona files for our five esteemed members of the review panel. Please create a prompt file to assemble the review panel and guide them through the review process to each provide their own unique perspective, then synthesize a summary, and provide the complete review in Markdown format.
+
+---
+
+Nice! Let us focus on the immediate items first:
+
+Immediate (Compliance & Discovery):
+
+- Add descriptive meta tags (title, description, Open Graph)
+- Implement skip-to-content navigation link for WCAG compliance
+- Update Font Awesome to current stable version (6.7.x)
+
+Let us take them one at a time. I will test each proposed change and we will work to resolve any issues. When we are satisfied I will commit the update and we will move on to the next item.
+
+Let us start with the first item!
