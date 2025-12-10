@@ -11829,3 +11829,40 @@ body {
     letter-spacing: 0.15rem !important;
   }
 }
+
+/* SVG Icon Utilities */
+.icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.icon-sm {
+  width: 0.875em;
+  height: 0.875em;
+}
+
+.icon-lg {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.icon-xl {
+  width: 2em;
+  height: 2em;
+}
+
+/* Social icon specific styling */
+.contact-section .social a .icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Navbar toggle icon */
+.navbar-toggler .icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
