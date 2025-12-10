@@ -93,3 +93,13 @@ Let us start with the first item!
 ---
 
 Nice! Let us move on to the next item.
+
+---
+
+Please elaborate on the "Implement consistent visual layout for project showcase" item.
+
+-
+
+We are going to be adding projects so moving to a card-based layout is appealing. We should have featured project cards for our featured projects, and regular cards for our other side projects. 
+
+Let us start by implementing featured project cards with two cards per row, with the rows switching to stacked for mobile layouts.

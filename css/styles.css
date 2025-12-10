@@ -11486,6 +11486,70 @@ html {
   top: 0;
 }
 
+/* Featured Project Cards */
+.projects-section .card {
+  border: none;
+  border-radius: 0.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+}
+
+.projects-section .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.projects-section .card-img-top {
+  height: 250px;
+  object-fit: cover;
+  object-position: top;
+}
+
+.projects-section .card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.projects-section .card-title:hover {
+  color: #64a19d !important;
+}
+
+.projects-section .card-text {
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.projects-section .badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.375rem 0.75rem;
+}
+
+.projects-section .card-footer {
+  padding: 1rem 1.25rem;
+}
+
+.projects-section .btn-sm {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+/* Ensure consistent card heights */
+.projects-section .card.h-100 {
+  display: flex;
+  flex-direction: column;
+}
+
+.projects-section .card-body {
+  flex: 1;
+}
+
+/* Gap utility for badges (Bootstrap 5.1 compatibility) */
+.gap-2 {
+  gap: 0.5rem;
+}
+
 body {
   letter-spacing: 0.0625em;
 }
