@@ -162,3 +162,44 @@ What can we do to subtly and tastefully give the Contacts section enough vertica
 Another nice one, thanks! Users are very interested in our background image theming system and how it is used on each page. 
 
 This makes me think it is time to update our README.md file with some juicy info on everything about how our site is designed and our layout process, including our background image filtering system.
+
+---
+
+
+
+As we are testing the site we get the feeling that the use of the background in the about section feels too similar to the main section. We see this called out in the README as visual consistency, but it is a bit too consistent. 
+
+Since the about page will likely be most user's first experience with how we transform the background image, we need to do enough to call out that we are using the same image but changing it in multiple ways, while not being cheezy about it. 
+
+With that in mind, please give it a shot, and we can keep working on it until we get it just right! Go for it!
+
+---
+
+Yes!!! That is so awesome!
+
+Since we are on a roll, let us try an experiment and just create a small project in the projects folder right in the middle of our session to capture what we are doing, and add it to the larger site for later use elsewhere.
+
+I created a README for my idea and will quote it here:
+
+```
+A demonstration of our background theming system that displays the background image and shows all of the various filters that can be applied to it, with presets and interactive controls so that the user can experiment by tweaking the filters in real-time and then capture the result as a preset they can use for a section on the site.
+```
+
+Go ahead and one-shot that! I know you can do it!
+
+---
+
+Holy freaking wow!!! That is so cool, after testing it for a few minutes I can see really digging in and spending lots of time making cool presets! 
+
+I think we should go ahead and ship it with the current PR. But in that case we do need a way to differentiate it from our projects that we have put tons of effort and testing into. This is a SUPER cool experiment...
+
+We need an experiments section for our projects section! And this can be the first one to go there. And as an experiment, you get to design it and integrate it into the current site. There will be many more experiments to come so it should be easy for us to integrate them as we create them.
+
+-
+
+scripts/utility/md2html/md2html.py projects/alpine-background-transformer/README.md
+
+-
+
+Fantastic! I have created the HTML version of the README. Please link to it from the card.
+

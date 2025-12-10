@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Alpine Background Transformer">
+  <title>Alpine Background Transformer</title>
+  
+  <!-- Bootstrap Icons CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  
+  <!-- Theme Initialization - Prevent FOUC -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  
+  <style>
+    /* CSS Variables for Theme */
+    :root {
+      /* Light theme colors */
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --bg-code: #f5f5f5;
+      --text-primary: #1a202c;
+      --text-secondary: #4a5568;
+      --text-muted: #718096;
+      --border-color: #e2e8f0;
+      --link-color: #3b82f6;
+      --link-hover: #2563eb;
+      --shadow: rgba(0, 0, 0, 0.1);
+      --code-text: #d63384;
+      --blockquote-border: #3b82f6;
+      --blockquote-bg: #eff6ff;
+      --table-header-bg: #f1f5f9;
+      --highlight-bg: #fef3c7;
+    }
+    
+    [data-theme="dark"] {
+      /* Dark theme colors */
+      --bg-primary: #1a202c;
+      --bg-secondary: #2d3748;
+      --bg-code: #2d3748;
+      --text-primary: #f7fafc;
+      --text-secondary: #e2e8f0;
+      --text-muted: #a0aec0;
+      --border-color: #4a5568;
+      --link-color: #60a5fa;
+      --link-hover: #93c5fd;
+      --shadow: rgba(0, 0, 0, 0.3);
+      --code-text: #f687b3;
+      --blockquote-border: #60a5fa;
+      --blockquote-bg: #1e3a5f;
+      --table-header-bg: #374151;
+      --highlight-bg: #7c2d12;
+    }
+    
+    /* Prevent FOUC */
+    [x-cloak] { display: none !important; }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background-color: var(--bg-primary);
+      transition: background-color 0.3s ease, color 0.3s ease;
+      overflow-x: hidden;
+    }
+    
+    /* Header Styling */
+    header {
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 4px var(--shadow);
+    }
+    
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .header-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    
+    /* Theme Toggle Button */
+    .theme-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+      border-radius: 0.375rem;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      font-size: 1.25rem;
+    }
+    
+    .theme-toggle:hover {
+      background-color: var(--bg-secondary);
+    }
+    
+    .theme-toggle:active {
+      transform: scale(0.95);
+    }
+    
+    .theme-toggle i {
+      transition: transform 0.3s ease;
+    }
+    
+    /* Main Content Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+    }
+    
+    /* Content Styling */
+    .content {
+      background-color: var(--bg-primary);
+      border-radius: 0.5rem;
+      padding: 2rem;
+      box-shadow: 0 1px 3px var(--shadow);
+    }
+    
+    @media (max-width: 768px) {
+      .content {
+        padding: 1.5rem;
+      }
+    }
+    
+    /* Typography */
+    h1, h2, h3, h4, h5, h6 {
+      color: var(--text-primary);
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    
+    h1 { font-size: 2.5rem; margin-top: 0; }
+    h2 { font-size: 2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; }
+    h3 { font-size: 1.5rem; }
+    h4 { font-size: 1.25rem; }
+    h5 { font-size: 1.125rem; }
+    h6 { font-size: 1rem; }
+    
+    @media (max-width: 768px) {
+      h1 { font-size: 2rem; }
+      h2 { font-size: 1.75rem; }
+      h3 { font-size: 1.375rem; }
+    }
+    
+    p {
+      margin-bottom: 1rem;
+      color: var(--text-secondary);
+    }
+    
+    /* Links */
+    a {
+      color: var(--link-color);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    
+    a:hover {
+      color: var(--link-hover);
+      text-decoration: underline;
+    }
+    
+    /* Lists */
+    ul, ol {
+      margin-bottom: 1rem;
+      padding-left: 2rem;
+      color: var(--text-secondary);
+    }
+    
+    li {
+      margin-bottom: 0.5rem;
+    }
+    
+    ul ul, ol ol, ul ol, ol ul {
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    /* Code */
+    code {
+      background-color: var(--bg-code);
+      color: var(--code-text);
+      padding: 0.2rem 0.4rem;
+      border-radius: 0.25rem;
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 0.875rem;
+    }
+    
+    pre {
+      background-color: var(--bg-code);
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      overflow-x: auto;
+      margin-bottom: 1rem;
+    }
+    
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+    
+    /* Blockquotes */
+    blockquote {
+      border-left: 4px solid var(--blockquote-border);
+      background-color: var(--blockquote-bg);
+      padding: 1rem 1.5rem;
+      margin: 1rem 0;
+      border-radius: 0.25rem;
+    }
+    
+    blockquote p {
+      margin-bottom: 0;
+      color: var(--text-primary);
+    }
+    
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1rem;
+      overflow-x: auto;
+      display: block;
+    }
+    
+    @media (min-width: 768px) {
+      table {
+        display: table;
+      }
+    }
+    
+    thead {
+      background-color: var(--table-header-bg);
+    }
+    
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    th {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    
+    td {
+      color: var(--text-secondary);
+    }
+    
+    tr:hover {
+      background-color: var(--bg-secondary);
+    }
+    
+    /* Horizontal Rule */
+    hr {
+      border: none;
+      border-top: 2px solid var(--border-color);
+      margin: 2rem 0;
+    }
+    
+    /* Images */
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 0.5rem;
+      margin: 1rem 0;
+    }
+    
+    /* Strong and Emphasis */
+    strong {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    
+    em {
+      font-style: italic;
+    }
+    
+    /* Smooth scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    /* Respect reduced motion preference */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+    
+    /* Print styles */
+    @media print {
+      body {
+        background: white;
+        color: black;
+      }
+      
+      header {
+        position: static;
+        box-shadow: none;
+      }
+      
+      .theme-toggle {
+        display: none;
+      }
+      
+      a {
+        color: #0066cc;
+        text-decoration: underline;
+      }
+      
+      pre, blockquote {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header with Theme Toggle -->
+  <header>
+    <div class="header-content">
+      <h1 class="header-title">Alpine Background Transformer</h1>
+      <button 
+        class="theme-toggle" 
+        onclick="toggleTheme()"
+        aria-label="Toggle theme"
+        title="Toggle light/dark theme">
+        <i class="bi bi-sun-fill" id="theme-icon-light" style="display: none;"></i>
+        <i class="bi bi-moon-stars-fill" id="theme-icon-dark" style="display: none;"></i>
+      </button>
+    </div>
+  </header>
+  
+  <!-- Main Content -->
+  <div class="container">
+    <div class="content">
+      <h1 id="alpine-background-transformer">Alpine Background Transformer</h1>
+<p>An interactive CSS gradient editor for experimenting with the portfolio's unified background theming system. Create, preview, and export gradient presets in real-time.</p>
+<p>🎨 <strong><a href="https://wclaytor.github.io/projects/alpine-background-transformer/index.html">Launch App</a></strong></p>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>This tool demonstrates how a single background image can be transformed into completely different visual experiences using CSS gradient overlays. It's the same technique used throughout the portfolio site to create visual cohesion while varying mood across sections.</p>
+<h2 id="features">Features</h2>
+<h3 id="interactive-controls">🎛️ Interactive Controls</h3>
+<ul>
+<li><strong>Gradient Angle</strong> - Rotate from 0° to 360° with quick presets (vertical, horizontal, diagonal)</li>
+<li><strong>Three Color Stops</strong> - Full control over start, middle, and end colors</li>
+<li><strong>Opacity Sliders</strong> - Fine-tune transparency for each color stop</li>
+<li><strong>Position Control</strong> - Adjust where the middle stop appears (10%-90%)</li>
+</ul>
+<h3 id="site-presets">📚 Site Presets</h3>
+<p>Pre-loaded with the actual gradient settings from the portfolio:</p>
+<table>
+<thead>
+<tr>
+<th>Preset</th>
+<th>Description</th>
+<th>Angle</th>
+<th>Colors</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Masthead</strong></td>
+<td>Dark hero section</td>
+<td>180°</td>
+<td>Black vertical fade</td>
+</tr>
+<tr>
+<td><strong>About</strong></td>
+<td>Teal diagonal sweep</td>
+<td>135°</td>
+<td>Teal → Blue → Black</td>
+</tr>
+<tr>
+<td><strong>Projects</strong></td>
+<td>Light white overlay</td>
+<td>180°</td>
+<td>White with subtle gray</td>
+</tr>
+<tr>
+<td><strong>Contact</strong></td>
+<td>Dark with blue tint</td>
+<td>180°</td>
+<td>Black with blue undertone</td>
+</tr>
+</tbody>
+</table>
+<h3 id="custom-presets">💾 Custom Presets</h3>
+<ul>
+<li>Save your own gradient combinations</li>
+<li>Presets persist in localStorage</li>
+<li>Load, delete, and manage saved presets</li>
+</ul>
+<h3 id="css-export">💻 CSS Export</h3>
+<ul>
+<li>Live-generated CSS code</li>
+<li>Syntax highlighting for readability</li>
+<li>One-click copy to clipboard</li>
+<li>Ready to paste into your stylesheet</li>
+</ul>
+<h2 id="usage">Usage</h2>
+<ol>
+<li><strong>Start with a Preset</strong> - Click any site preset to see how it transforms the background</li>
+<li><strong>Experiment</strong> - Adjust angle, colors, and opacity to create your own look</li>
+<li><strong>Preview</strong> - See changes in real-time on the preview panel</li>
+<li><strong>Copy</strong> - Click "Copy" to grab the CSS code</li>
+<li><strong>Save</strong> - Optionally save your creation as a custom preset</li>
+</ol>
+<h2 id="technology">Technology</h2>
+<ul>
+<li><strong>Alpine.js</strong> - Reactive UI with minimal footprint</li>
+<li><strong>Pure CSS</strong> - No external CSS framework</li>
+<li><strong>localStorage</strong> - Persist custom presets</li>
+<li><strong>CSS Linear Gradients</strong> - The core technique being demonstrated</li>
+</ul>
+<h2 id="the-technique">The Technique</h2>
+<p>The key insight is that CSS allows layering a <code>linear-gradient</code> on top of an image:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">background</span><span class="o">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">linear-gradient</span><span class="o">(</span>
+<span class="w">    </span><span class="nt">135deg</span><span class="o">,</span>
+<span class="w">    </span><span class="nt">rgba</span><span class="o">(</span><span class="nt">100</span><span class="o">,</span><span class="w"> </span><span class="nt">161</span><span class="o">,</span><span class="w"> </span><span class="nt">157</span><span class="o">,</span><span class="w"> </span><span class="nt">0</span><span class="p">.</span><span class="nc">85</span><span class="o">)</span><span class="w"> </span><span class="nt">0</span><span class="o">%,</span>
+<span class="w">    </span><span class="nt">rgba</span><span class="o">(</span><span class="nt">40</span><span class="o">,</span><span class="w"> </span><span class="nt">80</span><span class="o">,</span><span class="w"> </span><span class="nt">100</span><span class="o">,</span><span class="w"> </span><span class="nt">0</span><span class="p">.</span><span class="nc">75</span><span class="o">)</span><span class="w"> </span><span class="nt">50</span><span class="o">%,</span>
+<span class="w">    </span><span class="nt">rgba</span><span class="o">(</span><span class="nt">0</span><span class="o">,</span><span class="w"> </span><span class="nt">0</span><span class="o">,</span><span class="w"> </span><span class="nt">0</span><span class="o">,</span><span class="w"> </span><span class="nt">0</span><span class="p">.</span><span class="nc">95</span><span class="o">)</span><span class="w"> </span><span class="nt">100</span><span class="o">%</span>
+<span class="w">  </span><span class="o">),</span>
+<span class="w">  </span><span class="nt">url</span><span class="o">(</span><span class="s2">&quot;../assets/img/bg-masthead.jpg&quot;</span><span class="o">);</span>
+</code></pre></div>
+
+<p>By varying the:<br />
+- <strong>Angle</strong> (direction of the gradient)<br />
+- <strong>Colors</strong> (including transparency)<br />
+- <strong>Stop positions</strong> (where colors blend)</p>
+<p>You can create dramatically different appearances from the same source image.</p>
+<h2 id="benefits-of-this-approach">Benefits of This Approach</h2>
+<p>✅ <strong>Performance</strong> - One image download, multiple visual treatments<br />
+✅ <strong>Consistency</strong> - Unified visual language across sections<br />
+✅ <strong>Flexibility</strong> - Easy to adjust without new assets<br />
+✅ <strong>File Size</strong> - No need for multiple background images  </p>
+<h2 id="screenshots">Screenshots</h2>
+<p>The app features a split-panel layout:<br />
+- <strong>Left</strong>: Live preview with the background and overlay<br />
+- <strong>Right</strong>: Controls for angle, colors, and presets</p>
+<h2 id="related">Related</h2>
+<ul>
+<li><a href="../../index.html">Portfolio Homepage</a> - See the gradients in action</li>
+<li><a href="../../README.md">Main README</a> - Full documentation of the theming system</li>
+</ul>
+<hr />
+<p>Built with 💚 using <a href="https://alpinejs.dev/">Alpine.js</a></p>
+    </div>
+  </div>
+  
+  <!-- Theme Toggle Script -->
+  <script>
+    // Initialize theme icons on page load
+    function updateThemeIcon() {
+      const theme = document.documentElement.getAttribute('data-theme');
+      const lightIcon = document.getElementById('theme-icon-light');
+      const darkIcon = document.getElementById('theme-icon-dark');
+      
+      if (theme === 'dark') {
+        lightIcon.style.display = 'block';
+        darkIcon.style.display = 'none';
+      } else {
+        lightIcon.style.display = 'none';
+        darkIcon.style.display = 'block';
+      }
+    }
+    
+    // Toggle theme function
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateThemeIcon();
+    }
+    
+    // Update icon on load
+    updateThemeIcon();
+    
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (!localStorage.getItem('theme')) {
+        const newTheme = e.matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        updateThemeIcon();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alpine Background Transformer - Interactive CSS Gradient Editor</title>
+    <meta name="description" content="Interactive tool for experimenting with CSS gradient overlays on background images. Create, preview, and export gradient presets.">
+    
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #64a19d;
+            --primary-dark: #4a7c79;
+            --bg-dark: #1a1a2e;
+            --bg-darker: #0f0f1a;
+            --text: #e4e4e7;
+            --text-muted: #a1a1aa;
+            --border: #27273a;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-darker);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-dark);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header h1 svg {
+            width: 24px;
+            height: 24px;
+            color: var(--primary);
+        }
+
+        .header-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .header-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.2s;
+        }
+
+        .header-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Main Layout */
+        .app-container {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            min-height: calc(100vh - 60px);
+        }
+
+        @media (max-width: 1024px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Preview Panel */
+        .preview-panel {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: var(--bg-darker);
+        }
+
+        .preview-container {
+            width: 100%;
+            max-width: 900px;
+            aspect-ratio: 16/9;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .preview-background {
+            width: 100%;
+            height: 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        .preview-content {
+            text-align: center;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .preview-content h2 {
+            font-size: 3rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .preview-content p {
+            font-size: 1.125rem;
+            opacity: 0.8;
+        }
+
+        /* Controls Panel */
+        .controls-panel {
+            background: var(--bg-dark);
+            border-left: 1px solid var(--border);
+            overflow-y: auto;
+            max-height: calc(100vh - 60px);
+        }
+
+        @media (max-width: 1024px) {
+            .controls-panel {
+                border-left: none;
+                border-top: 1px solid var(--border);
+                max-height: none;
+            }
+        }
+
+        .controls-section {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .controls-section h3 {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        /* Presets Grid */
+        .presets-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .preset-btn {
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text);
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .preset-btn:hover {
+            border-color: var(--primary);
+            background: rgba(100, 161, 157, 0.1);
+        }
+
+        .preset-btn.active {
+            border-color: var(--primary);
+            background: rgba(100, 161, 157, 0.2);
+        }
+
+        .preset-btn .preset-name {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .preset-btn .preset-desc {
+            font-size: 0.625rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        /* Control Groups */
+        .control-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .control-label span:first-child {
+            font-weight: 500;
+        }
+
+        .control-value {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            color: var(--primary);
+            background: var(--bg-darker);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        /* Range Slider */
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--bg-darker);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        /* Color Picker */
+        .color-picker-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .color-picker-wrapper {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid var(--border);
+        }
+
+        .color-picker-wrapper input[type="color"] {
+            width: 60px;
+            height: 60px;
+            border: none;
+            cursor: pointer;
+            position: absolute;
+            top: -10px;
+            left: -10px;
+        }
+
+        .color-input {
+            flex: 1;
+            background: var(--bg-darker);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            color: var(--text);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+        }
+
+        .color-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Color Stops */
+        .color-stops {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .color-stop {
+            background: var(--bg-darker);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .color-stop-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .color-stop-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05rem;
+        }
+
+        /* Code Output */
+        .code-output {
+            background: var(--bg-darker);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: rgba(0,0,0,0.3);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-header span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.375rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .copy-btn.copied {
+            background: var(--success);
+        }
+
+        .copy-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .code-content {
+            padding: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .code-content .keyword {
+            color: #c792ea;
+        }
+
+        .code-content .function {
+            color: #82aaff;
+        }
+
+        .code-content .string {
+            color: #c3e88d;
+        }
+
+        .code-content .number {
+            color: #f78c6c;
+        }
+
+        /* Save Preset */
+        .save-preset-form {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .save-preset-form input {
+            flex: 1;
+            background: var(--bg-darker);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.625rem 0.75rem;
+            color: var(--text);
+            font-size: 0.875rem;
+        }
+
+        .save-preset-form input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .save-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.625rem 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .save-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Custom Presets */
+        .custom-presets {
+            margin-top: 1rem;
+        }
+
+        .custom-preset-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-darker);
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+        }
+
+        .custom-preset-item span {
+            font-size: 0.875rem;
+        }
+
+        .custom-preset-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .custom-preset-actions button {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: color 0.2s;
+        }
+
+        .custom-preset-actions button:hover {
+            color: var(--primary);
+        }
+
+        .custom-preset-actions button.delete:hover {
+            color: #ef4444;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-dark);
+            border: 1px solid var(--primary);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: rgba(100, 161, 157, 0.1);
+            border: 1px solid rgba(100, 161, 157, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            font-size: 0.8125rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
+
+        .info-box strong {
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body x-data="backgroundTransformer()">
+    <!-- Header -->
+    <header class="header">
+        <h1>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="13.5" cy="6.5" r="0.5"></circle>
+                <circle cx="17.5" cy="10.5" r="0.5"></circle>
+                <circle cx="8.5" cy="7.5" r="0.5"></circle>
+                <circle cx="6.5" cy="12.5" r="0.5"></circle>
+                <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.555C21.965 6.012 17.461 2 12 2z"></path>
+            </svg>
+            Background Transformer
+        </h1>
+        <div class="header-links">
+            <a href="../../index.html">← Back to Portfolio</a>
+            <a href="README.md">Documentation</a>
+        </div>
+    </header>
+
+    <!-- Main App -->
+    <div class="app-container">
+        <!-- Preview Panel -->
+        <div class="preview-panel">
+            <div class="preview-container">
+                <div class="preview-background" :style="previewStyle">
+                    <div class="preview-content">
+                        <h2>Preview</h2>
+                        <p>See your gradient in action</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls Panel -->
+        <div class="controls-panel">
+            <!-- Presets Section -->
+            <div class="controls-section">
+                <h3>📚 Site Presets</h3>
+                <div class="presets-grid">
+                    <template x-for="preset in sitePresets" :key="preset.name">
+                        <button 
+                            class="preset-btn"
+                            :class="{ 'active': activePreset === preset.name }"
+                            @click="loadPreset(preset)"
+                        >
+                            <span class="preset-name" x-text="preset.name"></span>
+                            <span class="preset-desc" x-text="preset.description"></span>
+                        </button>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Gradient Direction -->
+            <div class="controls-section">
+                <h3>🧭 Gradient Direction</h3>
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>Angle</span>
+                        <span class="control-value" x-text="angle + 'deg'"></span>
+                    </div>
+                    <input type="range" min="0" max="360" step="1" x-model="angle">
+                </div>
+                <div class="presets-grid" style="margin-top: 0.75rem;">
+                    <button class="preset-btn" @click="angle = 180" :class="{ 'active': angle == 180 }">
+                        <span class="preset-name">↓ Top to Bottom</span>
+                    </button>
+                    <button class="preset-btn" @click="angle = 0" :class="{ 'active': angle == 0 }">
+                        <span class="preset-name">↑ Bottom to Top</span>
+                    </button>
+                    <button class="preset-btn" @click="angle = 135" :class="{ 'active': angle == 135 }">
+                        <span class="preset-name">↘ Diagonal</span>
+                    </button>
+                    <button class="preset-btn" @click="angle = 90" :class="{ 'active': angle == 90 }">
+                        <span class="preset-name">→ Left to Right</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Color Stops -->
+            <div class="controls-section">
+                <h3>🎨 Color Stops</h3>
+                <div class="color-stops">
+                    <!-- Stop 1 -->
+                    <div class="color-stop">
+                        <div class="color-stop-header">
+                            <span class="color-stop-label">Start (0%)</span>
+                        </div>
+                        <div class="color-picker-group">
+                            <div class="color-picker-wrapper">
+                                <input type="color" x-model="stop1Color" @input="updateStop1FromPicker">
+                            </div>
+                            <input type="text" class="color-input" x-model="stop1Rgba" placeholder="rgba(0,0,0,0.5)">
+                        </div>
+                        <div class="control-group" style="margin-top: 0.75rem;">
+                            <div class="control-label">
+                                <span>Opacity</span>
+                                <span class="control-value" x-text="(stop1Alpha * 100).toFixed(0) + '%'"></span>
+                            </div>
+                            <input type="range" min="0" max="1" step="0.01" x-model="stop1Alpha" @input="updateStop1Rgba">
+                        </div>
+                    </div>
+
+                    <!-- Stop 2 -->
+                    <div class="color-stop">
+                        <div class="color-stop-header">
+                            <span class="color-stop-label">Middle</span>
+                            <span class="control-value" x-text="stop2Position + '%'"></span>
+                        </div>
+                        <div class="color-picker-group">
+                            <div class="color-picker-wrapper">
+                                <input type="color" x-model="stop2Color" @input="updateStop2FromPicker">
+                            </div>
+                            <input type="text" class="color-input" x-model="stop2Rgba" placeholder="rgba(0,0,0,0.5)">
+                        </div>
+                        <div class="control-group" style="margin-top: 0.75rem;">
+                            <div class="control-label">
+                                <span>Position</span>
+                            </div>
+                            <input type="range" min="10" max="90" step="1" x-model="stop2Position">
+                        </div>
+                        <div class="control-group">
+                            <div class="control-label">
+                                <span>Opacity</span>
+                                <span class="control-value" x-text="(stop2Alpha * 100).toFixed(0) + '%'"></span>
+                            </div>
+                            <input type="range" min="0" max="1" step="0.01" x-model="stop2Alpha" @input="updateStop2Rgba">
+                        </div>
+                    </div>
+
+                    <!-- Stop 3 -->
+                    <div class="color-stop">
+                        <div class="color-stop-header">
+                            <span class="color-stop-label">End (100%)</span>
+                        </div>
+                        <div class="color-picker-group">
+                            <div class="color-picker-wrapper">
+                                <input type="color" x-model="stop3Color" @input="updateStop3FromPicker">
+                            </div>
+                            <input type="text" class="color-input" x-model="stop3Rgba" placeholder="rgba(0,0,0,0.5)">
+                        </div>
+                        <div class="control-group" style="margin-top: 0.75rem;">
+                            <div class="control-label">
+                                <span>Opacity</span>
+                                <span class="control-value" x-text="(stop3Alpha * 100).toFixed(0) + '%'"></span>
+                            </div>
+                            <input type="range" min="0" max="1" step="0.01" x-model="stop3Alpha" @input="updateStop3Rgba">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generated CSS -->
+            <div class="controls-section">
+                <h3>💻 Generated CSS</h3>
+                <div class="code-output">
+                    <div class="code-header">
+                        <span>CSS Property</span>
+                        <button class="copy-btn" :class="{ 'copied': copied }" @click="copyCSS">
+                            <svg x-show="!copied" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            <svg x-show="copied" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span x-text="copied ? 'Copied!' : 'Copy'"></span>
+                        </button>
+                    </div>
+                    <div class="code-content" x-html="highlightedCSS"></div>
+                </div>
+            </div>
+
+            <!-- Save Custom Preset -->
+            <div class="controls-section">
+                <h3>💾 Save Custom Preset</h3>
+                <div class="save-preset-form">
+                    <input type="text" x-model="newPresetName" placeholder="My Awesome Gradient" @keyup.enter="saveCustomPreset">
+                    <button class="save-btn" @click="saveCustomPreset">Save</button>
+                </div>
+                
+                <div class="custom-presets" x-show="customPresets.length > 0">
+                    <template x-for="(preset, index) in customPresets" :key="index">
+                        <div class="custom-preset-item">
+                            <span x-text="preset.name"></span>
+                            <div class="custom-preset-actions">
+                                <button @click="loadPreset(preset)" title="Load">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                                </button>
+                                <button class="delete" @click="deleteCustomPreset(index)" title="Delete">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Info -->
+            <div class="controls-section">
+                <div class="info-box">
+                    <strong>💡 Tip:</strong> This tool demonstrates the background theming system used throughout the portfolio. 
+                    All sections use the same background image with different gradient overlays to create unique moods while maintaining visual cohesion.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" :class="{ 'show': showToast }" x-text="toastMessage"></div>
+
+    <script>
+        function backgroundTransformer() {
+            return {
+                // Background image path
+                bgImage: '../../assets/img/bg-masthead.jpg',
+                
+                // Active preset tracking
+                activePreset: 'Masthead',
+                
+                // Gradient controls
+                angle: 180,
+                stop1Color: '#000000',
+                stop1Alpha: 0.3,
+                stop1Rgba: 'rgba(0, 0, 0, 0.3)',
+                stop2Color: '#000000',
+                stop2Alpha: 0.7,
+                stop2Position: 75,
+                stop2Rgba: 'rgba(0, 0, 0, 0.7)',
+                stop3Color: '#000000',
+                stop3Alpha: 1,
+                stop3Rgba: 'rgba(0, 0, 0, 1)',
+                
+                // UI state
+                copied: false,
+                showToast: false,
+                toastMessage: '',
+                newPresetName: '',
+                
+                // Site presets from actual CSS
+                sitePresets: [
+                    {
+                        name: 'Masthead',
+                        description: 'Dark hero section',
+                        angle: 180,
+                        stop1: { color: '#000000', alpha: 0.3 },
+                        stop2: { color: '#000000', alpha: 0.7, position: 75 },
+                        stop3: { color: '#000000', alpha: 1 }
+                    },
+                    {
+                        name: 'About',
+                        description: 'Teal diagonal sweep',
+                        angle: 135,
+                        stop1: { color: '#64a19d', alpha: 0.85 },
+                        stop2: { color: '#285064', alpha: 0.75, position: 50 },
+                        stop3: { color: '#000000', alpha: 0.95 }
+                    },
+                    {
+                        name: 'Projects',
+                        description: 'Light white overlay',
+                        angle: 180,
+                        stop1: { color: '#ffffff', alpha: 0.85 },
+                        stop2: { color: '#ffffff', alpha: 0.75, position: 75 },
+                        stop3: { color: '#f8f9fa', alpha: 0.9 }
+                    },
+                    {
+                        name: 'Contact',
+                        description: 'Dark with blue tint',
+                        angle: 180,
+                        stop1: { color: '#000000', alpha: 0.7 },
+                        stop2: { color: '#001428', alpha: 0.8, position: 75 },
+                        stop3: { color: '#000000', alpha: 0.95 }
+                    }
+                ],
+                
+                // Custom presets (loaded from localStorage)
+                customPresets: [],
+                
+                init() {
+                    // Load custom presets from localStorage
+                    const saved = localStorage.getItem('bgTransformerPresets');
+                    if (saved) {
+                        this.customPresets = JSON.parse(saved);
+                    }
+                    
+                    // Initialize with Masthead preset
+                    this.loadPreset(this.sitePresets[0]);
+                },
+                
+                get previewStyle() {
+                    return {
+                        background: `linear-gradient(${this.angle}deg, ${this.stop1Rgba} 0%, ${this.stop2Rgba} ${this.stop2Position}%, ${this.stop3Rgba} 100%), url('${this.bgImage}')`,
+                        backgroundPosition: 'center',
+                        backgroundSize: 'cover'
+                    };
+                },
+                
+                get generatedCSS() {
+                    return `background: linear-gradient(
+  ${this.angle}deg,
+  ${this.stop1Rgba} 0%,
+  ${this.stop2Rgba} ${this.stop2Position}%,
+  ${this.stop3Rgba} 100%
+), url("../assets/img/bg-masthead.jpg");
+background-position: center;
+background-repeat: no-repeat;
+background-size: cover;`;
+                },
+                
+                get highlightedCSS() {
+                    return this.generatedCSS
+                        .replace(/(background|background-position|background-repeat|background-size):/g, '<span class="keyword">$1</span>:')
+                        .replace(/(linear-gradient|url)/g, '<span class="function">$1</span>')
+                        .replace(/(\d+)(deg|%|px)/g, '<span class="number">$1</span>$2')
+                        .replace(/(rgba?\([^)]+\))/g, '<span class="string">$1</span>')
+                        .replace(/("\.\.\/assets[^"]*")/g, '<span class="string">$1</span>');
+                },
+                
+                loadPreset(preset) {
+                    this.activePreset = preset.name;
+                    this.angle = preset.angle;
+                    
+                    this.stop1Color = preset.stop1.color;
+                    this.stop1Alpha = preset.stop1.alpha;
+                    this.updateStop1Rgba();
+                    
+                    this.stop2Color = preset.stop2.color;
+                    this.stop2Alpha = preset.stop2.alpha;
+                    this.stop2Position = preset.stop2.position;
+                    this.updateStop2Rgba();
+                    
+                    this.stop3Color = preset.stop3.color;
+                    this.stop3Alpha = preset.stop3.alpha;
+                    this.updateStop3Rgba();
+                    
+                    this.toast(`Loaded "${preset.name}" preset`);
+                },
+                
+                updateStop1FromPicker() {
+                    this.updateStop1Rgba();
+                },
+                
+                updateStop2FromPicker() {
+                    this.updateStop2Rgba();
+                },
+                
+                updateStop3FromPicker() {
+                    this.updateStop3Rgba();
+                },
+                
+                updateStop1Rgba() {
+                    const rgb = this.hexToRgb(this.stop1Color);
+                    this.stop1Rgba = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${this.stop1Alpha})`;
+                    this.activePreset = null;
+                },
+                
+                updateStop2Rgba() {
+                    const rgb = this.hexToRgb(this.stop2Color);
+                    this.stop2Rgba = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${this.stop2Alpha})`;
+                    this.activePreset = null;
+                },
+                
+                updateStop3Rgba() {
+                    const rgb = this.hexToRgb(this.stop3Color);
+                    this.stop3Rgba = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${this.stop3Alpha})`;
+                    this.activePreset = null;
+                },
+                
+                hexToRgb(hex) {
+                    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                    return result ? {
+                        r: parseInt(result[1], 16),
+                        g: parseInt(result[2], 16),
+                        b: parseInt(result[3], 16)
+                    } : { r: 0, g: 0, b: 0 };
+                },
+                
+                copyCSS() {
+                    navigator.clipboard.writeText(this.generatedCSS).then(() => {
+                        this.copied = true;
+                        this.toast('CSS copied to clipboard!');
+                        setTimeout(() => this.copied = false, 2000);
+                    });
+                },
+                
+                saveCustomPreset() {
+                    if (!this.newPresetName.trim()) {
+                        this.toast('Please enter a preset name');
+                        return;
+                    }
+                    
+                    const preset = {
+                        name: this.newPresetName.trim(),
+                        description: 'Custom preset',
+                        angle: parseInt(this.angle),
+                        stop1: { color: this.stop1Color, alpha: parseFloat(this.stop1Alpha) },
+                        stop2: { color: this.stop2Color, alpha: parseFloat(this.stop2Alpha), position: parseInt(this.stop2Position) },
+                        stop3: { color: this.stop3Color, alpha: parseFloat(this.stop3Alpha) }
+                    };
+                    
+                    this.customPresets.push(preset);
+                    this.saveToLocalStorage();
+                    this.newPresetName = '';
+                    this.toast(`Saved "${preset.name}" preset`);
+                },
+                
+                deleteCustomPreset(index) {
+                    const name = this.customPresets[index].name;
+                    this.customPresets.splice(index, 1);
+                    this.saveToLocalStorage();
+                    this.toast(`Deleted "${name}" preset`);
+                },
+                
+                saveToLocalStorage() {
+                    localStorage.setItem('bgTransformerPresets', JSON.stringify(this.customPresets));
+                },
+                
+                toast(message) {
+                    this.toastMessage = message;
+                    this.showToast = true;
+                    setTimeout(() => this.showToast = false, 2500);
+                }
+            };
+        }
+    </script>
+</body>
+</html>
