@@ -150,3 +150,9 @@ We are willing to try adding the tagline "Senior Software Engineer" and if it fi
 ---
 
 Very nice! We are definitely keeping that! The art director and the UX designer were brainstorming after reviewing this update and thought a subtle call to action indicator could enhance engagement. The most subtle thing they could think of is a down-facing arrow button that fades in and causes the page to scroll to the About section when clicked.
+
+---
+
+Nice! We would like each of the sections to feel like a page, but with the ability to scroll between them. However, the Contact section is only about a half page tall, so the illusion is somewhat broken when you click the contact link and see half of the projects section sticking out.
+
+What can we do to subtly and tastefully give the Contacts section enough vertical space to seem like a full page when we navigate to that section?

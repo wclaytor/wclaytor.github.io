@@ -11796,6 +11796,32 @@ body {
   color: #fff;
 }
 
+/* Contact section full-page feel */
+.contact-section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 10rem;
+  padding-bottom: 10rem;
+}
+
+/* Adjust for shorter screens */
+@media (max-height: 800px) {
+  .contact-section {
+    min-height: auto;
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+  }
+}
+
+@media (max-height: 600px) {
+  .contact-section {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}
+
 .footer {
   padding: 5rem 0;
 }
