@@ -11903,13 +11903,24 @@ body {
 
 /* Masthead tagline styling */
 .masthead-tagline {
-  font-size: 1.25rem;
-  font-weight: 300;
+  font-size: 1.5rem;
+  font-weight: 600;
   letter-spacing: 0.15rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.95);
   margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
   text-transform: uppercase;
   animation: fadeIn 1.5s ease-in;
+}
+
+/* Masthead subtitle styling */
+.masthead-subtitle {
+  font-size: 1rem;
+  font-weight: 300;
+  letter-spacing: 0.1rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 0;
+  animation: fadeIn 2s ease-in;
 }
 
 @keyframes fadeIn {
@@ -11923,19 +11934,29 @@ body {
   }
 }
 
-/* Responsive tagline sizing */
+/* Responsive tagline and subtitle sizing */
 @media (max-width: 767px) {
   .masthead-tagline {
-    font-size: 1rem;
+    font-size: 1.25rem;
     letter-spacing: 0.1rem;
     margin-top: 1rem;
+  }
+  
+  .masthead-subtitle {
+    font-size: 0.875rem;
+    letter-spacing: 0.08rem;
   }
 }
 
 @media (max-width: 575px) {
   .masthead-tagline {
-    font-size: 0.875rem;
+    font-size: 1rem;
     letter-spacing: 0.08rem;
+  }
+  
+  .masthead-subtitle {
+    font-size: 0.75rem;
+    letter-spacing: 0.05rem;
   }
 }
 

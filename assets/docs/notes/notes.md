@@ -203,3 +203,24 @@ scripts/utility/md2html/md2html.py projects/alpine-background-transformer/README
 
 Fantastic! I have created the HTML version of the README. Please link to it from the card.
 
+---
+
+Hello esteemed reviewers! I have worked through several rounds of your reviews.
+
+---
+
+All right! It looks like we have some next steps:
+
+## Next Steps
+
+1. **Immediate Fixes** (This PR): Remove unused SB Forms script, verify asset references, strengthen the masthead headline to lead with "25 Years" value proposition
+
+2. **Content Enhancement**: Refactor the About section copy to be scannable - bullet points, shorter phrases, impact-first language
+
+3. **Architecture Improvement**: Extract project data into `projects.json` and implement dynamic rendering with Alpine.js, establishing the maintainability pattern for future growth
+
+Let us start with the Immediate Fixes!
+
+---
+
+
