@@ -57,4 +57,29 @@ window.addEventListener('DOMContentLoaded', event => {
         currentYearElement.textContent = new Date().getFullYear();
     }
 
+    // Scroll indicator functionality
+    const scrollIndicator = document.getElementById('scrollIndicator');
+    if (scrollIndicator) {
+        // Smooth scroll to About section on click
+        scrollIndicator.addEventListener('click', function() {
+            const aboutSection = document.getElementById('about');
+            if (aboutSection) {
+                aboutSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+        
+        // Hide scroll indicator when user scrolls down
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (scrollTop > 100) {
+                scrollIndicator.style.opacity = '0';
+                scrollIndicator.style.pointerEvents = 'none';
+            } else {
+                scrollIndicator.style.opacity = '';
+                scrollIndicator.style.pointerEvents = '';
+            }
+        }, { passive: true });
+    }
+
 });

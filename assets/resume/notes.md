@@ -146,3 +146,7 @@ Ok! On to next steps:
 We really like the minimal landing page. We are hoping that folks will be intrigued and want to learn more by scrolling down or clicking / tapping the about link.
 
 We are willing to try adding the tagline "Senior Software Engineer" and if it fits with the current design and looks great we will consider keeping it. Please implement the tagline and make us love it!
+
+---
+
+Very nice! We are definitely keeping that! The art director and the UX designer were brainstorming after reviewing this update and thought a subtle call to action indicator could enhance engagement. The most subtle thing they could think of is a down-facing arrow button that fades in and causes the page to scroll to the About section when clicked.
