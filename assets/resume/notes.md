@@ -38,3 +38,40 @@ So now we have a way to save the whole HTML page and just give that to the scrip
 ---
 
 Nice! The client would like the Bastard Operator From Hell to view the resume through their Lens and provide their feedback.
+
+--
+
+Nice! It seems to be working based on the input:
+
+```
+python scripts/personas/create-persona.py assets/personas/kent-beck.html
+```
+
+But we would like the default output location to be the same as the input file.
+
+python scripts/personas/create-persona.py assets/personas/martin-fowler.html
+
+-
+
+Nice! We would like to have a team of five personas as our esteemed review panel. I have created persona files for you (The BOFH), Kent Beck, and Martin Fowler. You have the opportunity to suggest two additional personas to fill out the review panel. Please provide your suggestions with your reasoning and I will procure the persona files. Then we can assemble the panel and begin our full review process.
+
+-
+
+python scripts/personas/create-persona.py
+
+python scripts/personas/create-persona.py assets/personas/jakob-nielsen.html
+
+python scripts/personas/create-persona.py assets/personas/steve-krug.html
+
+---
+
+We are creating a review panel with five esteemed members to provide feedback on our work and help us create excellent solutions. Items for review may include:
+- a code update on the fly
+- a pull request
+- a new design idea for our website
+- a resume or cover letter
+- project documentation
+- an essay or blog post
+- etc...
+
+I have assembled the Persona files for our five esteemed members of the review panel. Please create a prompt file to assemble the review panel and guide them through the review process to each provide their own unique perspective, then synthesize a summary, and provide the complete review in Markdown format.

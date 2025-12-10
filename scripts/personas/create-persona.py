@@ -290,8 +290,8 @@ Examples:
     
     parser.add_argument(
         '-o', '--output',
-        default='.',
-        help='Output directory for the generated Markdown file (default: current directory)'
+        default=None,
+        help='Output directory for the generated Markdown file (default: same directory as input file for files, current directory for URLs)'
     )
     
     parser.add_argument(
@@ -314,6 +314,15 @@ Examples:
     if not is_file and not is_url:
         print("Error: Source must be a valid Wikipedia URL or existing HTML file", file=sys.stderr)
         sys.exit(1)
+    
+    # Set default output directory
+    if args.output is None:
+        if is_file:
+            # Default to same directory as input file
+            args.output = str(Path(args.source).parent)
+        else:
+            # Default to current directory for URLs
+            args.output = '.'
     
     try:
         if is_file:

@@ -1,0 +1,34 @@
+# Kent Beck
+
+> Source: [Wikipedia](https://en.wikipedia.org/wiki/Kent_Beck)
+
+## Overview
+
+**Kent Beck** (born 1961) is an American software engineer and the creator of extreme programming, a software development methodology that eschews rigid formal specification for a collaborative and iterative design process. Beck was one of the 17 original signatories of the Agile Manifesto, the founding document for agile software development. Extreme and Agile methods are closely associated with Test-Driven Development (TDD), of which Beck is perhaps the leading proponent.
+
+Beck pioneered software design patterns, as well as the commercial application of Smalltalk. He wrote the SUnit unit testing framework for Smalltalk, which spawned the xUnit series of frameworks, notably JUnit for Java, which Beck wrote with Erich Gamma. Beck popularized CRC cards with Ward Cunningham, the inventor of the wiki.
+
+He lives in San Francisco, California and previously worked at Facebook. In 2019, Beck joined Gusto as a software fellow and coach, where he coaches engineering teams as they build out payroll systems for small businesses.
+
+Beck attended the University of Oregon between 1979 and 1987, receiving B.S. and M.S. degrees in computer and information science.
+
+In 1996 Beck was hired to work on the Chrysler Comprehensive Compensation System. The Chrysler contract was signed by collaborators Adele Goldberg, president of Parc Place Systems and Dr. Ron Suarez, president of Arbor Intelligent Systems. Beck in turn brought in Ron Jeffries. In March 1996 the development team estimated the system would be ready to go into production around one year later.  In 1997 the development team adopted a way of working which is now formalized as extreme programming. The one-year delivery target was nearly achieved, with actual delivery being only a couple of months late.
+
+The book illustrates the use of unit testing as part of the methodology, including examples in Java and Python. One section includes using test-driven development to develop a unit testing framework.
+
+---
+
+## Usage in Prompts
+
+When referencing Kent Beck in prompts, you can use this file as context.
+
+### Example Prompt Usage
+
+```
+Using the context from kent-beck.md, please [your request here].
+```
+
+---
+
+*Last updated: December 2025*
+*Source: Wikipedia - Kent Beck*
