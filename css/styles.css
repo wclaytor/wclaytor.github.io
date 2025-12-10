@@ -11468,6 +11468,88 @@ html {
   scroll-padding-top: calc(4.5rem - 1px);
 }
 
+/* Skip to content link for accessibility */
+.skip-to-content {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #000;
+  color: #fff;
+  padding: 8px 16px;
+  text-decoration: none;
+  z-index: 10000;
+  font-size: 1rem;
+  border-radius: 0 0 4px 0;
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* Featured Project Cards */
+.projects-section .card {
+  border: none;
+  border-radius: 0.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+}
+
+.projects-section .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.projects-section .card-img-top {
+  height: 250px;
+  object-fit: cover;
+  object-position: top;
+}
+
+.projects-section .card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.projects-section .card-title:hover {
+  color: #64a19d !important;
+}
+
+.projects-section .card-text {
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.projects-section .badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.375rem 0.75rem;
+}
+
+.projects-section .card-footer {
+  padding: 1rem 1.25rem;
+}
+
+.projects-section .btn-sm {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+/* Ensure consistent card heights */
+.projects-section .card.h-100 {
+  display: flex;
+  flex-direction: column;
+}
+
+.projects-section .card-body {
+  flex: 1;
+}
+
+/* Gap utility for badges (Bootstrap 5.1 compatibility) */
+.gap-2 {
+  gap: 0.5rem;
+}
+
 body {
   letter-spacing: 0.0625em;
 }
@@ -11606,7 +11688,15 @@ body {
 
 .about-section {
   padding-top: 10rem;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.7) 75%, #000 100%), url("../assets/img/bg-masthead.jpg");
+  padding-bottom: 8rem;
+  background: 
+    linear-gradient(
+      135deg,
+      rgba(100, 161, 157, 0.85) 0%,
+      rgba(40, 80, 100, 0.75) 50%,
+      rgba(0, 0, 0, 0.95) 100%
+    ),
+    url("../assets/img/bg-masthead.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: scroll;
@@ -11714,6 +11804,311 @@ body {
   color: #fff;
 }
 
+/* Contact section full-page feel */
+.contact-section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 10rem;
+  padding-bottom: 10rem;
+}
+
+/* Adjust for shorter screens */
+@media (max-height: 800px) {
+  .contact-section {
+    min-height: auto;
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+  }
+}
+
+@media (max-height: 600px) {
+  .contact-section {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}
+
 .footer {
   padding: 5rem 0;
+}
+
+/* Mobile Responsive Fixes */
+html {
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Fix masthead h1 overflow on mobile */
+@media (max-width: 767px) {
+  .masthead h1, .masthead .h1 {
+    font-size: 2.5rem !important;
+    line-height: 2.8rem !important;
+    letter-spacing: 0.2rem !important;
+    word-wrap: break-word;
+    max-width: 100%;
+  }
+}
+
+/* Ensure proper scaling on small devices */
+@media (max-width: 575px) {
+  .masthead h1, .masthead .h1 {
+    font-size: 2rem !important;
+    line-height: 2.3rem !important;
+    letter-spacing: 0.15rem !important;
+  }
+}
+
+/* SVG Icon Utilities */
+.icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.icon-sm {
+  width: 0.875em;
+  height: 0.875em;
+}
+
+.icon-lg {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.icon-xl {
+  width: 2em;
+  height: 2em;
+}
+
+/* Social icon specific styling */
+.contact-section .social a .icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Navbar toggle icon */
+.navbar-toggler .icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Masthead tagline styling */
+.masthead-tagline {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.15rem;
+  color: rgba(255, 255, 255, 0.95);
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  animation: fadeIn 1.5s ease-in;
+}
+
+/* Masthead subtitle styling */
+.masthead-subtitle {
+  font-size: 1rem;
+  font-weight: 300;
+  letter-spacing: 0.1rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 0;
+  animation: fadeIn 2s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive tagline and subtitle sizing */
+@media (max-width: 767px) {
+  .masthead-tagline {
+    font-size: 1.25rem;
+    letter-spacing: 0.1rem;
+    margin-top: 1rem;
+  }
+  
+  .masthead-subtitle {
+    font-size: 0.875rem;
+    letter-spacing: 0.08rem;
+  }
+}
+
+@media (max-width: 575px) {
+  .masthead-tagline {
+    font-size: 1rem;
+    letter-spacing: 0.08rem;
+  }
+  
+  .masthead-subtitle {
+    font-size: 0.75rem;
+    letter-spacing: 0.05rem;
+  }
+}
+
+/* Scroll indicator styling */
+.scroll-indicator {
+  position: absolute;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0;
+  animation: fadeInDelayed 1s ease-out 2s both;
+  cursor: pointer;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  background: none;
+  border: none;
+  padding: 0.5rem;
+}
+
+.scroll-indicator:hover {
+  opacity: 1 !important;
+  transform: translateX(-50%) translateY(3px);
+}
+
+.scroll-indicator:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.scroll-indicator .arrow {
+  width: 24px;
+  height: 24px;
+  stroke: rgba(255, 255, 255, 0.5);
+  transition: stroke 0.3s ease;
+  animation: bounceSubtle 2s ease-in-out infinite;
+}
+
+.scroll-indicator:hover .arrow {
+  stroke: rgba(255, 255, 255, 0.8);
+}
+
+@keyframes fadeInDelayed {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.6;
+  }
+}
+
+@keyframes bounceSubtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+}
+
+/* Hide scroll indicator on short screens */
+@media (max-height: 500px) {
+  .scroll-indicator {
+    display: none;
+  }
+}
+
+/* Responsive scroll indicator */
+@media (max-width: 991.98px) {
+  .scroll-indicator {
+    bottom: 2rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .scroll-indicator {
+    bottom: 1.5rem;
+  }
+  
+  .scroll-indicator .arrow {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* ==========================================================================
+   Experiments Section
+   ========================================================================== */
+
+.experiments-section {
+  border-top: 2px dashed rgba(0, 0, 0, 0.1) !important;
+  position: relative;
+}
+
+.experiments-section::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+  border-radius: 2px;
+}
+
+.experiment-card {
+  position: relative;
+  border: 1px dashed rgba(245, 158, 11, 0.3);
+  transition: all 0.3s ease;
+}
+
+.experiment-card:hover {
+  border-color: rgba(245, 158, 11, 0.6);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(245, 158, 11, 0.15) !important;
+}
+
+.experiment-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+}
+
+.experiment-badge .badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.03rem;
+  display: flex;
+  align-items: center;
+  padding: 0.35rem 0.6rem;
+}
+
+/* Experiment card button styling */
+.experiment-card .btn-outline-warning {
+  border-color: #f59e0b;
+  color: #92400e;
+}
+
+.experiment-card .btn-outline-warning:hover {
+  background-color: #f59e0b;
+  border-color: #f59e0b;
+  color: #fff;
+}
+
+/* Responsive adjustments for experiments */
+@media (max-width: 767.98px) {
+  .experiments-section .col-lg-5 {
+    max-width: 400px;
+  }
 }

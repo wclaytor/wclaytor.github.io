@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Alpine Resume">
+  <title>Alpine Resume</title>
+  
+  <!-- Bootstrap Icons CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  
+  <!-- Theme Initialization - Prevent FOUC -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  
+  <style>
+    /* CSS Variables for Theme */
+    :root {
+      /* Light theme colors */
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --bg-code: #f5f5f5;
+      --text-primary: #1a202c;
+      --text-secondary: #4a5568;
+      --text-muted: #718096;
+      --border-color: #e2e8f0;
+      --link-color: #3b82f6;
+      --link-hover: #2563eb;
+      --shadow: rgba(0, 0, 0, 0.1);
+      --code-text: #d63384;
+      --blockquote-border: #3b82f6;
+      --blockquote-bg: #eff6ff;
+      --table-header-bg: #f1f5f9;
+      --highlight-bg: #fef3c7;
+    }
+    
+    [data-theme="dark"] {
+      /* Dark theme colors */
+      --bg-primary: #1a202c;
+      --bg-secondary: #2d3748;
+      --bg-code: #2d3748;
+      --text-primary: #f7fafc;
+      --text-secondary: #e2e8f0;
+      --text-muted: #a0aec0;
+      --border-color: #4a5568;
+      --link-color: #60a5fa;
+      --link-hover: #93c5fd;
+      --shadow: rgba(0, 0, 0, 0.3);
+      --code-text: #f687b3;
+      --blockquote-border: #60a5fa;
+      --blockquote-bg: #1e3a5f;
+      --table-header-bg: #374151;
+      --highlight-bg: #7c2d12;
+    }
+    
+    /* Prevent FOUC */
+    [x-cloak] { display: none !important; }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background-color: var(--bg-primary);
+      transition: background-color 0.3s ease, color 0.3s ease;
+      overflow-x: hidden;
+    }
+    
+    /* Header Styling */
+    header {
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 4px var(--shadow);
+    }
+    
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .header-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    
+    /* Theme Toggle Button */
+    .theme-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+      border-radius: 0.375rem;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      font-size: 1.25rem;
+    }
+    
+    .theme-toggle:hover {
+      background-color: var(--bg-secondary);
+    }
+    
+    .theme-toggle:active {
+      transform: scale(0.95);
+    }
+    
+    .theme-toggle i {
+      transition: transform 0.3s ease;
+    }
+    
+    /* Main Content Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+    }
+    
+    /* Content Styling */
+    .content {
+      background-color: var(--bg-primary);
+      border-radius: 0.5rem;
+      padding: 2rem;
+      box-shadow: 0 1px 3px var(--shadow);
+    }
+    
+    @media (max-width: 768px) {
+      .content {
+        padding: 1.5rem;
+      }
+    }
+    
+    /* Typography */
+    h1, h2, h3, h4, h5, h6 {
+      color: var(--text-primary);
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    
+    h1 { font-size: 2.5rem; margin-top: 0; }
+    h2 { font-size: 2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; }
+    h3 { font-size: 1.5rem; }
+    h4 { font-size: 1.25rem; }
+    h5 { font-size: 1.125rem; }
+    h6 { font-size: 1rem; }
+    
+    @media (max-width: 768px) {
+      h1 { font-size: 2rem; }
+      h2 { font-size: 1.75rem; }
+      h3 { font-size: 1.375rem; }
+    }
+    
+    p {
+      margin-bottom: 1rem;
+      color: var(--text-secondary);
+    }
+    
+    /* Links */
+    a {
+      color: var(--link-color);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    
+    a:hover {
+      color: var(--link-hover);
+      text-decoration: underline;
+    }
+    
+    /* Lists */
+    ul, ol {
+      margin-bottom: 1rem;
+      padding-left: 2rem;
+      color: var(--text-secondary);
+    }
+    
+    li {
+      margin-bottom: 0.5rem;
+    }
+    
+    ul ul, ol ol, ul ol, ol ul {
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    /* Code */
+    code {
+      background-color: var(--bg-code);
+      color: var(--code-text);
+      padding: 0.2rem 0.4rem;
+      border-radius: 0.25rem;
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 0.875rem;
+    }
+    
+    pre {
+      background-color: var(--bg-code);
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      overflow-x: auto;
+      margin-bottom: 1rem;
+    }
+    
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+    
+    /* Blockquotes */
+    blockquote {
+      border-left: 4px solid var(--blockquote-border);
+      background-color: var(--blockquote-bg);
+      padding: 1rem 1.5rem;
+      margin: 1rem 0;
+      border-radius: 0.25rem;
+    }
+    
+    blockquote p {
+      margin-bottom: 0;
+      color: var(--text-primary);
+    }
+    
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1rem;
+      overflow-x: auto;
+      display: block;
+    }
+    
+    @media (min-width: 768px) {
+      table {
+        display: table;
+      }
+    }
+    
+    thead {
+      background-color: var(--table-header-bg);
+    }
+    
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    th {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    
+    td {
+      color: var(--text-secondary);
+    }
+    
+    tr:hover {
+      background-color: var(--bg-secondary);
+    }
+    
+    /* Horizontal Rule */
+    hr {
+      border: none;
+      border-top: 2px solid var(--border-color);
+      margin: 2rem 0;
+    }
+    
+    /* Images */
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 0.5rem;
+      margin: 1rem 0;
+    }
+    
+    /* Strong and Emphasis */
+    strong {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    
+    em {
+      font-style: italic;
+    }
+    
+    /* Smooth scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    /* Respect reduced motion preference */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+    
+    /* Print styles */
+    @media print {
+      body {
+        background: white;
+        color: black;
+      }
+      
+      header {
+        position: static;
+        box-shadow: none;
+      }
+      
+      .theme-toggle {
+        display: none;
+      }
+      
+      a {
+        color: #0066cc;
+        text-decoration: underline;
+      }
+      
+      pre, blockquote {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header with Theme Toggle -->
+  <header>
+    <div class="header-content">
+      <h1 class="header-title">Alpine Resume</h1>
+      <button 
+        class="theme-toggle" 
+        onclick="toggleTheme()"
+        aria-label="Toggle theme"
+        title="Toggle light/dark theme">
+        <i class="bi bi-sun-fill" id="theme-icon-light" style="display: none;"></i>
+        <i class="bi bi-moon-stars-fill" id="theme-icon-dark" style="display: none;"></i>
+      </button>
+    </div>
+  </header>
+  
+  <!-- Main Content -->
+  <div class="container">
+    <div class="content">
+      <h1 id="alpine-resume">Alpine Resume</h1>
+<p>A modern, interactive resume Progressive Web App (PWA) built with Alpine.js. This project creates a clean, accessible, and mobile-responsive digital resume that can be used offline and installed as a native app.</p>
+<h2 id="project-overview">🚀 Project Overview</h2>
+<p>Alpine Resume transforms a traditional Markdown-formatted resume into a beautiful, interactive PWA. The application:</p>
+<ul>
+<li><strong>Displays professional resumes</strong> with clean, modern styling</li>
+<li><strong>Works offline</strong> through PWA capabilities</li>
+<li><strong>Installs as a native app</strong> on desktop and mobile devices</li>
+<li><strong>Ensures accessibility</strong> following WCAG 2.1 AA standards</li>
+<li><strong>Provides interactive features</strong> powered by Alpine.js</li>
+<li><strong>Supports theming</strong> for personalization and branding</li>
+</ul>
+<h2 id="current-status">✅ Current Status</h2>
+<p><strong>Phase 1: Foundation</strong> ✅ Complete</p>
+<ul>
+<li>✅ Resume example provided (raw text format)</li>
+<li>✅ Markdown template created</li>
+<li>✅ Example resume converted to Markdown format</li>
+<li>✅ Template documentation completed</li>
+</ul>
+<p><strong>Next Phase: Design &amp; Architecture</strong></p>
+<ul>
+<li>🔄 Define UI/UX specifications</li>
+<li>🔄 Design component architecture</li>
+<li>🔄 Create technical blueprint for Alpine.js implementation</li>
+<li>🔄 Establish PWA requirements</li>
+</ul>
+<h2 id="resume-documentation">📄 Resume Documentation</h2>
+<ul>
+<li><strong><a href="./docs/resume/resume-template.md">Resume Template</a></strong> - Markdown template for creating resumes</li>
+<li><strong><a href="./docs/resume/resume-example.md">Resume Example</a></strong> - Sample resume using the template</li>
+<li>Template includes comprehensive usage instructions and formatting guidelines</li>
+</ul>
+<h2 id="quick-start">🚀 Quick Start</h2>
+<h3 id="for-resume-authors">For Resume Authors</h3>
+<p><strong>📖 <a href="./docs/guides/USER-GUIDE.md">Read the User Guide</a></strong> - Complete guide for creating and using your resume</p>
+<p><strong>Quick Steps:</strong></p>
+<ol>
+<li>Copy <code>docs/resume/resume-template.md</code></li>
+<li>Fill in your information following the template structure</li>
+<li>Save your resume in Markdown format</li>
+<li>Upload to the application and it will render beautifully</li>
+</ol>
+<h3 id="for-developers">For Developers</h3>
+<ol>
+<li>Clone this repository</li>
+<li>Review the project documentation in <code>docs/</code></li>
+<li>Check open issues for current development tasks</li>
+<li>Follow the role-based development methodology</li>
+</ol>
+<h2 id="development-methodology">🎭 Development Methodology</h2>
+<p>This project uses a structured seven-role development approach</p>
+<h2 id="development-methodology_1">🎭 Development Methodology</h2>
+<p>This project uses a structured seven-role development approach:</p>
+<h3 id="the-seven-roles">The Seven Roles</h3>
+<ol>
+<li><strong>Director</strong> - Orchestrates project coordination and delivery</li>
+<li><strong>Product-Owner</strong> - Defines requirements and product vision  </li>
+<li><strong>Architect</strong> - Designs technical architecture and blueprints</li>
+<li><strong>Developer</strong> - Implements features and functionality</li>
+<li><strong>Designer</strong> - Creates UI/UX specifications and design systems</li>
+<li><strong>QA-Engineer</strong> - Ensures quality through testing and validation</li>
+<li><strong>Domain-Expert</strong> - Provides subject matter expertise</li>
+</ol>
+<p><strong>Full role documentation</strong>: <a href="./docs/roles/"><code>/docs/roles/</code></a></p>
+<h2 id="architecture">🏗️ Architecture</h2>
+<h3 id="technology-stack">Technology Stack</h3>
+<ul>
+<li><strong>Frontend Framework</strong>: Alpine.js (lightweight, reactive)</li>
+<li><strong>Styling</strong>: Modern CSS with theme system</li>
+<li><strong>PWA</strong>: Service workers for offline capability</li>
+<li><strong>Build</strong>: TBD (minimal build process preferred)</li>
+<li><strong>Hosting</strong>: TBD (static hosting compatible)</li>
+</ul>
+<h3 id="key-features">Key Features</h3>
+<ul>
+<li>✅ <strong>Resume Display</strong>: Render Markdown resumes with professional styling</li>
+<li>✅ <strong>Progressive Web App</strong>: Offline support and installability</li>
+<li>✅ <strong>Responsive Design</strong>: Mobile-first, works on all devices</li>
+<li>✅ <strong>Accessibility</strong>: WCAG 2.1 AA compliant (Lighthouse score: 100/100)</li>
+<li>✅ <strong>Theme Support</strong>: Light and dark modes with persistence</li>
+<li>✅ <strong>Print Styles</strong>: Professional PDF generation</li>
+<li>✅ <strong>Interactive Elements</strong>: Expandable sections, filtering, search</li>
+</ul>
+<h3 id="accessibility">Accessibility</h3>
+<p>Alpine Resume is <strong>fully accessible</strong> and meets <strong>WCAG 2.1 Level AA standards</strong>:</p>
+<ul>
+<li>✅ <strong>Lighthouse Accessibility Score: 100/100</strong></li>
+<li>✅ <strong>Keyboard Navigation</strong>: 100% keyboard accessible</li>
+<li>✅ <strong>Screen Reader Optimized</strong>: Works with NVDA, JAWS, VoiceOver</li>
+<li>✅ <strong>High Contrast</strong>: Meets WCAG AA contrast ratios (4.5:1+)</li>
+<li>✅ <strong>Responsive</strong>: Touch targets ≥44×44px, works on all devices</li>
+<li>✅ <strong>Reduced Motion</strong>: Respects user motion preferences</li>
+</ul>
+<p>📖 <strong>Learn More</strong>: <br />
+- <a href="./docs/guides/ACCESSIBILITY-GUIDE.md">Accessibility Guide</a> - User and developer guide<br />
+- <a href="./docs/testing/accessibility/README.md">Accessibility Documentation</a> - Complete compliance documentation</p>
+<h2 id="documentation-structure">📚 Documentation Structure</h2>
+<div class="highlight"><pre><span></span><code>docs/
+├── guides/              # User and developer guides
+│   ├── GETTING-STARTED.md
+│   ├── ACCESSIBILITY-GUIDE.md         # Accessibility best practices
+│   ├── PERFORMANCE-BENCHMARKING.md
+│   └── Responsive-Design-Patterns.md
+├── testing/             # Testing documentation and reports
+│   ├── accessibility/   # Accessibility compliance documentation
+│   │   ├── README.md    # Comprehensive accessibility documentation
+│   │   ├── KEYBOARD-NAVIGATION-GUIDE.md
+│   │   ├── SCREEN-READER-OPTIMIZATION.md
+│   │   └── S7-001-COMPREHENSIVE-AUDIT-FINAL.md
+│   ├── cross-browser-test-plan.md
+│   └── README.md
+├── resume/              # Resume templates and examples
+│   ├── resume-template.md
+│   └── resume-example.md
+├── roles/               # Role-based development methodology
+│   ├── Director.md
+│   ├── Product-Owner.md
+│   ├── Architect.md
+│   ├── Developer.md
+│   ├── Designer.md
+│   ├── QA-Engineer.md
+│   ├── Domain-Expert.md
+│   └── Roles-Collaboration.md
+├── features/            # Feature specifications and PRDs
+├── offline-demo/        # Offline detection feature documentation
+│   ├── IMPLEMENTATION-SUMMARY.md
+│   ├── OFFLINE-FEATURE.md
+│   └── TESTING-GUIDE.md
+└── notes/              # Development notes and decisions
+</code></pre></div>
+
+<h2 id="testing-demos">🧪 Testing &amp; Demos</h2>
+<h3 id="offline-detection-demo">Offline Detection Demo</h3>
+<p>The project includes <strong>offline-demo.html</strong> - a standalone demonstration page for testing the offline detection feature. This demo page allows you to:</p>
+<ul>
+<li>Manually test network status changes</li>
+<li>Visualize the offline indicator behavior</li>
+<li>Validate accessibility features</li>
+<li>Test without affecting the main application</li>
+</ul>
+<p><strong>Documentation</strong>: See <a href="./docs/offline-demo/"><code>docs/offline-demo/</code></a> for:<br />
+- Implementation details<br />
+- Testing instructions<br />
+- Feature specifications<br />
+- Automated test cases</p>
+<h2 id="skills-system">🔧 Skills System</h2>
+<p>This project leverages a modular <strong>Skills</strong> system for development workflows and capabilities:</p>
+<h3 id="relevant-skills-for-alpine-resume">Relevant Skills for Alpine Resume</h3>
+<p><strong>Development:</strong><br />
+- <strong>alpine-js</strong>: Guide for Alpine.js interactive components<br />
+- <strong>pwa-master</strong>: PWA implementation and offline capabilities<br />
+- <strong>alpine-playwright</strong>: Testing framework for Alpine.js applications</p>
+<p><strong>Design:</strong><br />
+- <strong>theme-master</strong>: Professional theme creation and documentation<br />
+- <strong>accessibility-audit</strong>: WCAG 2.1 AA compliance validation</p>
+<p><strong>Planning &amp; Documentation:</strong><br />
+- <strong>user-story-generator</strong>: Create well-structured user stories<br />
+- <strong>technical-decision-record</strong>: Document architectural decisions<br />
+- <strong>api-documentation</strong>: Document any data interfaces</p>
+<p><strong>Full skills documentation</strong>: <a href="./skills/README.md"><code>/skills/README.md</code></a></p>
+<h2 id="working-with-github-copilot">🎯 Working with GitHub Copilot</h2>
+<h3 id="creating-issues">Creating Issues</h3>
+<p>Reference specific roles for targeted guidance:</p>
+<div class="highlight"><pre><span></span><code><span class="ni">@copilot</span> As the <span class="gs">**Designer**</span>, please create UI specifications for the resume display component.
+</code></pre></div>
+
+<h3 id="multi-role-workflows">Multi-Role Workflows</h3>
+<p>Coordinate complex features across roles:</p>
+<div class="highlight"><pre><span></span><code><span class="ni">@copilot</span> 
+<span class="k">1.</span> <span class="gs">**Product-Owner**</span>: Define user stories for theme customization
+<span class="k">2.</span> <span class="gs">**Architect**</span>: Design theme system architecture  
+<span class="k">3.</span> <span class="gs">**Designer**</span>: Create color palette and visual specifications
+<span class="k">4.</span> <span class="gs">**Developer**</span>: Implement theme switching with Alpine.js
+<span class="k">5.</span> <span class="gs">**QA-Engineer**</span>: Test theme persistence and accessibility
+</code></pre></div>
+
+<h2 id="development-roadmap">� Development Roadmap</h2>
+<h3 id="phase-1-foundation">Phase 1: Foundation ✅</h3>
+<ul>
+<li>[x] Resume template and example</li>
+<li>[x] Project documentation structure</li>
+</ul>
+<h3 id="phase-2-design-architecture">Phase 2: Design &amp; Architecture 🔄</h3>
+<ul>
+<li>[ ] UI/UX specifications</li>
+<li>[ ] Component architecture design</li>
+<li>[ ] Technical blueprint</li>
+<li>[ ] PWA requirements definition</li>
+</ul>
+<h3 id="phase-3-core-implementation">Phase 3: Core Implementation 📋</h3>
+<ul>
+<li>[ ] Basic HTML structure</li>
+<li>[ ] Alpine.js resume rendering</li>
+<li>[ ] CSS styling system</li>
+<li>[ ] Responsive layouts</li>
+</ul>
+<h3 id="phase-4-pwa-features">Phase 4: PWA Features 📋</h3>
+<ul>
+<li>[ ] Service worker implementation</li>
+<li>[ ] Offline capability</li>
+<li>[ ] App manifest</li>
+<li>[ ] Install prompts</li>
+</ul>
+<h3 id="phase-5-enhancement">Phase 5: Enhancement 📋</h3>
+<ul>
+<li>[ ] Theme system</li>
+<li>[ ] Print styles</li>
+<li>[ ] Interactive features</li>
+<li>[ ] Performance optimization</li>
+</ul>
+<h3 id="phase-6-quality-launch">Phase 6: Quality &amp; Launch 📋</h3>
+<ul>
+<li>[ ] Accessibility audit</li>
+<li>[ ] Cross-browser testing</li>
+<li>[ ] Performance testing</li>
+<li>[ ] Documentation completion</li>
+<li>[x] Deployment guide</li>
+</ul>
+<h2 id="contributing">🤝 Contributing</h2>
+<p>We welcome contributions! Please read our <a href="./CONTRIBUTING.md">Contributing Guide</a> for details on:</p>
+<ul>
+<li>Development setup and workflow</li>
+<li>Code standards and testing requirements</li>
+<li>Pull request and issue guidelines</li>
+<li>Role-based development approach</li>
+<li>Community guidelines</li>
+</ul>
+<p><strong>Quick Start for Contributors:</strong></p>
+<ol>
+<li><strong>Review open issues</strong> to understand current priorities</li>
+<li><strong>Follow role patterns</strong> based on the type of contribution</li>
+<li><strong>Reference role documentation</strong> for quality standards</li>
+<li><strong>Use skills</strong> to guide implementation approaches</li>
+<li><strong>Test thoroughly</strong> before submitting PRs</li>
+</ol>
+<p>For detailed information, see <a href="./CONTRIBUTING.md">CONTRIBUTING.md</a></p>
+<h2 id="project-resources">📖 Project Resources</h2>
+<h3 id="for-users">For Users</h3>
+<ul>
+<li><strong>User Guide</strong>: <a href="./docs/guides/USER-GUIDE.md">docs/guides/USER-GUIDE.md</a> - Complete guide for end users</li>
+<li><strong>Resume Template</strong>: <a href="./docs/resume/resume-template.md">docs/resume/resume-template.md</a></li>
+<li><strong>Accessibility Guide</strong>: <a href="./docs/guides/ACCESSIBILITY-GUIDE.md">docs/guides/ACCESSIBILITY-GUIDE.md</a> - User and developer guide</li>
+<li><strong>Deployment Guide</strong>: <a href="./docs/guides/DEPLOYMENT-GUIDE.md">docs/guides/DEPLOYMENT-GUIDE.md</a> - Comprehensive deployment instructions</li>
+</ul>
+<h3 id="for-developers_1">For Developers</h3>
+<ul>
+<li><strong>Contributing Guide</strong>: <a href="./CONTRIBUTING.md">CONTRIBUTING.md</a> - <strong>Start here for contributing</strong></li>
+<li><strong>Getting Started</strong>: <a href="./docs/guides/GETTING-STARTED.md">docs/guides/GETTING-STARTED.md</a></li>
+<li><strong>Role Documentation</strong>: <a href="./docs/roles/"><code>/docs/roles/</code></a></li>
+<li><strong>Collaboration Guide</strong>: <a href="./docs/roles/Roles-Collaboration.md"><code>/docs/roles/Roles-Collaboration.md</code></a></li>
+<li><strong>Skills System</strong>: <a href="./skills/README.md"><code>/skills/README.md</code></a></li>
+<li><strong>GitHub Issues Sync</strong>: <a href="./scripts/github/issues-sync/"><code>/scripts/github/issues-sync/</code></a></li>
+<li><strong>Copilot Instructions</strong>: <a href="./.github/copilot-instructions.md"><code>.github/copilot-instructions.md</code></a></li>
+<li><strong>Agent Guide</strong>: <a href="./AGENTS.md">AGENTS.md</a></li>
+<li><strong>Claude Guide</strong>: <a href="./CLAUDE.md">CLAUDE.md</a></li>
+</ul>
+<h3 id="testing-quality">Testing &amp; Quality</h3>
+<ul>
+<li><strong>Accessibility Documentation</strong>: <a href="./docs/testing/accessibility/README.md">docs/testing/accessibility/README.md</a> - Complete compliance docs</li>
+<li><strong>Keyboard Navigation</strong>: <a href="./docs/testing/accessibility/KEYBOARD-NAVIGATION-GUIDE.md">docs/testing/accessibility/KEYBOARD-NAVIGATION-GUIDE.md</a></li>
+<li><strong>Screen Reader Guide</strong>: <a href="./docs/testing/accessibility/SCREEN-READER-OPTIMIZATION.md">docs/testing/accessibility/SCREEN-READER-OPTIMIZATION.md</a></li>
+</ul>
+<h2 id="license">📄 License</h2>
+<p>MIT License - See <a href="./LICENSE.md">LICENSE.md</a> for details</p>
+<h2 id="getting-help">🙋 Getting Help</h2>
+<h3 id="for-users_1">For Users</h3>
+<ul>
+<li><strong>New to Alpine Resume?</strong> Read the <a href="./docs/guides/USER-GUIDE.md">User Guide</a></li>
+<li><strong>Creating a resume?</strong> Use the <a href="./docs/resume/resume-template.md">resume template</a></li>
+<li><strong>Accessibility questions?</strong> Check the <a href="./docs/guides/ACCESSIBILITY-GUIDE.md">Accessibility Guide</a></li>
+</ul>
+<h3 id="for-developers_2">For Developers</h3>
+<ul>
+<li><strong>Want to contribute?</strong> Start with the <a href="./CONTRIBUTING.md">Contributing Guide</a></li>
+<li><strong>New to the project?</strong> Read this README and <a href="./docs/guides/GETTING-STARTED.md">Getting Started Guide</a></li>
+<li>Review the <a href="./docs/roles/">role documentation</a> for development guidance</li>
+<li>Check <a href="https://github.com/wclaytor/alpine-resume/issues">open issues</a> for current work</li>
+<li>Explore the <a href="./skills/README.md">skills system</a> for implementation guides</li>
+<li>Ask GitHub Copilot for role-specific assistance in issues and PRs</li>
+</ul>
+<hr />
+<p><strong>Alpine Resume</strong> - A modern, accessible PWA for showcasing your professional experience. Built with Alpine.js using a structured role-based development methodology.</p>
+    </div>
+  </div>
+  
+  <!-- Theme Toggle Script -->
+  <script>
+    // Initialize theme icons on page load
+    function updateThemeIcon() {
+      const theme = document.documentElement.getAttribute('data-theme');
+      const lightIcon = document.getElementById('theme-icon-light');
+      const darkIcon = document.getElementById('theme-icon-dark');
+      
+      if (theme === 'dark') {
+        lightIcon.style.display = 'block';
+        darkIcon.style.display = 'none';
+      } else {
+        lightIcon.style.display = 'none';
+        darkIcon.style.display = 'block';
+      }
+    }
+    
+    // Toggle theme function
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateThemeIcon();
+    }
+    
+    // Update icon on load
+    updateThemeIcon();
+    
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (!localStorage.getItem('theme')) {
+        const newTheme = e.matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        updateThemeIcon();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -3,12 +3,26 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>wclaytor.github.io</title>
+        <meta name="description" content="William Claytor - Senior Software Engineer with over 25 years of experience in software development, quality assurance, and test automation. Certified in Java and .NET web development." />
+        <meta name="author" content="William Claytor" />
+        <meta name="keywords" content="software engineer, quality assurance, test automation, QA, Java, .NET, JavaScript, Python, Ruby, web development" />
+        
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://wclaytor.github.io/" />
+        <meta property="og:title" content="William Claytor - Senior Software Engineer" />
+        <meta property="og:description" content="Senior Software Engineer with over 25 years of experience in software development, quality assurance, and test automation." />
+        <meta property="og:image" content="https://wclaytor.github.io/assets/img/og-image.jpg" />
+        
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://wclaytor.github.io/" />
+        <meta property="twitter:title" content="William Claytor - Senior Software Engineer" />
+        <meta property="twitter:description" content="Senior Software Engineer with over 25 years of experience in software development, quality assurance, and test automation." />
+        <meta property="twitter:image" content="https://wclaytor.github.io/assets/img/og-image.jpg" />
+        
+        <title>William Claytor - Senior Software Engineer | Over 25 Years Experience in QA & Test Automation</title>
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-        <!-- Font Awesome icons (free version)-->
-        <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
         <!-- Google fonts-->
         <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
@@ -16,6 +30,8 @@
         <link href="css/styles.css" rel="stylesheet" />
     </head>
     <body id="page-top">
+        <!-- Skip to main content link for accessibility -->
+        <a href="#about" class="skip-to-content">Skip to main content</a>
 
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
@@ -23,14 +39,14 @@
                 <a class="navbar-brand" href="#page-top">wclaytor.github.io</a>
                 <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                     Menu
-                    <i class="fas fa-bars"></i>
+                    <svg class="icon" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
                         <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
                         <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-                        <li class="nav-item"><a class="nav-link" href="assets/resume/william_claytor_resume.html">Resume</a></li>
+                        <li class="nav-item"><a class="nav-link" href="assets/resume/william_claytor_resume-2025.html">Resume</a></li>
                     </ul>
                 </div>
             </div>
@@ -42,10 +58,17 @@
                 <div class="d-flex justify-content-center">
                     <div class="text-center">
                         <h1 class="mx-auto my-0 text-uppercase">william claytor</h1>
-                        
+                        <p class="masthead-tagline">Over 25 Years Building Quality Software</p>
+                        <p class="masthead-subtitle">Senior Software Engineer | QA & Test Automation Expert</p>
                     </div>
                 </div>
             </div>
+            <!-- Scroll indicator -->
+            <button class="scroll-indicator" id="scrollIndicator" aria-label="Scroll to About section">
+                <svg class="arrow" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </button>
         </header>
 
         <!-- About-->
@@ -55,7 +78,7 @@
                     <div class="col-lg-8">
                         
                         <h4 class="text-white">
-                            Senior Software Engineer with 25 years of industry experience in software development, quality assurance, and test automation.
+                            Senior Software Engineer with over 25 years of industry experience in software development, quality assurance, and test automation.
                         </h4>
 
                         <br>
@@ -87,32 +110,153 @@
         <!-- Projects Showcase Section-->
         <section class="projects-section bg-light" id="projects">
             <div class="container px-4 px-lg-5">
-
-                <!-- Featured Project Row 1 --> <!-- Alpine Resume Project -->
-                <div class="row gx-0 mb-4 mb-lg-5 align-items-center">
-                    <div class="col-xl-8 col-lg-7"><img class="img-fluid mb-3 mb-lg-0" src="assets/img/alpine-resume.jpg" alt="Alpine Resume" /></div>
-                    <div class="col-xl-4 col-lg-5">
-                        <div class="featured-text text-center text-lg-left">
-                            <a href="projects/alpine-resume/index.html"><h4>Alpine Resume</h4></a>
-                            <p class="text-black-50 mb-0">Alpine Resume transforms a traditional Markdown-formatted resume into a beautiful, interactive PWA.</p>
-                        </div>
+                <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
+                    <div class="col-lg-8 text-center">
+                        <h2 class="text-black mb-4">Featured Projects</h2>
+                        <p class="text-black-50">
+                            A showcase of recent work demonstrating expertise in modern web development, 
+                            progressive web apps, and developer tooling.
+                        </p>
                     </div>
                 </div>
 
-                <!-- Featured Project Row 2 --> <!-- Alpine Markdown Presentation Project -->
-                <div class="row gx-0 mb-4 mb-lg-5 align-items-center">
-                    <div class="col-xl-4 col-lg-5">
-                        <div class="featured-text featured-text-right text-center text-lg-right">
-                            <a href="projects/alpine-markdown-presentation/index.html"><h4>Alpine Markdown Presentation</h4></a>
-                            <p class="text-black-50 mb-0">
-                                A beautiful, offline-capable PWA for creating and presenting Markdown-based slide decks. Perfect for meetings and conference presentations.
+                <!-- Featured Projects Grid -->
+                <div class="row gx-4 gx-lg-5">
+                    
+                    <!-- Alpine Resume Card -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <img class="card-img-top" src="assets/img/alpine-resume.jpg" alt="Alpine Resume" />
+                            <div class="card-body">
+                                <a href="projects/alpine-resume/index.html" class="text-decoration-none">
+                                    <h4 class="card-title text-primary">Alpine Resume</h4>
+                                </a>
+                                <p class="card-text text-black-50">
+                                    Alpine Resume transforms a traditional Markdown-formatted resume into a 
+                                    beautiful, interactive PWA with offline capability and modern design.
+                                </p>
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    <span class="badge bg-secondary">Alpine.js</span>
+                                    <span class="badge bg-secondary">Markdown</span>
+                                    <span class="badge bg-secondary">PWA</span>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent border-top-0">
+                                <a href="projects/alpine-resume/index.html" class="btn btn-primary btn-sm">
+                                    View Project
+                                </a>
+                                <a href="projects/alpine-resume/README.html" class="btn btn-outline-secondary btn-sm">
+                                    <svg class="icon icon-sm" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg> View README
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alpine Markdown Presentation Card -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <img class="card-img-top" src="assets/img/alpine-presentation.jpg" alt="Alpine Markdown Presentation" />
+                            <div class="card-body">
+                                <a href="projects/alpine-markdown-presentation/index.html" class="text-decoration-none">
+                                    <h4 class="card-title text-primary">Alpine Markdown Presentation</h4>
+                                </a>
+                                <p class="card-text text-black-50">
+                                    A beautiful, offline-capable PWA for creating and presenting Markdown-based 
+                                    slide decks. Perfect for meetings and conference presentations.
+                                </p>
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    <span class="badge bg-secondary">Alpine.js</span>
+                                    <span class="badge bg-secondary">Markdown</span>
+                                    <span class="badge bg-secondary">PWA</span>
+                                    <span class="badge bg-secondary">Presentations</span>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent border-top-0">
+                                <a href="projects/alpine-markdown-presentation/index.html" class="btn btn-primary btn-sm">
+                                    View Project
+                                </a>
+                                <a href="projects/alpine-markdown-presentation/README.html" class="btn btn-outline-secondary btn-sm">
+                                    <svg class="icon icon-sm" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg> View README
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Experiments Section -->
+                <div class="experiments-section mt-5 pt-5 border-top">
+                    <div class="row gx-4 gx-lg-5 justify-content-center mb-4">
+                        <div class="col-lg-8 text-center">
+                            <div class="d-flex align-items-center justify-content-center gap-2 mb-3">
+                                <svg class="text-warning" style="width: 28px; height: 28px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9 3h6v2H9z"></path>
+                                    <path d="M10 5v4.5l-4 6.5h12l-4-6.5V5"></path>
+                                    <path d="M6 16v5a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-5"></path>
+                                    <circle cx="12" cy="18" r="1"></circle>
+                                </svg>
+                                <h3 class="text-black mb-0">Experiments</h3>
+                            </div>
+                            <p class="text-black-50 small">
+                                A sandbox for creative explorations, prototypes, and technical experiments. 
+                                These projects are works-in-progress showcasing new ideas and techniques.
                             </p>
                         </div>
                     </div>
-                    <div class="col-xl-8 col-lg-7"><img class="img-fluid mb-3 mb-lg-0" src="assets/img/alpine-presentation.jpg" alt="Alpine Markdown Presentation" /></div>
-                </div>
-                
 
+                    <!-- Experiments Grid -->
+                    <div class="row gx-4 gx-lg-5 justify-content-center">
+                        
+                        <!-- Background Transformer Card -->
+                        <div class="col-lg-5 col-md-6 mb-4">
+                            <div class="card h-100 shadow-sm experiment-card">
+                                <div class="experiment-badge">
+                                    <span class="badge bg-warning text-dark">
+                                        <svg style="width: 12px; height: 12px; margin-right: 4px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M9 3h6v2H9z"></path>
+                                            <path d="M10 5v4.5l-4 6.5h12l-4-6.5V5"></path>
+                                        </svg>
+                                        Experiment
+                                    </span>
+                                </div>
+                                <div class="card-img-top" style="height: 180px; background: linear-gradient(135deg, rgba(100, 161, 157, 0.85) 0%, rgba(40, 80, 100, 0.75) 50%, rgba(0, 0, 0, 0.95) 100%), url('assets/img/bg-masthead.jpg'); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center;">
+                                    <svg style="width: 56px; height: 56px; color: rgba(255,255,255,0.9);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+                                        <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+                                        <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                                        <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+                                        <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.555C21.965 6.012 17.461 2 12 2z"></path>
+                                    </svg>
+                                </div>
+                                <div class="card-body">
+                                    <a href="projects/alpine-background-transformer/index.html" class="text-decoration-none">
+                                        <h5 class="card-title text-primary">Background Transformer</h5>
+                                    </a>
+                                    <p class="card-text text-black-50 small">
+                                        Interactive CSS gradient editor for experimenting with the site's 
+                                        unified background theming system.
+                                    </p>
+                                    <div class="d-flex flex-wrap gap-1 mb-2">
+                                        <span class="badge bg-light text-dark border">Alpine.js</span>
+                                        <span class="badge bg-light text-dark border">CSS Gradients</span>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-transparent border-top-0 pt-0">
+                                    <a href="projects/alpine-background-transformer/index.html" class="btn btn-outline-warning btn-sm text-dark">
+                                        <svg style="width: 14px; height: 14px; margin-right: 4px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                        </svg>
+                                        Launch
+                                    </a>
+                                    <a href="projects/alpine-background-transformer/README.html" class="btn btn-link btn-sm text-muted">
+                                        README
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
 
             </div>
         </section>
@@ -129,10 +273,10 @@
                     <div class="col-md-4 mb-3 mb-md-0">
                         <div class="card py-4 h-100">
                             <div class="card-body text-center">
-                                <i class="fas fa-envelope text-primary mb-2"></i>
+                                <svg class="icon icon-xl text-primary mb-2" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
                                 <h4 class="text-uppercase m-0">Email</h4>
                                 <hr class="my-4 mx-auto" />
-                                <div class="small text-black-50"><a href="mailto:wclaytor@github.com">wclaytor@fastmail.com</a></div>
+                                <div class="small text-black-50"><a href="mailto:wclaytor@fastmail.com">wclaytor@fastmail.com</a></div>
                             </div>
                         </div>
                     </div>
@@ -143,23 +287,22 @@
 
                 </div>
                 <div class="social d-flex justify-content-center">
-                    <a class="mx-2" href="https://www.linkedin.com/in/billclaytor/"><i class="fab fa-linkedin-in"></i></a>
-                    <a class="mx-2" href="https://github.com/wclaytor"><i class="fab fa-github"></i></a>
+                    <a class="mx-2" href="https://www.linkedin.com/in/billclaytor/" aria-label="LinkedIn Profile">
+                        <svg class="icon" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19a.66.66 0 000 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"></path></svg>
+                    </a>
+                    <a class="mx-2" href="https://github.com/wclaytor" aria-label="GitHub Profile">
+                        <svg class="icon" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path></svg>
+                    </a>
                 </div>
             </div>
         </section>
 
         <!-- Footer-->
-        <footer class="footer bg-black small text-center text-white-50"><div class="container px-4 px-lg-5">Copyright &copy; William Claytor 2023 | 2025</div></footer>
+        <footer class="footer bg-black small text-center text-white-50"><div class="container px-4 px-lg-5">Copyright &copy; William Claytor 2023 - <span id="current-year"></span></div></footer>
         
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Core theme JS-->
         <script src="js/scripts.js"></script>
-        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-        <!-- * *                               SB Forms JS                               * *-->
-        <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
-        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
     </body>
 </html>
