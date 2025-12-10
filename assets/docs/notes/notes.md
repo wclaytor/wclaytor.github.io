@@ -230,3 +230,17 @@ One thing that has been nagging at us through this process is that the professio
 --
 
 Yes, let us go with "over 25 years" and we will (hopefully) update it when it needs to be "over 30 years". ;?
+
+---
+
+Ok! I think we are at the point where we can merge this PR and go live with these updates. Before we do that
+
+---
+
+All right! We have our review panel prompt and we would like to create a variant of it that will be a go-live assesment prompt. While the review prompt has a long term focus, the go-live assesment should focus on any show-stopping UI / UX issues, embarrasing issues with any of the content, security issues, performance issues, etc...
+
+Basically, if there is any reason that we should not merge the current PR and go live with it, this is the time to call it our and either fix it or acknowledge it and defer it. We can't fix everything and this is an MVP, so we need to be realistic.
+
+But we are also about to present this site to the world as a demonstration of our experience, skill, abilities, focus on quality, and good judgement. Before we update the URL in the LinkedIn profile to point to this site, we need to be absolutely sure that it is up to standards and will get us hired rather than round-filed over some issue we should have caught and fixed. Heaven forbid we are using any third-party libraries that could become compromised and then harm viewers of our site. We absolutely can not have that happen.
+
+So we need a promt file to assemble the panel with that mission.
