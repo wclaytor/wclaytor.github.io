@@ -103,3 +103,20 @@ Please elaborate on the "Implement consistent visual layout for project showcase
 We are going to be adding projects so moving to a card-based layout is appealing. We should have featured project cards for our featured projects, and regular cards for our other side projects. 
 
 Let us start by implementing featured project cards with two cards per row, with the rows switching to stacked for mobile layouts.
+
+---
+
+Nice! We would like to include a link to the README.md file for each project. However, viewing the README.md in the browser will just show the raw text, which is not what we want. We want the README to be nicely formatted like they look on GitHub. So we would like to create a Python script to convert our README.md files into README.html files with that sweet formatting. We would also like to include a light / dark mode theme toggle like we use in the alpine-resume site which I have included as an example.
+
+Please create the md2html.py script that will convert any Markdown file into a sweet HTML page that looks great in the browser.
+
+--
+
+scripts/utility/md2html/md2html.py
+
+scripts/utility/md2html/md2html.py projects/alpine-resume/README.md
+
+scripts/utility/md2html/md2html.py projects/alpine-markdown-presentation/README.md
+
+Nice! These project repos are currently private, so instead of 'source' buttons let us replace those with 'view readme' buttons that link to our new README.html files.
+
