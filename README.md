@@ -22,35 +22,27 @@ This portfolio follows a **single-page application** design pattern using a scro
 
 The homepage consists of four full-screen sections stacked vertically:
 
-```
-┌─────────────────────────────────┐
-│         NAVIGATION BAR          │  ← Fixed position, transparent → solid on scroll
-├─────────────────────────────────┤
-│                                 │
-│          MASTHEAD               │  ← Full viewport height (100vh)
-│     "WILLIAM CLAYTOR"           │     Hero section with animated tagline
-│   Senior Software Engineer      │     Scroll indicator arrow
-│             ↓                   │
-│                                 │
-├─────────────────────────────────┤
-│                                 │
-│           ABOUT                 │  ← Dark theme with gradient overlay
-│    Professional summary         │     Same background image as masthead
-│      Three skill pillars        │
-│                                 │
-├─────────────────────────────────┤
-│                                 │
-│          PROJECTS               │  ← Light theme with white overlay
-│      Featured project cards     │     Same background image, inverted feel
-│                                 │
-├─────────────────────────────────┤
-│                                 │
-│          CONTACT                │  ← Full viewport height (100vh)
-│      Email card + socials       │     Dark theme with blue tint
-│                                 │
-├─────────────────────────────────┤
-│           FOOTER                │  ← Dynamic copyright year
-└─────────────────────────────────┘
+```mermaid
+graph TB
+    NAV[Navigation Bar<br/>Fixed position, transparent → solid on scroll]
+    MAST[MASTHEAD<br/>Full viewport height 100vh<br/>Hero section with animated tagline<br/>Scroll indicator arrow ↓]
+    ABOUT[ABOUT<br/>Dark theme with gradient overlay<br/>Professional summary<br/>Three skill pillars]
+    PROJ[PROJECTS<br/>Light theme with white overlay<br/>Featured project cards]
+    CONT[CONTACT<br/>Full viewport height 100vh<br/>Email card + socials<br/>Dark theme with blue tint]
+    FOOT[FOOTER<br/>Dynamic copyright year]
+    
+    NAV --> MAST
+    MAST --> ABOUT
+    ABOUT --> PROJ
+    PROJ --> CONT
+    CONT --> FOOT
+    
+    style NAV fill:#333,stroke:#64a19d,color:#fff
+    style MAST fill:#1a1a3c,stroke:#64a19d,color:#fff
+    style ABOUT fill:#191a3c,stroke:#64a19d,color:#fff
+    style PROJ fill:#f8f9fa,stroke:#64a19d,color:#333
+    style CONT fill:#1a1e3c,stroke:#64a19d,color:#fff
+    style FOOT fill:#000,stroke:#64a19d,color:#fff
 ```
 
 ---
@@ -88,14 +80,14 @@ Each section applies a unique `linear-gradient` overlay that filters the same ba
 ```css
 .about-section {
   background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.3) 0%,
-    rgba(0, 0, 0, 0.7) 75%,
-    #000 100%
+    135deg,
+    rgba(25, 25, 60, 0.80) 0%,     /* Dark midnight blue */
+    rgba(15, 30, 60, 0.85) 50%,    /* Deeper navy */
+    rgba(0, 0, 0, 0.95) 100%       /* Black */
   ), url("../assets/img/bg-masthead.jpg");
 }
 ```
-**Effect:** Continues the dark theme from Masthead, maintains visual continuity
+**Effect:** Sophisticated midnight blue atmosphere with night-sky tones, maintains visual flow from Masthead
 
 #### Projects Section
 ```css
@@ -112,29 +104,42 @@ Each section applies a unique `linear-gradient` overlay that filters the same ba
 
 #### Contact Section
 ```css
-.contact-section {
+.contact-section::before {
   background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.7) 0%,
-    rgba(0, 20, 40, 0.8) 75%,       /* Blue tint added */
-    rgba(0, 0, 0, 0.95) 100%
+    160deg,
+    rgba(20, 30, 60, 0.75) 0%,     /* Deep indigo-blue */
+    rgba(40, 20, 60, 0.70) 30%,    /* Subtle purple */
+    rgba(15, 25, 50, 0.80) 70%,    /* Dark blue */
+    rgba(0, 0, 0, 0.95) 100%       /* Black */
   ), url("../assets/img/bg-masthead.jpg");
+  filter: blur(3px);
+}
+
+.contact-section::after {
+  /* Film grain overlay using SVG noise pattern */
+  background-image: url("data:image/svg+xml,...");
+  opacity: 0.08;
 }
 ```
-**Effect:** Dark theme with subtle blue undertone, feels distinct while staying cohesive
+**Effect:** Premium presentation with blurred background, cinematic film grain texture, and indigo-purple gradient for distinction while maintaining cohesion
 
 ### Visual Flow
 
-```
-MASTHEAD        →    ABOUT          →    PROJECTS       →    CONTACT
-┌───────────┐       ┌───────────┐       ┌───────────┐       ┌───────────┐
-│ ░░░░░░░░░ │       │ ░░░░░░░░░ │       │ ▓▓▓▓▓▓▓▓▓ │       │ ░░▒░░░░░░ │
-│ ░░░░░░░░░ │       │ ░░░░░░░░░ │       │ ▓▓▓▓▓▓▓▓▓ │       │ ░░▒░░░░░░ │
-│ ▒▒▒▒▒▒▒▒▒ │       │ ▒▒▒▒▒▒▒▒▒ │       │ ▓▓▓▓▓▓▓▓▓ │       │ ░░▒▒░░░░░ │
-│ ▓▓▓▓▓▓▓▓▓ │       │ ▓▓▓▓▓▓▓▓▓ │       │ ▒▒▒▒▒▒▒▒▒ │       │ ▓▓▓▓▓▓▓▓▓ │
-│ ███████████│       │ ███████████│       │ ░░░░░░░░░ │       │ ███████████│
-└───────────┘       └───────────┘       └───────────┘       └───────────┘
-   Dark→Black          Dark→Black        Light (inverted)    Dark+Blue tint
+```mermaid
+graph LR
+    A[MASTHEAD<br/>Dark → Black<br/>Dramatic fade<br/>to pure black]
+    B[ABOUT<br/>Midnight Blue<br/>Night-sky tones<br/>rgba 25,25,60]
+    C[PROJECTS<br/>Light inverted<br/>White overlay<br/>85-90% opacity]
+    D[CONTACT<br/>Blur + Grain<br/>Indigo-purple<br/>Film grain 8%]
+    
+    A --> B
+    B --> C
+    C --> D
+    
+    style A fill:#1a1a1a,stroke:#64a19d,color:#fff
+    style B fill:#191a3c,stroke:#64a19d,color:#fff
+    style C fill:#f8f9fa,stroke:#64a19d,color:#333
+    style D fill:#281e3c,stroke:#64a19d,color:#fff
 ```
 
 ---
