@@ -1178,7 +1178,7 @@
           
           try {
             // Try to fetch the example resume from file
-            const response = await fetch('docs/resume/resume-example.md');
+            const response = await fetch('./resume-example.md');
             
             let content;
             if (response.ok) {
