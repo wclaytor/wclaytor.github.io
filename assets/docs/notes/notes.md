@@ -1,5 +1,6 @@
 # 2025 resume update notes
 
+## 2025.12.10
 We are working on an update to the client resume! We have added their two most recent engagements to their existing markdown file by copy/pasting them from LinkedIn but they don't quite fit the template and will likely break our display system. Please review the two most recent entries and update the formatting to be consistent with the template and how it is used in the rest of the resume.
 
 ---
@@ -282,3 +283,25 @@ Yes, that is great! Please continue with the next.
 ---
 
 So we have the persona-based versions of our review and go-live prompts. Let us create alternate versions of these that refernece the advisors rather than referening the personas.
+
+---
+
+## 2025.12.11
+
+We are working on some final tweaks and polish to the website before we go live.
+
+Please review the README.md file to get familiar with the layout and background theming system.
+
+First, we would like to adjust the background filter for the about section to use more of an indigo blue.
+
+-
+
+Nice, that looks perfect! Now, we would like to flex a bit for the contacts section as it now looks very similar to the about section. In addition to the gradient and transparency, we would like to add grain and blur effects.
+
+---
+
+Nice! We previously created the alpine-background-transformer project to demonstrate the background theming system. We would like to update that project to reflect the recent updates to the site:
+- new midnight theme for the about section
+- new effects and purple theme for the content section
+
+So we will need to update the theme examples for the sections to reflect the current site. And we will need to add the blur and grain effects controls to the controls panel.

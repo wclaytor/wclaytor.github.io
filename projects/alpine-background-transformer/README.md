@@ -18,15 +18,19 @@ This tool demonstrates how a single background image can be transformed into com
 - **Opacity Sliders** - Fine-tune transparency for each color stop
 - **Position Control** - Adjust where the middle stop appears (10%-90%)
 
+### ✨ Effects (New!)
+- **Background Blur** - Add a dreamy depth effect with adjustable blur amount (1-10px)
+- **Film Grain** - Cinematic texture overlay with adjustable intensity (2-20%)
+
 ### 📚 Site Presets
 Pre-loaded with the actual gradient settings from the portfolio:
 
-| Preset | Description | Angle | Colors |
-|--------|-------------|-------|--------|
+| Preset | Description | Angle | Effects |
+|--------|-------------|-------|---------|
 | **Masthead** | Dark hero section | 180° | Black vertical fade |
-| **About** | Teal diagonal sweep | 135° | Teal → Blue → Black |
+| **About** | Midnight blue atmosphere | 135° | Dark blue diagonal sweep |
 | **Projects** | Light white overlay | 180° | White with subtle gray |
-| **Contact** | Dark with blue tint | 180° | Black with blue undertone |
+| **Contact** | Premium with effects | 160° | Blur + Grain + Indigo-purple |
 
 ### 💾 Custom Presets
 - Save your own gradient combinations
@@ -62,11 +66,23 @@ The key insight is that CSS allows layering a `linear-gradient` on top of an ima
 background: 
   linear-gradient(
     135deg,
-    rgba(100, 161, 157, 0.85) 0%,
-    rgba(40, 80, 100, 0.75) 50%,
+    rgba(25, 25, 60, 0.80) 0%,
+    rgba(15, 30, 60, 0.85) 50%,
     rgba(0, 0, 0, 0.95) 100%
   ),
   url("../assets/img/bg-masthead.jpg");
+```
+
+For premium effects like the Contact section, you can add blur and grain:
+
+```css
+/* Blur effect on ::before pseudo-element */
+filter: blur(3px);
+transform: scale(1.05);
+
+/* Grain overlay on ::after pseudo-element */
+background-image: url("data:image/svg+xml,..."); /* SVG noise pattern */
+opacity: 0.08;
 ```
 
 By varying the:
