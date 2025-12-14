@@ -1,15 +1,15 @@
 // Service Worker for Presentation Viewer PWA
-// Version 1.0.0
+// Version 1.0.1
 
-const CACHE_VERSION = 'presentation-viewer-v1';
+const CACHE_VERSION = 'presentation-viewer-v1.0.1';
 const CACHE_NAME = `pwa-presentation-${CACHE_VERSION}`;
 
 // URLs to cache for offline functionality
 const urlsToCache = [
-  '/',
-  '/presentation-viewer.html',
-  '/sample-presentation.md',
-  '/markdown-template-specification.md',
+  './',
+  './index.html',
+  './presentation-sample.md',
+  './presentation-template.md',
   // CDN resources
   'https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js',
   'https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js',
