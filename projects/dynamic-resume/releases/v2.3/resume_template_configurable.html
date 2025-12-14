@@ -253,7 +253,7 @@ function getInitialView(){
 function syncViewButton(view){
   const btn = $('#viewBtn');
   if(!btn) return;
-  const label = (view === 'short') ? 'Short' : 'Full';
+  const label = (view === 'short') ? 'Content: Short' : 'Content: Full';
   btn.textContent = label;
   btn.setAttribute('aria-pressed', 'true');
 }
