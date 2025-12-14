@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline Detection Demo - Alpine Resume</title>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f9fafb;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    h1 {
+      color: #111827;
+      margin-bottom: 1rem;
+    }
+    
+    .demo-controls {
+      margin: 2rem 0;
+      padding: 1rem;
+      background: #f3f4f6;
+      border-radius: 0.5rem;
+    }
+    
+    button {
+      padding: 0.75rem 1.5rem;
+      margin: 0.5rem 0.5rem 0.5rem 0;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    
+    button:hover {
+      background: #2563eb;
+    }
+    
+    .status {
+      margin: 1rem 0;
+      padding: 1rem;
+      border-radius: 0.5rem;
+    }
+    
+    .status.online {
+      background: #d1fae5;
+      border-left: 4px solid #10b981;
+      color: #065f46;
+    }
+    
+    .status.offline {
+      background: #fee2e2;
+      border-left: 4px solid #ef4444;
+      color: #991b1b;
+    }
+    
+    .instructions {
+      margin: 2rem 0;
+      padding: 1rem;
+      background: #dbeafe;
+      border-left: 4px solid #3b82f6;
+      border-radius: 0.25rem;
+    }
+    
+    /* Offline indicator styles */
+    .offline-indicator {
+      position: fixed;
+      bottom: 1rem;
+      left: 1rem;
+      right: 1rem;
+      max-width: 28rem;
+      z-index: 50;
+      background: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      border-radius: 0.5rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      padding: 1rem;
+    }
+    
+    @media (min-width: 640px) {
+      .offline-indicator {
+        left: auto;
+        right: 1rem;
+      }
+    }
+    
+    .offline-indicator-content {
+      display: flex;
+      align-items: start;
+      gap: 0.75rem;
+    }
+    
+    .offline-indicator-icon {
+      flex-shrink: 0;
+      font-size: 1.25rem;
+      color: #92400e;
+    }
+    
+    .offline-indicator-text h3 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #78350f;
+      margin: 0 0 0.25rem 0;
+    }
+    
+    .offline-indicator-text p {
+      font-size: 0.875rem;
+      color: #92400e;
+      margin: 0;
+    }
+  </style>
+</head>
+<body x-data="{ networkStore: Alpine.store('network') }">
+  
+  <div class="container">
+    <h1>🌐 Offline Detection Demo</h1>
+    
+    <p>This page demonstrates the offline detection feature implemented for Alpine Resume (Issue S3-006).</p>
+    
+    <div class="instructions">
+      <strong>📋 How to Test:</strong>
+      <ol style="margin-left: 1.5rem; margin-top: 0.5rem;">
+        <li>Open DevTools (F12)</li>
+        <li>Go to the Network tab</li>
+        <li>Check the "Offline" checkbox</li>
+        <li>Watch the offline indicator appear</li>
+        <li>Uncheck "Offline" to go back online</li>
+      </ol>
+    </div>
+    
+    <div class="demo-controls">
+      <h2>Manual Testing Controls</h2>
+      <p>Use these buttons to simulate network status changes:</p>
+      <button @click="window.dispatchEvent(new Event('offline'))">
+        📴 Simulate Going Offline
+      </button>
+      <button @click="window.dispatchEvent(new Event('online'))">
+        📶 Simulate Going Online
+      </button>
+    </div>
+    
+    <div class="status" :class="$store.network.isOnline ? 'online' : 'offline'">
+      <strong>Network Status:</strong>
+      <span x-text="$store.network.isOnline ? '✅ ONLINE' : '❌ OFFLINE'"></span>
+    </div>
+    
+    <div style="margin-top: 2rem;">
+      <h2>Feature Details</h2>
+      <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+        <li>✅ Uses <code>navigator.onLine</code> API</li>
+        <li>✅ Listens for 'online' and 'offline' events</li>
+        <li>✅ Shows visual indicator when offline</li>
+        <li>✅ Non-obtrusive toast notification</li>
+        <li>✅ ARIA live region for accessibility</li>
+        <li>✅ Smooth animations with Alpine transitions</li>
+        <li>✅ Responsive design (mobile & desktop)</li>
+        <li>✅ No functionality disabled when offline</li>
+      </ul>
+    </div>
+    
+    <div style="margin-top: 2rem; padding: 1rem; background: #f9fafb; border-radius: 0.5rem;">
+      <h3>Console Output</h3>
+      <p>Check the browser console to see network status change logs.</p>
+    </div>
+  </div>
+  
+  <!-- Offline Indicator (matches implementation in index.html) -->
+  <div 
+    x-show="!$store.network.isOnline"
+    x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="opacity-0 translate-y-4"
+    x-transition:enter-end="opacity-100 translate-y-0"
+    x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100 translate-y-0"
+    x-transition:leave-end="opacity-0 translate-y-4"
+    role="alert"
+    aria-live="polite"
+    aria-atomic="true"
+    class="offline-indicator">
+    <div class="offline-indicator-content">
+      <div class="offline-indicator-icon">
+        <i class="bi bi-wifi-off" aria-hidden="true"></i>
+      </div>
+      <div class="offline-indicator-text">
+        <h3>You're offline</h3>
+        <p>The app continues to work! Your changes are saved locally.</p>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Initialize Alpine store
+    document.addEventListener('alpine:init', () => {
+      Alpine.store('network', {
+        isOnline: navigator.onLine,
+        
+        init() {
+          console.log(`Network status initialized: ${this.isOnline ? 'online' : 'offline'}`);
+          
+          // Listen for online event
+          window.addEventListener('online', () => {
+            this.isOnline = true;
+            console.log('Network status: Back online');
+          });
+          
+          // Listen for offline event
+          window.addEventListener('offline', () => {
+            this.isOnline = false;
+            console.log('Network status: Gone offline');
+          });
+        }
+      });
+      
+      // Initialize the store
+      Alpine.store('network').init();
+    });
+  </script>
+</body>
+</html>
