@@ -387,7 +387,7 @@ function render(model){
     sections.forEach(sec => {
       const a = document.createElement('a');
       a.href = `#${sec.id}`;
-      a.innerHTML = `<span>${escapeHtml(sec.title)}</span><span class="pill">${sec.kind||''}</span>`;
+      a.innerHTML = `<span>${escapeHtml(sec.title)}</span>`;
       a.addEventListener('click', (e) => {
         // Let anchor work, but adjust focus after.
         setTimeout(() => {
@@ -432,7 +432,7 @@ function render(model){
     sections.forEach(sec => {
       const a = document.createElement('a');
       a.href = `#${sec.id}`;
-      a.innerHTML = `<span>${escapeHtml(sec.title)}</span><span class="pill">${sec.kind||''}</span>`;
+      a.innerHTML = `<span>${escapeHtml(sec.title)}</span>`;
       a.addEventListener('click', () => closeMobileDrawer());
       mNav.appendChild(a);
     });
