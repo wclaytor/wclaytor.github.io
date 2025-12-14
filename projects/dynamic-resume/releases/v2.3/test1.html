@@ -146,7 +146,6 @@
     <button class="btn" id="mobileMenuBtn" aria-expanded="false" aria-controls="mobileDrawer">Menu</button>
     <div style="font-weight:800;letter-spacing:-0.02em">William Claytor</div>
     <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
-      <button class="btn" id="homeBtnMobile" title="Home">Home</button>
       <button class="btn" id="themeBtnMobile" title="Toggle theme" aria-pressed="false">Theme</button>
     </div>
   </div>
@@ -158,7 +157,6 @@
     <div class="brand">
       <div class="name" id="brandName">Navigation</div>
 <div class="toolbar" aria-label="Toolbar">
-        <button class="btn" id="homeBtn" title="Home">Home</button>
 
         <div class="search" id="searchWrap">
           <input id="searchInput" type="search" placeholder="Search (press /)" aria-label="Search resume" />
@@ -376,6 +374,16 @@ function render(model){
   if(CONFIG.ui.enableNav){
     const nav = $('#navLinks');
     nav.innerHTML = '';
+    // Add Home link first
+    const homeLink = document.createElement('a');
+    homeLink.href = '#';
+    homeLink.innerHTML = `<span>Home</span>`;
+    homeLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      scrollHome();
+    });
+    nav.appendChild(homeLink);
+    // Then add section links
     sections.forEach(sec => {
       const a = document.createElement('a');
       a.href = `#${sec.id}`;
@@ -410,6 +418,17 @@ function render(model){
   drawer.appendChild(m);
   const mNav = $('#mNav', drawer);
   if(CONFIG.ui.enableNav){
+    // Add Home link first
+    const homeLink = document.createElement('a');
+    homeLink.href = '#';
+    homeLink.innerHTML = `<span>Home</span>`;
+    homeLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      scrollHome();
+      closeMobileDrawer();
+    });
+    mNav.appendChild(homeLink);
+    // Then add section links
     sections.forEach(sec => {
       const a = document.createElement('a');
       a.href = `#${sec.id}`;
@@ -596,8 +615,6 @@ function toggleMobileDrawer(){
   render((initialView === 'short') ? buildShortModel(RESUME) : RESUME);
 
   // Buttons
-  $('#homeBtn')?.addEventListener('click', scrollHome);
-  $('#homeBtnMobile')?.addEventListener('click', scrollHome);
   $('#themeBtn')?.addEventListener('click', toggleTheme);
   $('#themeBtnMobile')?.addEventListener('click', toggleTheme);
   $('#printBtn')?.addEventListener('click', () => window.print());

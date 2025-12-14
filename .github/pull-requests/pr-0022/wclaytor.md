@@ -55,3 +55,23 @@ Wrote projects/dynamic-resume/releases/v2.2/test.html
 Well it created a file, but the file doesn't include the resume data. They gave us a "generated" version that we found quite impressive. So of course the first thing we want to do is test the python script and reproduce the results. You can see the results in test.html
 
 As a baseline, before we even think about improvements we might want to make, we should try to figure out why the current script output doesn't match the "generated" version. It is possible that they didn't even use the script to generate that version at all. We hope that is not the case. Maybe it is just a small issue. Let us proceed.
+
+-
+
+python projects/dynamic-resume/releases/v2.3/build_resume.py projects/dynamic-resume/releases/v2.3/william-claytor-resume.md projects/dynamic-resume/releases/v2.3/test1.html
+
+---
+
+There are a few more issues. We will work through them one at a time and I will test each update before we move on to the next.
+
+Please keep in mind that we want to update the script so that it creates the correct result and verify the generated test.htm l file. We do not want to update the test.html file directly.
+
+First: In the navigation section, 'Home' is a separate button. Insetead, it should be the first option in the list of sections, like: - Home - Links - etc... 
+
+Speaking of the section navigation, we do not need a label to tell us what the section contains ('text'). Please remove these. 
+
+The 'Short' button is not explanatory. In the same way that we have 'Theme: Dark' we should have 'Content: Short'. 
+
+The links should be removed from the William Claytor header as they are also in the Links section. The Links section should just be one of the sections, not a heading section with a surround like William Claytor. There is already a leftover Links section heading and this is where the links should go. And when we do display the links, we should have a label and then the URL of the link as the link. This way when it is printed the URLs are displayed rather than just the text 'Personal website', etc... And this way users can see the URL they are about to visit to ensure it is valid and safe. 
+
+And lastly, please also tweak the header to include that “US citizen willing to relocate…” line (right now it isn’t captured by the minimal parser, since it’s a pre-section bullet). That’s easy to support by adding a headerBullets field in the parsed model.
