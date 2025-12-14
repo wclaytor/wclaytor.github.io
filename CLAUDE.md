@@ -72,6 +72,109 @@ This site is a professional showcase. Every suggestion, every line of code, ever
    - Note any follow-up actions needed
    - Be concise but complete
 
+## Leveraging Skills
+
+This project has specialized Claude skills in `.claude/skills/` that provide domain expertise for specific tasks. Think of skills as expert consultants you can call upon for specialized work.
+
+### Available Skills
+
+1. **frontend-design** - Production-grade interface design
+   - Creates creative, polished UI that avoids generic AI aesthetics
+   - Use for: Building pages, components, layouts, or modernizing designs
+   - Strength: High-quality visual design and contemporary web patterns
+
+2. **canvas-design** - Visual art creation
+   - Generates beautiful graphics in PNG and PDF formats
+   - Use for: Posters, graphics, diagrams, illustrations
+   - Strength: Original designs that avoid copyright issues
+
+3. **theme-factory** - Consistent styling system
+   - 10 pre-set themes plus custom theme generation
+   - Use for: Applying consistent design to pages, slides, docs
+   - Strength: Professional color schemes and typography systems
+
+4. **webapp-testing** - Playwright-based testing
+   - Tests local web applications with screenshots and logs
+   - Use for: Verifying functionality, debugging UI, quality assurance
+   - Strength: Automated testing before deployment
+
+5. **pdf** - PDF manipulation toolkit
+   - Extract, create, merge, split, and fill PDF forms
+   - Use for: Resume generation, documentation handling
+   - Strength: Comprehensive PDF operations
+
+6. **brand-guidelines** - Anthropic brand standards
+   - Official brand colors and typography
+   - Use for: Branded content or artifacts
+   - Strength: Consistent professional branding
+
+7. **skill-creator** - Skill development guide
+   - Guide for creating new skills
+   - Use for: Extending capabilities with custom skills
+   - Strength: Framework for building specialized tools
+
+### When to Use Skills
+
+**Design & Development**:
+- Building new pages or components → `frontend-design`
+- Creating graphics or visual assets → `canvas-design`
+- Applying consistent styling → `theme-factory`
+
+**Quality Assurance**:
+- Testing before deployment → `webapp-testing`
+- Validating functionality → `webapp-testing`
+
+**Content & Documents**:
+- Resume PDFs → `pdf`
+- Documentation → `pdf`
+- Branded content → `brand-guidelines`
+
+**Extending Capabilities**:
+- Creating new specialized tools → `skill-creator`
+
+### Skill Best Practices
+
+1. **Read the Skill First**: Use `read_file` to get the full skill instructions before applying it
+   ```
+   read_file: /workspaces/wclaytor.github.io/.claude/skills/frontend-design/SKILL.md
+   ```
+
+2. **Combine Skills**: Use multiple skills together for comprehensive solutions
+   - Example: `frontend-design` + `theme-factory` for styled pages
+   - Example: `frontend-design` + `webapp-testing` for tested features
+
+3. **Trust Skill Expertise**: Skills contain specialized knowledge
+   - Let them guide implementation details
+   - Follow their recommendations and patterns
+   - They know best practices in their domain
+
+4. **Match Task to Skill**: Choose the right skill for the job
+   - Don't use `canvas-design` for web pages (use `frontend-design`)
+   - Don't use `pdf` for web content (use `frontend-design`)
+   - Each skill has its specialized purpose
+
+5. **Document Skill Usage**: When using a skill, mention it
+   - Helps maintain consistency
+   - Makes it clear what expertise was applied
+   - Useful for future reference
+
+### Skill Integration Example
+
+```markdown
+Task: Modernize the homepage
+
+Approach:
+1. Read frontend-design skill for modern patterns
+2. Apply skill's recommendations for:
+   - Contemporary layout structures
+   - Modern color schemes
+   - Professional animations
+3. Use theme-factory for consistent styling
+4. Test with webapp-testing before deployment
+
+Result: Professional, modern homepage that avoids generic AI design
+```
+
 ## Key Principles
 
 ### 1. Professional First

@@ -148,6 +148,121 @@ When preparing for production:
 3. **Update** documentation if needed
 4. **Report** what was done and why
 
+## Leveraging Skills
+
+This project has specialized Claude skills available in `.claude/skills/` that provide expert-level knowledge for specific domains. Agents should use these skills to enhance their work quality and efficiency.
+
+### Available Skills
+
+1. **frontend-design** 🎨
+   - Creates production-grade interfaces with high design quality
+   - Avoids generic AI aesthetics, produces creative polished designs
+   - **Use for**: Building web components, pages, layouts, modernizing designs
+
+2. **canvas-design** 🖼️
+   - Creates beautiful visual art in PNG and PDF formats
+   - **Use for**: Posters, graphics, diagrams, illustrations, static design pieces
+
+3. **theme-factory** 🎨
+   - 10 pre-set themes plus custom theme generation
+   - **Use for**: Applying consistent styling to HTML pages, slides, docs, reports
+
+4. **webapp-testing** 🧪
+   - Playwright-based testing toolkit
+   - **Use for**: Testing local apps, verifying functionality, debugging UI, capturing screenshots
+
+5. **pdf** 📄
+   - Comprehensive PDF manipulation (extract, create, merge, split, forms)
+   - **Use for**: Resume generation, documentation handling
+
+6. **brand-guidelines** 🏢
+   - Applies Anthropic's official brand colors and typography
+   - **Use for**: Branded content or artifacts
+
+7. **skill-creator** 🛠️
+   - Guide for creating new specialized skills
+   - **Use for**: Extending capabilities with custom skills
+
+### When Agents Should Use Skills
+
+#### 🔍 Analysis Agents
+- Use **webapp-testing** to verify functionality during audits
+- Use **frontend-design** to evaluate design quality and modern patterns
+
+#### 🎨 Design Agents
+- **Primary tool**: Use **frontend-design** for all UI/UX work
+- Use **theme-factory** to apply consistent styling
+- Use **canvas-design** for graphics and visual assets
+- Combine **frontend-design** + **theme-factory** for complete designs
+
+#### 💻 Development Agents
+- Use **frontend-design** when building new features
+- Use **webapp-testing** before committing changes
+- Use **theme-factory** for consistent styling implementation
+
+#### 📝 Content Agents
+- Use **pdf** for resume and document generation
+- Use **canvas-design** for creating visual content
+- Use **brand-guidelines** when creating branded materials
+
+#### 🚀 Deployment Agents
+- **Critical**: Use **webapp-testing** in pre-deploy checks
+- Verify all functionality with automated tests
+- Capture screenshots for documentation
+
+### Skill Best Practices for Agents
+
+1. **Read First**: Always read the skill's SKILL.md file before using
+   ```
+   Location: .claude/skills/[skill-name]/SKILL.md
+   ```
+
+2. **Match Task to Skill**: Choose the right specialist
+   - Web pages → `frontend-design`
+   - Static graphics → `canvas-design`
+   - Testing → `webapp-testing`
+   - Documents → `pdf`
+
+3. **Combine Skills**: Use multiple skills for comprehensive solutions
+   - Example: `frontend-design` + `theme-factory` + `webapp-testing`
+   - Design → Style → Test → Deploy
+
+4. **Trust Skill Expertise**: Skills contain specialized knowledge
+   - Follow their recommendations
+   - Let them guide implementation details
+   - They know domain best practices
+
+5. **Document Usage**: Note which skills were used in reports
+   - Helps maintain consistency
+   - Useful for future reference
+   - Shows expertise was applied
+
+### Skill Integration in Workflows
+
+**Adding a New Project** (Updated):
+1. Create folder structure
+2. **Use `frontend-design`** to build modern, professional interface
+3. **Use `theme-factory`** to apply consistent styling
+4. Add content and documentation
+5. **Use `webapp-testing`** to verify functionality
+6. Add to projects index
+7. Test and deploy
+
+**Updating Design** (Updated):
+1. Review current design
+2. **Use `frontend-design`** for modern patterns and aesthetics
+3. **Use `theme-factory`** for consistent color/typography
+4. Implement changes
+5. **Use `webapp-testing`** to verify across devices
+6. Check accessibility and performance
+
+**Improving Performance** (Updated):
+1. Audit with Lighthouse
+2. Optimize assets
+3. **Use `webapp-testing`** to measure improvements
+4. Implement optimizations
+5. Re-test and validate
+
 ## Decision Framework
 
 When making decisions, ask:
