@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>William Claytor — Resume</title>
+<style>
+:root{
+  --bg:#ffffff;--panel:#f6f7f9;--text:#111827;--muted:#4b5563;--border:#e5e7eb;
+  --accent:#2563eb;--mark:#fff3a3;--shadow:0 6px 22px rgba(0,0,0,.08);--radius:14px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+  --sans:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+}
+html[data-theme="dark"]{
+  --bg:#0b1020;--panel:#111a33;--text:#e5e7eb;--muted:#a7b0c2;--border:#26324f;
+  --accent:#60a5fa;--mark:#4b3b00;--shadow:0 10px 28px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.5}
+a{color:var(--accent);text-decoration-thickness:.08em;text-underline-offset:.16em}
+a:focus,button:focus,summary:focus,input:focus{outline:3px solid color-mix(in oklab,var(--accent) 65%,transparent);outline-offset:2px}
+.skip{position:absolute;left:-999px;top:auto;width:1px;height:1px;overflow:hidden}
+.skip:focus{left:16px;top:16px;width:auto;height:auto;background:var(--panel);border:1px solid var(--border);padding:10px 12px;border-radius:12px;z-index:10000}
+.layout{display:grid;grid-template-columns:320px 1fr;gap:18px;max-width:1100px;margin:0 auto;padding:18px}
+@media (max-width:980px){.layout{grid-template-columns:1fr}.aside{position:relative;top:0;height:auto}}
+.aside{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;position:sticky;top:18px;height:calc(100dvh - 36px);overflow:auto}
+@media (max-width:980px){.aside{position:relative;height:auto}}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.brand h2{font-size:14px;margin:0;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.toolbar{display:grid;gap:10px;margin:10px 0 14px}
+.row{display:flex;gap:10px}
+.btn{appearance:none;border:1px solid var(--border);background:transparent;color:var(--text);padding:9px 10px;border-radius:12px;cursor:pointer;font-weight:600;flex:1}
+.btn:hover{border-color:color-mix(in oklab,var(--border) 35%,var(--accent))}
+.btn[aria-pressed="true"]{background:color-mix(in oklab,var(--accent) 18%,transparent);border-color:color-mix(in oklab,var(--accent) 50%,var(--border))}
+.input{width:100%;padding:9px 10px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--text)}
+.hint{font-size:12px;color:var(--muted);margin:0}
+.nav ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.nav a{display:flex;align-items:center;padding:8px 10px;border-radius:12px;color:var(--text);text-decoration:none;border:1px solid transparent}
+.nav a:hover{background:color-mix(in oklab,var(--accent) 10%,transparent);border-color:color-mix(in oklab,var(--accent) 30%,var(--border))}
+.nav a[aria-current="true"]{background:color-mix(in oklab,var(--accent) 14%,transparent);border-color:color-mix(in oklab,var(--accent) 45%,var(--border))}
+.main{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+.pagehead{padding:14px 14px 12px;border:1px solid var(--border);border-radius:var(--radius);background:color-mix(in oklab,var(--panel) 85%,transparent);margin-bottom:14px}
+.pagehead h1{margin:0 0 6px;font-size:30px;line-height:1.1}
+.meta{display:flex;flex-wrap:wrap;gap:10px;color:var(--muted);font-size:14px}
+.meta .mono{font-family:var(--mono)}
+.headbullets{margin:10px 0 0;padding-left:18px;color:var(--muted)}
+.section{scroll-margin-top:14px;margin-top:20px}
+.section h2{font-size:18px;margin:0 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.card{border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;background:color-mix(in oklab,var(--panel) 70%,transparent);margin:10px 0}
+.jobhead{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;justify-content:space-between}
+.jobtitle{font-weight:800}
+.company{font-weight:700;color:var(--muted)}
+.small{font-size:13px;color:var(--muted)}
+ul{margin:8px 0 10px;padding-left:18px}
+details{border:1px solid var(--border);border-radius:12px;padding:8px 10px;background:transparent;margin:8px 0}
+summary{cursor:pointer;font-weight:700}
+mark{background:var(--mark);color:inherit;padding:0 .15em;border-radius:.2em}
+.fade{transition:opacity .25s ease,transform .25s ease}
+.fade.out{opacity:0;transform:translateY(6px)}
+.badge{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:999px;padding:4px 8px;font-size:12px;color:var(--muted)}
+.kbd{font-family:var(--mono);font-size:12px;border:1px solid var(--border);border-radius:8px;padding:1px 6px;color:var(--muted)}
+@media print{
+  body{background:#fff}
+  .layout{display:block;max-width:none;padding:0}
+  .aside{display:none !important}
+  .main{border:none;box-shadow:none;padding:0}
+  a{text-decoration:none;color:#000}
+  .pagehead{border:1px solid #ddd;background:#fff}
+  mark{background:transparent}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="layout">
+  <aside class="aside" aria-label="Tools and navigation">
+    <div class="brand">
+      <h2>Navigation</h2>
+      <span class="badge" id="statusBadge" aria-live="polite"></span>
+    </div>
+    <div class="toolbar" role="region" aria-label="Toolbar">
+      <input id="search" class="input" type="search" placeholder="Search (press /)" aria-label="Search resume">
+      <div class="row">
+        <button id="contentToggle" class="btn" type="button" aria-pressed="true"></button>
+        <button id="themeToggle" class="btn" type="button" aria-pressed="false"></button>
+      </div>
+      <p class="hint">Shortcuts: <span class="kbd">/</span> search · <span class="kbd">P</span> print</p>
+    </div>
+    <nav class="nav" aria-label="Section navigation">
+      <ul id="navList"></ul>
+    </nav>
+  </aside>
+
+  <main id="content" class="main" tabindex="-1">
+    <header class="pagehead" id="pageHead"></header>
+    <div id="contentRoot" class="fade"></div>
+  </main>
+</div>
+
+<script id="__DATA__" type="application/json">{"model": {"header": {"name": "William Claytor", "lines": ["Bel Air, MD | Tucson, AZ"], "email": "claytor1@gmail.com", "bullets": ["US citizen willing to relocate within the US for the right location and opportunity"]}, "sections": [{"title": "Links", "links": [{"label": "Personal Website", "url": "https://wclaytor.github.io/"}, {"label": "GitHub", "url": "https://github.com/wclaytor"}, {"label": "LinkedIn", "url": "https://www.linkedin.com/in/billclaytor/"}], "body": "- Personal Website: https://wclaytor.github.io/\n- GitHub: https://github.com/wclaytor\n- LinkedIn: https://www.linkedin.com/in/billclaytor/"}, {"title": "Summary", "body": "Senior Quality Engineer and Automation Leader with 25+ years of experience transforming manual QA into scalable automated systems, currently pioneering AI-assisted QA workflows. Proven track record of building test frameworks, leading globally distributed teams, and embedding quality into CI/CD pipelines across SaaS, enterprise, and regulated environments."}, {"title": "Work Experience", "jobs": [{"title": "Senior Automation QA Engineer", "company": "insightsoftware", "location": "Remote", "dates": "05/2023 – 12/2025", "companyDescription": "", "groups": []}, {"title": "Professional Development Sabbatical", "company": "", "location": "08/2022 – 03/2023", "dates": "Sabbatical to develop and ship a production Rails app and evaluate modern test frameworks.", "companyDescription": "", "groups": []}, {"title": "Senior QA Engineer and QA Manager", "company": "Active911", "location": "Corvallis, OR", "dates": "03/2020 – 07/2022", "companyDescription": "", "groups": []}, {"title": "Senior Software Engineer", "company": "Puppet", "location": "Portland, OR", "dates": "01/2018 – 03/2020", "companyDescription": "Puppet is the industry-leading automation solution for configuration management, compliance, CI/CD, patch management, IT automation, and more.", "groups": []}, {"title": "Senior Quality Engineer", "company": "National Public Radio", "location": "Washington, DC", "dates": "05/2014 – 01/2018", "companyDescription": "NPR is an independent, nonprofit media organization that was founded on a mission to create a more informed public.", "groups": []}, {"title": "QA Automation Manager", "company": "American Public University System", "location": "Charles Town, WV", "dates": "03/2012 – 05/2014", "companyDescription": "American Public University System (APUS) is an online university system with its headquarters in Charles Town, West Virginia.", "groups": []}, {"title": "Lead QA Analyst", "company": "FINRA", "location": "Rockville, MD", "dates": "09/2003 – 03/2012", "companyDescription": "", "groups": []}, {"title": "Test Automation Specialist", "company": "Fannie Mae", "location": "Washington, DC", "dates": "09/2002 – 09/2003", "companyDescription": "", "groups": []}, {"title": "Test Automation Specialist", "company": "MedContrax", "location": "Gaithersburg, MD", "dates": "01/2001 – 02/2002", "companyDescription": "", "groups": []}, {"title": "Test Automation Specialist", "company": "US Census Bureau", "location": "Suitland, MD", "dates": "09/1998 – 01/2001", "companyDescription": "The Census Bureau's mission is to serve as the nation's leading provider of quality data about its people and economy.", "groups": []}], "body": "### Senior Automation QA Engineer\n\n**insightsoftware**  \nRemote  \n05/2023 – 12/2025\n\ninsightsoftware is a global provider of reporting, analytics, and performance management solutions.\n\n**Automation & Innovation:**\n\n- Pioneered AI-assisted QA workflow (GitHub Copilot + PowerShell) automating end-to-end Jira/Xray operations from requirements analysis through test execution and reporting\n- Streamlined documentation by building an AI pipeline that converted legacy training videos into a searchable library using transcript analysis, automated screenshot extraction, and context-aware wiki generation\n- Automated sprint release verification via Azure Pipelines using in-house C# / Selenium framework across multiple product lines\n- Developed a test reporting dashboard tool for the automation triage process to quickly generate an HTML / email report with the daily Azure test results across multiple environments and releases, replacing the manual process and reducing report generation time from over 10 minutes to under 30 seconds\n- Created an automated pipeline to extract 5000+ automated test cases from the legacy Team Foundation Server and generate corresponding test cases and test steps in Jira / Xray\n- Coordinated test reporting across 7 globally distributed teams, establishing customer-facing delivery process for sanitized release reports\n\n**Leadership & Cross-Functional Initiatives:**\n\n- Led distributed QA organization: coordinated with India-based co-lead, established processes across onshore/offshore teams, transitioned manual testers to automation\n- Led disaster recovery testing for multiple products across global teams, coordinating with Production Support and Engineering through multiple DR iterations\n- Founded Automation Guild community of practice; delivered monthly sessions on UI testing, performance testing, and automation best practices\n- Established performance testing capability: led the initial development of the JMeter / Grafana framework and core test suite, helped to hire and onboard Principal Performance Engineer and Senior Performance Engineer\n\n---\n\n### Professional Development Sabbatical\n\n08/2022 – 03/2023\n\nSabbatical to develop and ship a production Rails app and evaluate modern test frameworks.\n\n- Built and deployed Songbook (Rails, Dokku, DigitalOcean) - a setlist organizer for live music performance\n- Evaluated Playwright and Cypress by building Page Object Model implementations for each\n- Adopted GitHub Actions and GitHub Projects as CI/CD and project management alternatives to Jenkins / Jira\n\n---\n\n### Senior QA Engineer and QA Manager\n\n**Active911**  \nCorvallis, OR  \n03/2020 – 07/2022\n\nActive911 helps heroes save lives with software designed to get first responders on scene faster with fast alerting, easy scheduling and more.\n\n**Technical Leadership:**\n\n- Established end-to-end QA coverage for ActiveAlert and ActiveTeam across web, Android, and iOS platforms throughout the full SDLC\n- Architected Nightwatch.js test framework using Page Object Model; reusable module library accelerated new test development across the team\n- Built real-time test automation dashboard integrating Jenkins Job DSL with TestRail API for live execution status and reporting\n\n**Team Leadership:**\n\n- Grew and developed QA team: led hiring, identified and promoted internal candidates from Customer Support, mentored team members in automation practices\n- Embedded quality in development process by collaborating with product and engineering during backlog review and design sessions\n- Coordinated UAT with product managers, ensuring customer requirements validated before releases\n\n---\n\n### Senior Software Engineer\n\n**Puppet**  \nPortland, OR  \n01/2018 – 03/2020\n\nPuppet is the industry-leading automation solution for configuration management, compliance, CI/CD, patch management, IT automation, and more.\n\n**Performance Engineering & Framework Development:**\n\n- Extended gatling-puppet-load-test (GPLT) framework with scale testing, automated HTML comparison reports, and system tuning integration with comprehensive RSpec unit test coverage\n- Built Ruby provisioning utility for Puppet ABS API, enabling automated infrastructure node deployment with JSON request handling and YAML configuration export\n- Contributed to Reference Architecture Setup (RAS) CLI tool using Ruby and Puppet Bolt; implemented Docker-based acceptance tests with comprehensive RSpec coverage\n\n**Cross-Team Collaboration:**\n\n- Drove performance testing standards through Reference Architectures Working Group, collaborating with Customer Success, Installer, and PuppetDB teams on architecture definition and test roadmap\n- Served as Scrum Master for Installer and SLV teams, establishing Puppet Operating Model implementation and facilitating continuous process improvement\n\n---\n\n### Senior Quality Engineer\n\n**National Public Radio**  \nWashington, DC  \n05/2014 – 01/2018\n\nNPR is an independent, nonprofit media organization that was founded on a mission to create a more informed public.\n\n**Test Automation Architecture:**\n\n- Led JavaScript framework evaluation across multiple teams; selected and implemented Nightwatch.js with cross-browser support integrated into Seamus CMS CI pipeline\n- Architected hybrid test framework (keyword-driven + data-driven) in Java / Selenium serving cross-platform testing needs\n- Built mobile testing capability using Appium for Android and iOS, establishing Jenkins-based infrastructure with simulators and emulators\n\n**Developer Tooling & Infrastructure:**\n\n- Created test documentation web app using Node.js / Express backend with React / Redux frontend, improving test suite visibility across teams\n- Established Jenkins automation dashboards using Job DSL across Publishing, TechOps, and NPR One teams\n- Modernized API test suite with modular architecture, adding coverage for new endpoints and improving maintainability\n\n---\n\n### QA Automation Manager\n\n**American Public University System**  \nCharles Town, WV  \n03/2012 – 05/2014\n\nAmerican Public University System (APUS) is an online university system with its headquarters in Charles Town, West Virginia.\n\n- Designed full-stack test automation architecture in .NET / C#: keyword-driven UI framework (Coded UI + Selenium) plus data-driven back-end framework verifying student registration and payment transactions\n- Built QA Automation team from ground up: led recruiting for engineer and specialist roles, trained team members in automation tools, development practices, and organizational processes\n- Established Agile test management workflow using HP ALM / Quality Center for workload planning and execution tracking\n- Drove automation adoption organization-wide through stakeholder engagement and active participation in design, requirements, and test plan reviews\n\n---\n\n### Lead QA Analyst\n\n**FINRA**  \nRockville, MD  \n09/2003 – 03/2012\n\nFINRA enables investors and firms to participate in the market with confidence by safeguarding its integrity.\n\n- Ensured quality of critical securities industry infrastructure: Web CRD (central licensing system for U.S. securities industry) and IAPD, supporting regulatory compliance throughout 9-year tenure\n- Evolved test automation platform from WinRunner to QTP, architecting improved dependency management for multi-application, multi-release, multi-environment testing\n- Designed no-code test framework (QTP / VBScript + Excel parameterization) enabling manual testers to create and execute automated tests without programming knowledge\n- Pioneered CI adoption: implemented automated test execution pipeline using CruiseControl → Hudson with Ant scripting\n- Established requirements-based automation process with HP Quality Center for traceability, test organization, and defect management\n\n---\n\n### Test Automation Specialist\n\n**Fannie Mae**  \nWashington, DC  \n09/2002 – 09/2003\n\nFannie Mae was chartered by U.S. Congress in 1938 to provide a reliable source of affordable mortgage financing across the country.\n\n- Tested critical mortgage processing applications for federal housing finance agency\n- Built WinRunner test automation framework with reusable business action functions; developed LoadRunner scripts for internal and hosted virtual user (HVU) performance testing\n- Administered TestDirector server and managed test infrastructure including requirements traceability and defect coordination\n\n---\n\n### Test Automation Specialist\n\n**MedContrax**  \nGaithersburg, MD  \n01/2001 – 02/2002\n\nMedContrax was a software company based in Rockville, Maryland, providing data processing and integration services to the healthcare industry.\n\n- Tested pharmaceutical contract management application (ColdFusion / SQL Server) for healthcare data processing company\n- Developed WinRunner automation framework with reusable function library enabling rapid test development\n- Owned full QC environment: Windows NT Server, SQL Server, IIS, ColdFusion, TestDirector administration, and defect coordination\n\n---\n\n### Test Automation Specialist\n\n**US Census Bureau**  \nSuitland, MD  \n09/1998 – 01/2001\n\nThe Census Bureau's mission is to serve as the nation's leading provider of quality data about its people and economy.\n\n- Managed automated testing of federal data collection applications using Mercury Interactive TestSuite (WinRunner, LoadRunner, TestDirector)\n- Conducted performance test engineering: identified key transactions, developed LoadRunner scripts, executed performance scenarios\n- Built interactive test results intranet site (Windows 2000 Server/IIS) - early web development for test visibility\n- Delivered Y2K compliance testing for critical government systems under federal deadline pressure\n\n---"}, {"title": "Education", "body": "**Towson University** - English Studies  \nCoursework completed 1992–1994 | Towson, MD\n\n**Harford Community College** - Business Management  \nCoursework completed 1990–1991 | Churchville, MD\n\n---"}, {"title": "Skills", "body": "**Core Expertise**\nAI-Assisted QA Workflows | Test Automation Architecture | Software Development | QA Team Leadership | Performance Testing | CI/CD Integration | Test Strategy\n\n**Languages**\nJavaScript, Ruby, Python, C#/.NET, Java, PowerShell, SQL\n\n**Test Automation**\nSelenium, Playwright, Nightwatch.js, Appium, JMeter, Gatling, RSpec\n\n**DevOps & Cloud**\nJenkins, Azure Pipelines, AWS, Git, GitHub Actions, Docker, Grafana\n\n**AI Tools**\nGitHub Copilot, Claude, ChatGPT / Codex\n\n**Practices**\nAgile / Scrum, Test-Driven Development, API Testing, Cross-Platform Testing"}]}, "config": {"ui": {"defaultView": "short", "labels": {"contentShort": "Short", "contentFull": "Full"}}, "storage": {"themeKey": "resume_theme", "viewKey": "resume_view"}, "shortView": {"sections": {"include": ["Summary", "Links", "Work Experience", "Skills", "Education"]}, "workExperience": {"jobsToKeep": 3, "bulletsPerJob": 3, "alwaysIncludeRoles": []}, "earlierExperience": {"enabled": true, "label": "Earlier Experience", "maxCompanies": 8}}}}</script>
+<script>
+(() => {
+  const data = JSON.parse(document.getElementById("__DATA__").textContent);
+  const cfg = data.config || {};
+  const full = data.model;
+
+  const themeKey = cfg.storage?.themeKey || "resume_theme";
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const initialTheme = localStorage.getItem(themeKey) || (prefersDark ? "dark" : "light");
+  setTheme(initialTheme);
+
+  const navList = document.getElementById("navList");
+  const contentRoot = document.getElementById("contentRoot");
+  const statusBadge = document.getElementById("statusBadge");
+  const themeToggle = document.getElementById("themeToggle");
+  const contentToggle = document.getElementById("contentToggle");
+  const search = document.getElementById("search");
+  const pageHead = document.getElementById("pageHead");
+
+  function setTheme(t){
+    document.documentElement.dataset.theme = t;
+    localStorage.setItem(themeKey, t);
+    themeToggle.textContent = `Theme: ${t[0].toUpperCase()+t.slice(1)}`;
+    themeToggle.setAttribute("aria-pressed", t === "dark" ? "true" : "false");
+  }
+
+  const viewKey = cfg.storage?.viewKey || "resume_view";
+  const defaultView = cfg.ui?.defaultView || "short";
+  let view = localStorage.getItem(viewKey) || defaultView;
+
+  function labelView(v){
+    const lbl = v === "full" ? (cfg.ui?.labels?.contentFull || "Full") : (cfg.ui?.labels?.contentShort || "Short");
+    return `Content: ${lbl}`;
+  }
+
+  function esc(s){ return (s||"").replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  function slug(s){ return (s||"").toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'') || "section"; }
+
+  function buildShortModel(model){
+    const sCfg = cfg.shortView || {};
+    const out = JSON.parse(JSON.stringify(model));
+
+    const include = sCfg.sections?.include || ["Summary","Links","Work Experience","Skills","Education"];
+    out.sections = out.sections.filter(s => include.includes(s.title));
+
+    const we = out.sections.find(s => s.title === "Work Experience");
+    if (we && Array.isArray(we.jobs)){
+      const keepJobs = sCfg.workExperience?.jobsToKeep ?? 3;
+      const bulletsPer = sCfg.workExperience?.bulletsPerJob ?? 3;
+      const always = (sCfg.workExperience?.alwaysIncludeRoles || []);
+      const jobs = we.jobs;
+
+      const alwaysJobs = jobs.filter(j => always.includes(j.title));
+      const rest = jobs.filter(j => !always.includes(j.title));
+      const kept = [...alwaysJobs, ...rest].slice(0, keepJobs);
+
+      kept.forEach(j => {
+        (j.groups||[]).forEach(g => g.items = (g.items||[]).slice(0, bulletsPer));
+      });
+      we.jobs = kept;
+
+      const earlier = sCfg.earlierExperience?.enabled ?? true;
+      if (earlier){
+        const omitted = jobs.filter(j => !kept.some(k => k.title === j.title && k.company === j.company));
+        if (omitted.length){
+          const maxNames = sCfg.earlierExperience?.maxCompanies ?? 8;
+          const names = [...new Set(omitted.map(j => j.company).filter(Boolean))].slice(0, maxNames);
+          const suffix = (omitted.length > maxNames) ? "…" : "";
+          we.earlier = (sCfg.earlierExperience?.label || "Earlier Experience") + ": " + names.join(", ") + suffix;
+        }
+      }
+    }
+    return out;
+  }
+
+  function getModelForView(v){ return v === "full" ? full : buildShortModel(full); }
+
+  function renderHeader(model){
+    const h = model.header || {};
+    const metaParts = [];
+    if (h.lines && h.lines.length) metaParts.push(...h.lines);
+    if (h.email) metaParts.push(h.email);
+    const meta = metaParts.length ? `<div class="meta">${metaParts.map(p=>{
+      const isEmail = /@/.test(p);
+      return isEmail ? `<span class="mono">${esc(p)}</span>` : `<span>${esc(p)}</span>`;
+    }).join("")}</div>` : "";
+    const bullets = (h.bullets && h.bullets.length) ? `<ul class="headbullets">${h.bullets.map(b=>`<li>${esc(b)}</li>`).join("")}</ul>` : "";
+    pageHead.innerHTML = `<h1>${esc(h.name || "William Claytor")}</h1>${meta}${bullets}`;
+  }
+
+  function mdToHtml(src){
+    const lines = (src||"").split(/\r?\n/);
+    let html = "";
+    let inList = false;
+    function closeList(){ if(inList){ html += "</ul>"; inList=false; } }
+    function inline(s){
+      let out = esc(s);
+      out = out.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+      out = out.replace(/\[([^\]]+?)\]\((https?:\/\/[^\s)]+)\)/g, `<a href="$2" rel="noopener noreferrer" target="_blank">$1</a>`);
+      out = out.replace(/(https?:\/\/[^\s<]+)/g, `<a href="$1" rel="noopener noreferrer" target="_blank">$1</a>`);
+      return out;
+    }
+    for (let i=0;i<lines.length;i++){
+      const ln = lines[i];
+      if (/^\s*$/.test(ln)){ closeList(); continue; }
+      if (/^\s*---\s*$/.test(ln)){ closeList(); html += "<hr>"; continue; }
+      const mLI = ln.match(/^\s*-\s+(.*)$/);
+      if (mLI){
+        if(!inList){ html += "<ul>"; inList=true; }
+        html += `<li>${inline(mLI[1])}</li>`;
+        continue;
+      }
+      closeList();
+      html += `<p>${inline(ln)}</p>`;
+    }
+    closeList();
+    return html;
+  }
+
+  function renderLinksSection(sec){
+    const links = sec.links || [];
+    if (!links.length) return "<p class='small'>No links provided.</p>";
+    return `<ul>${links.map(l => {
+      const label = esc(l.label || "Link");
+      const url = esc(l.url || "");
+      return `<li><strong>${label}:</strong> <a href="${url}" rel="noopener noreferrer" target="_blank">${url}</a></li>`;
+    }).join("")}</ul>`;
+  }
+
+  function renderWorkExperience(sec){
+    const jobs = sec.jobs || [];
+    let out = "";
+    if (sec.earlier) out += `<p class="small">${esc(sec.earlier)}</p>`;
+    jobs.forEach(job => {
+      const title = esc(job.title);
+      const company = esc(job.company || "");
+      const loc = esc(job.location || "");
+      const dates = esc(job.dates || "");
+      const desc = job.companyDescription ? `
+        <details>
+          <summary>About ${company}</summary>
+          <div class="small">${mdToHtml(job.companyDescription)}</div>
+        </details>` : "";
+      const groups = (job.groups||[]).map(g => {
+        const gTitle = esc(g.title || "");
+        const items = (g.items||[]).map(it => `<li>${esc(it)}</li>`).join("");
+        return `<div class="card"><div class="small"><strong>${gTitle}</strong></div><ul>${items}</ul></div>`;
+      }).join("");
+      out += `
+        <article class="card">
+          <div class="jobhead">
+            <div>
+              <div class="jobtitle">${title}</div>
+              <div class="company">${company}</div>
+              <div class="small">${[loc, dates].filter(Boolean).join(" · ")}</div>
+            </div>
+          </div>
+          ${desc}
+          ${groups}
+        </article>`;
+    });
+    return out;
+  }
+
+  function renderSections(model){
+    contentRoot.innerHTML = "";
+    const frag = document.createDocumentFragment();
+    model.sections.forEach(sec => {
+      const id = slug(sec.title);
+      const wrap = document.createElement("section");
+      wrap.className = "section";
+      wrap.id = id;
+      wrap.setAttribute("aria-label", sec.title);
+      let body = "";
+      if (sec.title === "Work Experience") body = renderWorkExperience(sec);
+      else if (sec.title === "Links") body = renderLinksSection(sec);
+      else body = mdToHtml(sec.body || "");
+      wrap.innerHTML = `<h2>${esc(sec.title)}</h2>` + body;
+      frag.appendChild(wrap);
+    });
+    contentRoot.appendChild(frag);
+  }
+
+  function buildNav(model){
+    navList.innerHTML = "";
+    const items = [{id:"home", title:"Home", onClick: () => window.scrollTo({top:0, behavior:"smooth"})}]
+      .concat(model.sections.map(s => ({id:slug(s.title), title:s.title})));
+
+    items.forEach(item => {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = item.id === "home" ? "#top" : `#${item.id}`;
+      a.textContent = item.title;
+      a.addEventListener("click", (e) => {
+        if (item.onClick){ e.preventDefault(); item.onClick(); }
+      });
+      li.appendChild(a);
+      navList.appendChild(li);
+    });
+  }
+
+  function updateBadge(model){
+    const v = view === "full" ? (cfg.ui?.labels?.contentFull || "Full") : (cfg.ui?.labels?.contentShort || "Short");
+    statusBadge.textContent = `${v} · ${model.sections.length} sections`;
+  }
+
+  function rerender(){
+    const model = getModelForView(view);
+    renderHeader(model);
+    buildNav(model);
+    renderSections(model);
+    updateBadge(model);
+    contentToggle.textContent = labelView(view);
+    contentToggle.setAttribute("aria-pressed", view === "full" ? "false" : "true");
+    if (search.value.trim()) applySearch(search.value.trim());
+  }
+
+  // Search: rerender then highlight + hide unmatched sections
+  function applySearch(q){
+    const needle = q.toLowerCase();
+    const model = getModelForView(view);
+    renderHeader(model); buildNav(model); renderSections(model); updateBadge(model);
+
+    if (!q) return;
+
+    const walker = document.createTreeWalker(contentRoot, NodeFilter.SHOW_TEXT);
+    const texts = [];
+    while(walker.nextNode()) texts.push(walker.currentNode);
+
+    let hits = 0;
+    texts.forEach(node => {
+      const t = node.nodeValue;
+      const idx = t.toLowerCase().indexOf(needle);
+      if (idx === -1) return;
+      const span = document.createElement("span");
+      span.appendChild(document.createTextNode(t.slice(0, idx)));
+      const mark = document.createElement("mark");
+      mark.textContent = t.slice(idx, idx + q.length);
+      span.appendChild(mark);
+      span.appendChild(document.createTextNode(t.slice(idx + q.length)));
+      node.parentNode.replaceChild(span, node);
+      hits++;
+    });
+
+    [...contentRoot.querySelectorAll(".section")].forEach(sec => {
+      sec.style.display = sec.textContent.toLowerCase().includes(needle) ? "" : "none";
+    });
+    statusBadge.textContent = `${hits} match${hits===1?"":"es"}`;
+  }
+
+  themeToggle.addEventListener("click", () => {
+    const t = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    setTheme(t);
+  });
+
+  contentToggle.addEventListener("click", () => {
+    view = (view === "full") ? "short" : "full";
+    localStorage.setItem(viewKey, view);
+    contentRoot.classList.add("out");
+    setTimeout(() => { contentRoot.classList.remove("out"); rerender(); }, 140);
+  });
+
+  search.addEventListener("input", e => applySearch(e.target.value.trim()));
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "/" && document.activeElement !== search){ e.preventDefault(); search.focus(); }
+    if (e.key.toLowerCase() === "p" && !e.ctrlKey && !e.metaKey && !e.altKey){ e.preventDefault(); window.print(); }
+  });
+
+  rerender();
+})();
+</script>
+</body>
+</html>
