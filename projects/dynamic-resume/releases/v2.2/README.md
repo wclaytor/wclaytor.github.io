@@ -10,7 +10,7 @@ It’s designed to be **accessible**, **mobile-friendly**, and **easy to regener
 
 ## Files
 
-- `build_resume_v2.py` — the generator script
+- `build_resume.py` — the generator script
 - `resume_template.html` — the standalone HTML template (CSS + JS included) with two placeholders:
   - `__NAME__` (for the page title / header)
   - `__JSON__` (the parsed resume data embedded as JSON)
