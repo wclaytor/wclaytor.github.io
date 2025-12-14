@@ -513,47 +513,6 @@ function renderWithTransition(view){
   setTimeout(doRender, prefersReducedMotion ? 0 : 180);
 }
 
-/** ====== Search ====== */
-function applySearch(q){
-  const query = (q||'').trim();
-  // If empty, re-render current view cleanly
-  const view = getInitialView();
-  const model = (view === 'short') ? buildShortModel(RESUME) : RESUME;
-  render(model);
-  if(!query || query.length < (CONFIG.search.minQueryLength||2)) return;
-
-  const haySections = new Set((CONFIG.search.fields||[]).map(s => s.toLowerCase()));
-  const panel = $('#viewPanel');
-  // Highlight and filter cards based on text match
-  const cards = $$('.card', panel);
-  const lowerQ = query.toLowerCase();
-  cards.forEach(card => {
-    const text = card.textContent.toLowerCase();
-    const match = text.includes(lowerQ);
-    card.style.display = match ? '' : 'none';
-    if(match && CONFIG.search.highlightMatches){
-      // highlight within bullet list + small text + headings
-      // naive: replace text nodes inside card for a few known elements
-      $$('li, .small, div[style*="font-weight"]', card).forEach(el => {
-        el.innerHTML = highlight(el.textContent, query);
-      });
-    }
-  });
-
-  // Also hide sections that have no visible cards
-  $$('#viewPanel > section', panel).forEach(sec => {
-    const hasVisibleCard = $$('.card', sec).some(c => c.style.display !== 'none');
-    // If section contains no cards (like Summary text), keep it unless excluded by fields rule
-    const title = $('h2', sec)?.textContent?.toLowerCase() || '';
-    const isCardSection = $$('.card', sec).length > 0;
-    if(isCardSection){
-      sec.style.display = hasVisibleCard ? '' : 'none';
-    }else{
-      sec.style.display = haySections.size && !haySections.has(title) ? '' : '';
-    }
-  });
-}
-
 /** ====== Mobile drawer ====== */
 function openMobileDrawer(){
   const btn = $('#mobileMenuBtn');
@@ -603,18 +562,8 @@ function toggleMobileDrawer(){
     setView(cur === 'short' ? 'full' : 'short');
   });
 
-  // Search
-  const si = $('#searchInput');
-  si?.addEventListener('input', () => applySearch(si.value));
-
   // Keyboard shortcuts
   document.addEventListener('keydown', (e) => {
-    if(e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey){
-      if(CONFIG.ui.enableSearch){
-        e.preventDefault();
-        $('#searchInput')?.focus();
-      }
-    }
     if(e.key.toLowerCase() === 'p' && (e.ctrlKey || e.metaKey)){
       // let browser print
       return;

@@ -299,7 +299,7 @@ def main():
             "ui": {
                 "defaultTheme": "system",
                 "enableThemeToggle": True,
-                "enableSearch": True,
+                "enableSearch": False,
                 "enableNav": True,
                 "enableViewToggle": True,
                 "defaultView": "short",

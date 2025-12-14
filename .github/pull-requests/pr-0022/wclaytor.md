@@ -79,3 +79,14 @@ And lastly, please also tweak the header to include that “US citizen willing t
 python projects/dynamic-resume/releases/v2.3/build_resume.py projects/dynamic-resume/releases/v2.3/william-claytor-resume.md projects/dynamic-resume/releases/v2.3/test2.html
 
 The structure of the page looks good but the links section is empty.
+
+---
+
+I noticed that the search does not seem to be working. I enter terms contained in the resume but nothing happens.
+
+--
+
+It is still broken, and I don't think the search is providing any value over just letting the user user their browser search. Please remove it.
+
+python projects/dynamic-resume/releases/v2.3/build_resume.py projects/dynamic-resume/releases/v2.3/william-claytor-resume.md projects/dynamic-resume/releases/v2.3/test3.html
+
