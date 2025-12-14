@@ -276,7 +276,11 @@ def main():
     ap.add_argument("input_md", type=Path, help="Markdown resume file")
     ap.add_argument("output_html", type=Path, help="Output standalone HTML file")
     ap.add_argument("--config", type=Path, default=None, help="Optional JSON config (resume.config.json)")
-    ap.add_argument("--template", type=Path, default=Path("resume_template_configurable.html"), help="HTML template file")
+    
+    # Default template is in the same directory as this script
+    script_dir = Path(__file__).parent
+    default_template = script_dir / "resume_template_configurable.html"
+    ap.add_argument("--template", type=Path, default=default_template, help="HTML template file")
     args = ap.parse_args()
 
     md = args.input_md.read_text(encoding="utf-8")
@@ -285,10 +289,64 @@ def main():
     if args.config is not None:
         config = load_json(args.config)
     else:
+        # Default config that enables all UI features
         config = {
-            "ui": {"defaultView": "short", "sidebarTitle": "Navigation"},
-            "shortView": {"workExperience": {"jobsToKeep": 3, "bulletsPerJob": 3}},
-            "companyDescriptions": {"collapsedByDefault": True},
+            "meta": {
+                "generator": "resume-cleanroom",
+                "version": "1.1"
+            },
+            "ui": {
+                "defaultTheme": "system",
+                "enableThemeToggle": True,
+                "enableSearch": True,
+                "enableNav": True,
+                "enableViewToggle": True,
+                "defaultView": "short",
+                "rememberView": True,
+                "rememberTheme": True,
+                "collapseCompanyDescriptionsByDefault": True,
+                "smoothScroll": True
+            },
+            "shortView": {
+                "workExperience": {
+                    "jobsToKeep": 3,
+                    "bulletsPerJob": 3,
+                    "keepRoleHeadings": True,
+                    "keepCompanyLine": True,
+                    "keepDatesLine": True
+                },
+                "sections": {
+                    "include": [
+                        "Summary",
+                        "Work Experience",
+                        "Skills",
+                        "Education",
+                        "Links"
+                    ],
+                    "exclude": []
+                },
+                "earlierExperience": {
+                    "enabled": True,
+                    "label": "Earlier Experience",
+                    "format": "inline",
+                    "maxCompanies": 8
+                }
+            },
+            "search": {
+                "minQueryLength": 2,
+                "highlightMatches": True,
+                "fields": [
+                    "Summary",
+                    "Work Experience",
+                    "Skills",
+                    "Education"
+                ]
+            },
+            "accessibility": {
+                "reduceMotionRespectsPreference": True,
+                "focusVisible": True,
+                "skipLink": True
+            }
         }
 
     template = args.template.read_text(encoding="utf-8")

@@ -27,3 +27,31 @@ And lastly, please also tweak the header to include that “US citizen willing t
 python projects/dynamic-resume/releases/v2.2/build_resume.py projects/dynamic-resume/releases/v2.2/william-claytor-resume.md projects/dynamic-resume/releases/v2.2/test.html
 
 We are debugging the script. I can see the template is there. Please see what this issue is and fix it.
+
+```
+@wclaytor ➜ /workspaces/wclaytor.github.io (21-more-tweaks) $ python projects/dynamic-resume/releases/v2.2/build_resume.py projects/dynamic-resume/releases/v2.2/william-claytor-resume.md projects/dynamic-resume/releases/v2.2/test.html
+Traceback (most recent call last):
+  File "/workspaces/wclaytor.github.io/projects/dynamic-resume/releases/v2.2/build_resume.py", line 306, in <module>
+    main()
+  File "/workspaces/wclaytor.github.io/projects/dynamic-resume/releases/v2.2/build_resume.py", line 294, in main
+    template = args.template.read_text(encoding="utf-8")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python/3.12.1/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python/3.12.1/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'resume_template_configurable.html'
+```
+
+---
+
+```
+@wclaytor ➜ /workspaces/wclaytor.github.io (21-more-tweaks) $ python projects/dynamic-resume/releases/v2.2/build_resume.py projects/dynamic-resume/releases/v2.2/william-claytor-resume.md projects/dynamic-resume/releases/v2.2/test.html
+Wrote projects/dynamic-resume/releases/v2.2/test.html
+```
+
+Well it created a file, but the file doesn't include the resume data. They gave us a "generated" version that we found quite impressive. So of course the first thing we want to do is test the python script and reproduce the results. You can see the results in test.html
+
+As a baseline, before we even think about improvements we might want to make, we should try to figure out why the current script output doesn't match the "generated" version. It is possible that they didn't even use the script to generate that version at all. We hope that is not the case. Maybe it is just a small issue. Let us proceed.
