@@ -90,3 +90,4 @@ It is still broken, and I don't think the search is providing any value over jus
 
 python projects/dynamic-resume/releases/v2.3/build_resume.py projects/dynamic-resume/releases/v2.3/william-claytor-resume.md projects/dynamic-resume/releases/v2.3/test3.html
 
+python projects/dynamic-resume/releases/v2.3/build_resume.py projects/dynamic-resume/releases/v2.3/william-claytor-resume.md projects/dynamic-resume/releases/v2.3/william_claytor_resume.html
