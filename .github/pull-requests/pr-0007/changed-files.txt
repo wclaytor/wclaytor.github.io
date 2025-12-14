@@ -1,0 +1,8 @@
+projects/alpine-markdown-presentation/index.html
+projects/alpine-resume/LICENSE.md
+projects/alpine-resume/README.md
+projects/alpine-resume/index.html
+projects/alpine-resume/manifest.json
+projects/alpine-resume/resume-example.md
+projects/alpine-resume/resume-template.md
+projects/alpine-resume/sw.js
