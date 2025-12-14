@@ -147,7 +147,7 @@ def parse_markdown_resume(md: str) -> Dict[str, Any]:
             flush()
             cur_title = ln[3:].strip()
             cur_lines = []
-            cur_kind = "links" if cur_title.lower() == "links" else "text"
+            cur_kind = "text"  # All sections are text type with HTML content
         else:
             if cur_title is not None:
                 cur_lines.append(ln)
@@ -194,7 +194,8 @@ def normalize_sections(sections: List[Dict[str, Any]], md: str) -> List[Dict[str
         if sec["title"].lower() == "links":
             raw = md_section_lines(md, "Links")
             links = parse_links_block(raw)
-            items = [f'<li><a href="{escape_attr(l["url"])}" target="_blank" rel="noopener noreferrer">{md_inline(l["label"])}</a></li>' for l in links]
+            # Format: "Label - URL" where URL is the clickable link
+            items = [f'<li>{md_inline(l["label"])} — <a href="{escape_attr(l["url"])}" target="_blank" rel="noopener noreferrer">{escape_attr(l["url"])}</a></li>' for l in links]
             sec["html"] = "<ul>" + "".join(items) + "</ul>" if items else ""
         out.append(sec)
     return out
