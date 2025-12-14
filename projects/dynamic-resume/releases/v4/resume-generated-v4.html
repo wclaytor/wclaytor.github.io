@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>William Claytor — Resume</title>
+<meta name="color-scheme" content="light dark">
+<style>
+:root{
+  --bg:#fff;--panel:#f5f7fa;--text:#111;--muted:#555;--border:#ddd;--accent:#2563eb;
+}
+html[data-theme="dark"]{
+  --bg:#0b1020;--panel:#111a33;--text:#e5e7eb;--muted:#a7b0c2;--border:#26324f;--accent:#60a5fa;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui;background:var(--bg);color:var(--text)}
+.layout{display:grid;grid-template-columns:300px 1fr;max-width:1100px;margin:auto}
+aside{background:var(--panel);border-right:1px solid var(--border);padding:16px}
+main{padding:24px}
+nav ul{list-style:none;padding:0}
+nav a{display:block;padding:6px 8px;border-radius:6px;color:inherit;text-decoration:none}
+nav a:hover{background:rgba(0,0,0,.05)}
+h1{margin:0}
+.section{margin-top:24px}
+.section h2{border-bottom:1px solid var(--border)}
+button{padding:6px 10px;border:1px solid var(--border);background:none;border-radius:6px;cursor:pointer}
+@media print{aside{display:none}.layout{display:block}}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside>
+    <button id="themeBtn"></button>
+    <button id="viewBtn"></button>
+    <nav><ul id="nav"></ul></nav>
+  </aside>
+  <main>
+    <header id="header"></header>
+    <div id="content"></div>
+  </main>
+</div>
+
+<script id="DATA" type="application/json">{"model": {"header": {"name": "William Claytor", "lines": ["Bel Air, MD | Tucson, AZ"], "email": "claytor1@gmail.com", "bullets": ["US citizen willing to relocate within the US"]}, "sections": []}, "config": {}}</script>
+<script>
+(() => {
+  const data = JSON.parse(document.getElementById("DATA").textContent);
+  const model = data.model;
+  const cfg = data.config || {};
+
+  const nav = document.getElementById("nav");
+  const header = document.getElementById("header");
+  const content = document.getElementById("content");
+  const themeBtn = document.getElementById("themeBtn");
+  const viewBtn = document.getElementById("viewBtn");
+
+  // theme
+  let theme = localStorage.getItem("theme") || "light";
+  document.documentElement.dataset.theme = theme;
+  themeBtn.textContent = "Theme: " + theme[0].toUpperCase()+theme.slice(1);
+  themeBtn.onclick = () => {
+    theme = theme==="dark"?"light":"dark";
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem("theme", theme);
+    themeBtn.textContent = "Theme: " + theme[0].toUpperCase()+theme.slice(1);
+  };
+
+  // header
+  header.innerHTML = `<h1>${model.header.name}</h1>
+    <div>${model.header.lines.join(" · ")} · ${model.header.email}</div>
+    <ul>${model.header.bullets.map(b=>`<li>${b}</li>`).join("")}</ul>`;
+
+  // nav
+  nav.innerHTML = '<li><a href="#">Home</a></li>' +
+    model.sections.map(s=>`<li><a href="#${s.title.replace(/\W+/g,"-")}">${s.title}</a></li>`).join("");
+
+  // sections
+  content.innerHTML = model.sections.map(s=>`
+    <section class="section" id="${s.title.replace(/\W+/g,"-")}">
+      <h2>${s.title}</h2>
+      ${s.links ? `<ul>${s.links.map(l=>`<li><strong>${l.label}:</strong> <a href="${l.url}">${l.url}</a></li>`).join("")}</ul>`
+        : `<pre>${(s.body||"").trim()}</pre>`}
+    </section>`).join("");
+})();
+</script>
+</body>
+</html>

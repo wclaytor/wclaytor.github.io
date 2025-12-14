@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>Resume</title>
+  
+    <style>
+      /* Base styles and theme variables for light mode */
+      :root[data-theme="light"] {
+        --color-bg-primary: #ffffff;
+        --color-bg-secondary: #f9fafb;
+        --color-text-primary: #111827;
+        --color-text-secondary: #4b5563;
+        --color-text-tertiary: #6b7280;
+        --color-heading-primary: #111827;
+        --color-heading-secondary: #1f2937;
+        --color-heading-tertiary: #374151;
+        --color-primary: #3b82f6;
+        --color-link: #2563eb;
+        --color-link-hover: #1d4ed8;
+        --color-border-primary: #e5e7eb;
+        --color-code-bg: #f3f4f6;
+        --color-code-text: #1f2937;
+        --color-pre-bg: #f9fafb;
+        --color-pre-border: #e5e7eb;
+      }
+      
+      /* Dark theme variables */
+      :root[data-theme="dark"] {
+        --color-bg-primary: #1f2937;
+        --color-bg-secondary: #111827;
+        --color-text-primary: #f9fafb;
+        --color-text-secondary: #d1d5db;
+        --color-text-tertiary: #9ca3af;
+        --color-heading-primary: #f9fafb;
+        --color-heading-secondary: #e5e7eb;
+        --color-heading-tertiary: #d1d5db;
+        --color-primary: #60a5fa;
+        --color-link: #93c5fd;
+        --color-link-hover: #bfdbfe;
+        --color-border-primary: #374151;
+        --color-code-bg: #374151;
+        --color-code-text: #f9fafb;
+        --color-pre-bg: #1f2937;
+        --color-pre-border: #4b5563;
+      }
+      
+      * {
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        line-height: 1.6;
+        color: var(--color-text-primary);
+        background-color: var(--color-bg-secondary);
+        margin: 0;
+        padding: 2rem;
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+      
+      /* Theme toggle button */
+      .theme-toggle-container {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 1000;
+      }
+      
+      .theme-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        min-height: 44px;
+        padding: 0.5rem;
+        background-color: var(--color-bg-primary);
+        border: 1px solid var(--color-border-primary);
+        border-radius: 0.5rem;
+        cursor: pointer;
+        font-size: 1.25rem;
+        color: var(--color-text-primary);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease;
+      }
+      
+      @media (hover: hover) {
+        .theme-toggle:hover {
+          transform: scale(1.05);
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+        }
+      }
+      
+      .theme-toggle:active {
+        transform: scale(0.95);
+      }
+      
+      .theme-toggle:focus {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+      }
+      
+      .theme-icon {
+        display: none;
+      }
+      
+      :root[data-theme="light"] .theme-icon.sun {
+        display: block;
+      }
+      
+      :root[data-theme="dark"] .theme-icon.moon {
+        display: block;
+      }
+      
+      .resume-container {
+        max-width: 56rem;
+        margin: 0 auto;
+        background-color: var(--color-bg-primary);
+        padding: 3rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      }
+      
+      /* Typography */
+      h1 {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: var(--color-heading-primary);
+        margin-bottom: 1rem;
+        line-height: 1.25;
+        transition: color 0.3s ease;
+      }
+      
+      h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--color-heading-primary);
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--color-primary);
+        transition: color 0.3s ease, border-color 0.3s ease;
+      }
+      
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: var(--color-heading-secondary);
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+        transition: color 0.3s ease;
+      }
+      
+      h4 {
+        font-size: 1.125rem;
+        font-weight: 500;
+        color: var(--color-heading-tertiary);
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+        transition: color 0.3s ease;
+      }
+      
+      p {
+        font-size: 1rem;
+        color: var(--color-text-secondary);
+        margin-bottom: 1rem;
+        transition: color 0.3s ease;
+      }
+      
+      /* Links */
+      a {
+        color: var(--color-link);
+        text-decoration: underline;
+        word-wrap: break-word;
+        transition: color 0.3s ease;
+      }
+      
+      a:hover {
+        color: var(--color-link-hover);
+      }
+      
+      /* Lists */
+      ul, ol {
+        margin-left: 1.5rem;
+        margin-bottom: 1rem;
+      }
+      
+      li {
+        font-size: 1rem;
+        color: var(--color-text-secondary);
+        margin-top: 0.5rem;
+        transition: color 0.3s ease;
+      }
+      
+      ul li {
+        list-style-type: disc;
+      }
+      
+      ol li {
+        list-style-type: decimal;
+      }
+      
+      /* Text formatting */
+      strong {
+        font-weight: 600;
+        color: var(--color-text-primary);
+        transition: color 0.3s ease;
+      }
+      
+      em {
+        font-style: italic;
+        color: var(--color-heading-tertiary);
+        transition: color 0.3s ease;
+      }
+      
+      /* Code */
+      code {
+        background-color: var(--color-code-bg);
+        color: var(--color-code-text);
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.875rem;
+        font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        word-wrap: break-word;
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+      
+      pre {
+        background-color: var(--color-pre-bg);
+        border: 1px solid var(--color-pre-border);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        margin-bottom: 1rem;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+      }
+      
+      pre code {
+        background-color: transparent;
+        padding: 0;
+        color: var(--color-text-primary);
+      }
+      
+      /* Blockquotes */
+      blockquote {
+        border-left: 4px solid var(--color-primary);
+        padding-left: 1rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        margin: 1rem 0;
+        font-style: italic;
+        color: var(--color-heading-tertiary);
+        transition: border-color 0.3s ease, color 0.3s ease;
+      }
+      
+      /* Horizontal rules */
+      hr {
+        margin: 2rem 0;
+        border: 0;
+        border-top: 1px solid var(--color-border-primary);
+        transition: border-color 0.3s ease;
+      }
+      
+      /* Toolbar styles */
+      .toolbar {
+        position: sticky;
+        top: 0;
+        background-color: var(--color-bg-primary);
+        border-bottom: 1px solid var(--color-border-primary);
+        padding: 0.75rem 1rem;
+        z-index: 1000;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        margin: -2rem -2rem 2rem -2rem;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+      }
+      
+      .toolbar-content {
+        max-width: 56rem;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+      
+      .toolbar-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        min-height: 44px;
+        padding: 0.5rem 0.75rem;
+        background-color: var(--color-bg-secondary);
+        border: 1px solid var(--color-border-primary);
+        border-radius: 0.375rem;
+        cursor: pointer;
+        font-size: 0.875rem;
+        color: var(--color-text-primary);
+        gap: 0.25rem;
+        transition: all 0.2s ease;
+      }
+      
+      .toolbar-btn:hover {
+        background-color: var(--color-bg-primary);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      
+      .toolbar-btn:active {
+        transform: translateY(0);
+      }
+      
+      .toolbar-btn:focus {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+      }
+      
+      /* Search container */
+      .search-container {
+        flex: 1;
+        min-width: 200px;
+        max-width: 400px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      
+      .search-input {
+        flex: 1;
+        min-height: 44px;
+        padding: 0.5rem 2rem 0.5rem 0.75rem;
+        background-color: var(--color-bg-secondary);
+        border: 1px solid var(--color-border-primary);
+        border-radius: 0.375rem;
+        color: var(--color-text-primary);
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+      }
+      
+      .search-input:focus {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 0;
+        border-color: var(--color-primary);
+      }
+      
+      .clear-search {
+        position: absolute;
+        right: 4.5rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.25rem;
+        color: var(--color-text-tertiary);
+        font-size: 1rem;
+        line-height: 1;
+      }
+      
+      .clear-search:hover {
+        color: var(--color-text-primary);
+      }
+      
+      .search-results {
+        font-size: 0.75rem;
+        color: var(--color-text-tertiary);
+        white-space: nowrap;
+      }
+      
+      /* Search highlighting */
+      .search-highlight {
+        background-color: rgba(251, 191, 36, 0.4);
+        color: inherit;
+        padding: 0.125rem 0.25rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+      
+      :root[data-theme="dark"] .search-highlight {
+        background-color: rgba(251, 191, 36, 0.3);
+      }
+      
+      /* Navigation panel */
+      .nav-panel {
+        position: fixed;
+        top: 0;
+        right: -300px;
+        width: 280px;
+        height: 100vh;
+        background-color: var(--color-bg-primary);
+        border-left: 1px solid var(--color-border-primary);
+        box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+        transition: right 0.3s ease, background-color 0.3s ease;
+        z-index: 1001;
+        overflow-y: auto;
+      }
+      
+      .nav-panel.open {
+        right: 0;
+      }
+      
+      .nav-content {
+        padding: 1.5rem;
+      }
+      
+      .nav-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--color-heading-primary);
+        margin: 0 0 1rem 0;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--color-primary);
+      }
+      
+      .nav-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      
+      .nav-list li {
+        margin: 0;
+      }
+      
+      .nav-list a {
+        display: block;
+        padding: 0.5rem 0.75rem;
+        color: var(--color-text-secondary);
+        text-decoration: none;
+        border-radius: 0.375rem;
+        transition: all 0.2s ease;
+        font-size: 0.875rem;
+      }
+      
+      .nav-list a:hover {
+        background-color: var(--color-bg-secondary);
+        color: var(--color-text-primary);
+        transform: translateX(4px);
+      }
+      
+      .nav-list a.active {
+        background-color: var(--color-primary);
+        color: white;
+      }
+      
+      /* Responsive adjustments */
+      @media (max-width: 640px) {
+        .toolbar-content {
+          gap: 0.25rem;
+        }
+        
+        .toolbar-btn {
+          padding: 0.5rem;
+          font-size: 0;
+        }
+        
+        .toolbar-btn span {
+          font-size: 1.25rem;
+        }
+        
+        .search-container {
+          min-width: 150px;
+        }
+        
+        .search-results {
+          display: none;
+        }
+      }
+      
+      /* Print styles */
+      @media print {
+        .toolbar,
+        .nav-panel,
+        .theme-toggle-container {
+          display: none !important;
+        }
+        
+        body {
+          background-color: white !important;
+          padding: 0;
+        }
+        
+        .resume-container {
+          box-shadow: none;
+          padding: 0;
+        }
+        
+        * {
+          color: #000 !important;
+          background: #fff !important;
+        }
+        
+        .search-highlight {
+          background: transparent !important;
+          font-weight: normal !important;
+        }
+      }
+      
+      /* Respect user motion preferences */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  
+    <script>
+      (function() {
+        // Constants
+        const THEME_STORAGE_KEY = 'resume-theme';
+        const THEME_LIGHT = 'light';
+        const THEME_DARK = 'dark';
+        
+        // Initialize theme before content renders to prevent FOUC
+        function getInitialTheme() {
+          try {
+            // Check localStorage for saved theme
+            const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+            if (savedTheme === THEME_DARK || savedTheme === THEME_LIGHT) {
+              return savedTheme;
+            }
+          } catch (e) {
+            console.warn('localStorage unavailable:', e.message);
+          }
+          
+          // Fall back to system preference
+          try {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+              return THEME_DARK;
+            }
+          } catch (e) {
+            console.warn('System theme detection unavailable:', e.message);
+          }
+          
+          // Default to light theme
+          return THEME_LIGHT;
+        }
+        
+        // Apply theme immediately
+        const initialTheme = getInitialTheme();
+        document.documentElement.setAttribute('data-theme', initialTheme);
+        
+        // Theme toggle function
+        window.toggleTheme = function() {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || THEME_LIGHT;
+          const newTheme = currentTheme === THEME_LIGHT ? THEME_DARK : THEME_LIGHT;
+          
+          document.documentElement.setAttribute('data-theme', newTheme);
+          
+          // Save to localStorage
+          try {
+            localStorage.setItem(THEME_STORAGE_KEY, newTheme);
+          } catch (e) {
+            console.warn('Failed to save theme preference:', e.message);
+          }
+        };
+        
+        // Listen for system theme changes
+        if (window.matchMedia) {
+          try {
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const handleChange = function(e) {
+              // Only apply system preference if user hasn't set a preference
+              try {
+                const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+                if (!savedTheme) {
+                  const newTheme = e.matches ? THEME_DARK : THEME_LIGHT;
+                  document.documentElement.setAttribute('data-theme', newTheme);
+                }
+              } catch (err) {
+                console.warn('Failed to check saved theme:', err);
+              }
+            };
+            
+            if (mediaQuery.addEventListener) {
+              mediaQuery.addEventListener('change', handleChange);
+            } else if (mediaQuery.addListener) {
+              mediaQuery.addListener(handleChange);
+            }
+          } catch (e) {
+            console.warn('System theme change detection unavailable:', e.message);
+          }
+        }
+        
+        // ===== Search Functionality =====
+        let searchDebounceTimer = null;
+        
+        window.handleSearch = function(query) {
+          clearTimeout(searchDebounceTimer);
+          searchDebounceTimer = setTimeout(() => performSearch(query), 250);
+          
+          // Show/hide clear button
+          const clearBtn = document.getElementById('clearBtn');
+          if (clearBtn) {
+            clearBtn.style.display = query ? 'block' : 'none';
+          }
+        };
+        
+        function performSearch(query) {
+          const container = document.querySelector('.resume-container');
+          const resultsSpan = document.getElementById('searchResults');
+          
+          if (!container) return;
+          
+          // Clear previous highlights
+          clearHighlights(container);
+          
+          if (!query || query.trim() === '') {
+            if (resultsSpan) resultsSpan.textContent = '';
+            return;
+          }
+          
+          // Search and highlight
+          const regex = new RegExp(escapeRegex(query), 'gi');
+          let matchCount = 0;
+          
+          walkTextNodes(container, (textNode) => {
+            const text = textNode.textContent;
+            const matches = text.match(regex);
+            
+            if (matches && matches.length > 0) {
+              const span = document.createElement('span');
+              let lastIndex = 0;
+              let match;
+              const tempRegex = new RegExp(escapeRegex(query), 'gi');
+              
+              while ((match = tempRegex.exec(text)) !== null) {
+                // Add text before match
+                if (match.index > lastIndex) {
+                  span.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
+                }
+                
+                // Add highlighted match
+                const highlight = document.createElement('mark');
+                highlight.className = 'search-highlight';
+                highlight.textContent = match[0];
+                span.appendChild(highlight);
+                
+                lastIndex = tempRegex.lastIndex;
+                matchCount++;
+              }
+              
+              // Add remaining text
+              if (lastIndex < text.length) {
+                span.appendChild(document.createTextNode(text.substring(lastIndex)));
+              }
+              
+              textNode.parentNode.replaceChild(span, textNode);
+            }
+          });
+          
+          // Update results count
+          if (resultsSpan) {
+            resultsSpan.textContent = matchCount > 0 
+              ? matchCount + (matchCount === 1 ? ' match' : ' matches')
+              : 'No results';
+          }
+          
+          // Scroll to first match
+          if (matchCount > 0) {
+            const firstHighlight = container.querySelector('.search-highlight');
+            if (firstHighlight) {
+              firstHighlight.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          }
+        }
+        
+        window.clearSearch = function() {
+          const searchInput = document.getElementById('searchInput');
+          const clearBtn = document.getElementById('clearBtn');
+          const resultsSpan = document.getElementById('searchResults');
+          const container = document.querySelector('.resume-container');
+          
+          if (searchInput) searchInput.value = '';
+          if (clearBtn) clearBtn.style.display = 'none';
+          if (resultsSpan) resultsSpan.textContent = '';
+          if (container) clearHighlights(container);
+        };
+        
+        function clearHighlights(container) {
+          const highlights = container.querySelectorAll('.search-highlight');
+          highlights.forEach(highlight => {
+            const parent = highlight.parentNode;
+            parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
+            parent.normalize();
+          });
+        }
+        
+        function walkTextNodes(node, callback) {
+          if (node.nodeType === Node.TEXT_NODE) {
+            if (node.textContent.trim()) {
+              callback(node);
+            }
+          } else if (node.nodeType === Node.ELEMENT_NODE && 
+                     !['SCRIPT', 'STYLE', 'MARK'].includes(node.tagName)) {
+            Array.from(node.childNodes).forEach(child => walkTextNodes(child, callback));
+          }
+        }
+        
+        function escapeRegex(string) {
+          // Escape special regex characters
+          return string.replace(/[\.\*\+\?\^\$\{\}\(\)\|\[\]\\]/g, '\\$&');
+        }
+        
+        // ===== Navigation Functionality =====
+        window.toggleNav = function() {
+          const navPanel = document.getElementById('navPanel');
+          if (navPanel) {
+            navPanel.classList.toggle('open');
+          }
+        };
+        
+        function buildNavigation() {
+          const container = document.querySelector('.resume-container');
+          const navList = document.getElementById('navList');
+          
+          if (!container || !navList) return;
+          
+          // Find all h2 elements (main sections)
+          const headings = container.querySelectorAll('h2');
+          
+          headings.forEach((heading, index) => {
+            // Generate or use existing ID
+            let id = heading.id;
+            if (!id) {
+              id = heading.textContent
+                .toLowerCase()
+                .trim()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/\s+/g, '-');
+              heading.id = id;
+            }
+            
+            // Create nav item
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = '#' + id;
+            a.textContent = heading.textContent.trim();
+            a.onclick = (e) => {
+              e.preventDefault();
+              scrollToSection(id);
+              // Close nav on mobile
+              const navPanel = document.getElementById('navPanel');
+              if (navPanel && window.innerWidth < 768) {
+                navPanel.classList.remove('open');
+              }
+            };
+            
+            li.appendChild(a);
+            navList.appendChild(li);
+          });
+        }
+        
+        function scrollToSection(sectionId) {
+          const element = document.getElementById(sectionId);
+          if (element) {
+            const offset = 100; // Account for toolbar
+            const elementPosition = element.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - offset;
+            
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
+          }
+        }
+        
+        // ===== Export Functions =====
+        window.exportToPDF = function() {
+          window.print();
+        };
+        
+        window.exportToMarkdown = function() {
+          const markdownScript = document.getElementById('markdownSource');
+          if (!markdownScript) {
+            alert('Markdown source not available');
+            return;
+          }
+          
+          const markdownContent = markdownScript.textContent;
+          const blob = new Blob([markdownContent], { type: 'text/markdown;charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          
+          // Generate filename
+          const h1 = document.querySelector('.resume-container h1');
+          let filename = 'resume.md';
+          if (h1 && h1.textContent.trim()) {
+            const name = h1.textContent.trim()
+              .replace(/[^a-zA-Z0-9\s-]/g, '')
+              .replace(/\s+/g, '_')
+              .toLowerCase();
+            filename = name + '_resume.md';
+          }
+          
+          // Create and trigger download
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        };
+        
+        // ===== Initialize on page load =====
+        window.addEventListener('DOMContentLoaded', function() {
+          buildNavigation();
+        });
+      })();
+    </script>
+</head>
+<body>
+  <!-- Toolbar with interactive features -->
+  <div class="toolbar">
+    <div class="toolbar-content">
+      <!-- Theme Toggle -->
+      <button 
+        class="toolbar-btn theme-toggle" 
+        onclick="toggleTheme()" 
+        aria-label="Toggle theme"
+        title="Toggle between light and dark theme"
+        type="button">
+        <span class="theme-icon sun" aria-hidden="true">☀️</span>
+        <span class="theme-icon moon" aria-hidden="true">🌙</span>
+      </button>
+      
+      <!-- Search -->
+      <div class="search-container">
+        <input 
+          type="search" 
+          id="searchInput"
+          placeholder="Search..."
+          aria-label="Search resume"
+          class="search-input"
+          oninput="handleSearch(this.value)"
+          onkeydown="if(event.key==='Escape') clearSearch()"
+        />
+        <button onclick="clearSearch()" class="clear-search" id="clearBtn" style="display: none;" aria-label="Clear search">✕</button>
+        <span id="searchResults" class="search-results"></span>
+      </div>
+      
+      <!-- Export buttons -->
+      <button onclick="exportToPDF()" class="toolbar-btn" aria-label="Export as PDF" title="Print or save as PDF">
+        <span aria-hidden="true">📄</span> PDF
+      </button>
+      <button onclick="exportToMarkdown()" class="toolbar-btn" aria-label="Export as Markdown" title="Download as Markdown">
+        <span aria-hidden="true">📝</span> Markdown
+      </button>
+      
+      <!-- Navigation toggle -->
+      <button onclick="toggleNav()" class="toolbar-btn" id="navToggle" aria-label="Toggle navigation" title="Show/hide section navigation">
+        <span aria-hidden="true">☰</span> Nav
+      </button>
+    </div>
+  </div>
+  
+  <!-- Navigation panel -->
+  <nav id="navPanel" class="nav-panel" aria-label="Resume sections">
+    <div class="nav-content">
+      <h2 class="nav-title">Sections</h2>
+      <ul id="navList" class="nav-list"></ul>
+    </div>
+  </nav>
+  
+  <div class="resume-container">
+    <h1>William Claytor</h1>
+<p>Bel Air, MD | Tucson, AZ
+<a href="mailto:claytor1@gmail.com">claytor1@gmail.com</a></p>
+<ul>
+<li>US citizen willing to relocate within the US for the right location and opportunity</li>
+</ul>
+<h2>Links</h2>
+<ul>
+<li>Personal Website: <a href="https://wclaytor.github.io/">https://wclaytor.github.io/</a></li>
+<li>GitHub: <a href="https://github.com/wclaytor">https://github.com/wclaytor</a></li>
+<li>LinkedIn: <a href="https://www.linkedin.com/in/billclaytor/">https://www.linkedin.com/in/billclaytor/</a></li>
+</ul>
+<h2>Summary</h2>
+<p>Senior Quality Engineer and Automation Leader with 25+ years of experience transforming manual QA into scalable automated systems, currently pioneering AI-assisted QA workflows. Proven track record of building test frameworks, leading globally distributed teams, and embedding quality into CI/CD pipelines across SaaS, enterprise, and regulated environments.</p>
+<h2>Work Experience</h2>
+<h3>Senior Automation QA Engineer</h3>
+<p><strong>insightsoftware</strong><br>Remote<br>05/2023 – 12/2025</p>
+<p>insightsoftware is a global provider of reporting, analytics, and performance management solutions.</p>
+<p><strong>Automation &amp; Innovation:</strong></p>
+<ul>
+<li>Pioneered AI-assisted QA workflow (GitHub Copilot + PowerShell) automating end-to-end Jira/Xray operations from requirements analysis through test execution and reporting</li>
+<li>Streamlined documentation by building an AI pipeline that converted legacy training videos into a searchable library using transcript analysis, automated screenshot extraction, and context-aware wiki generation</li>
+<li>Automated sprint release verification via Azure Pipelines using in-house C# / Selenium framework across multiple product lines</li>
+<li>Developed a test reporting dashboard tool for the automation triage process to quickly generate an HTML / email report with the daily Azure test results across multiple environments and releases, replacing the manual process and reducing report generation time from over 10 minutes to under 30 seconds</li>
+<li>Created an automated pipeline to extract 5000+ automated test cases from the legacy Team Foundation Server and generate corresponding test cases and test steps in Jira / Xray</li>
+<li>Coordinated test reporting across 7 globally distributed teams, establishing customer-facing delivery process for sanitized release reports</li>
+</ul>
+<p><strong>Leadership &amp; Cross-Functional Initiatives:</strong></p>
+<ul>
+<li>Led distributed QA organization: coordinated with India-based co-lead, established processes across onshore/offshore teams, transitioned manual testers to automation</li>
+<li>Led disaster recovery testing for multiple products across global teams, coordinating with Production Support and Engineering through multiple DR iterations</li>
+<li>Founded Automation Guild community of practice; delivered monthly sessions on UI testing, performance testing, and automation best practices</li>
+<li>Established performance testing capability: led the initial development of the JMeter / Grafana framework and core test suite, helped to hire and onboard Principal Performance Engineer and Senior Performance Engineer</li>
+</ul>
+<hr>
+<h3>Professional Development Sabbatical</h3>
+<p>08/2022 – 03/2023</p>
+<p>Sabbatical to develop and ship a production Rails app and evaluate modern test frameworks.</p>
+<ul>
+<li>Built and deployed Songbook (Rails, Dokku, DigitalOcean) - a setlist organizer for live music performance</li>
+<li>Evaluated Playwright and Cypress by building Page Object Model implementations for each</li>
+<li>Adopted GitHub Actions and GitHub Projects as CI/CD and project management alternatives to Jenkins / Jira</li>
+</ul>
+<hr>
+<h3>Senior QA Engineer and QA Manager</h3>
+<p><strong>Active911</strong><br>Corvallis, OR<br>03/2020 – 07/2022</p>
+<p>Active911 helps heroes save lives with software designed to get first responders on scene faster with fast alerting, easy scheduling and more.</p>
+<p><strong>Technical Leadership:</strong></p>
+<ul>
+<li>Established end-to-end QA coverage for ActiveAlert and ActiveTeam across web, Android, and iOS platforms throughout the full SDLC</li>
+<li>Architected Nightwatch.js test framework using Page Object Model; reusable module library accelerated new test development across the team</li>
+<li>Built real-time test automation dashboard integrating Jenkins Job DSL with TestRail API for live execution status and reporting</li>
+</ul>
+<p><strong>Team Leadership:</strong></p>
+<ul>
+<li>Grew and developed QA team: led hiring, identified and promoted internal candidates from Customer Support, mentored team members in automation practices</li>
+<li>Embedded quality in development process by collaborating with product and engineering during backlog review and design sessions</li>
+<li>Coordinated UAT with product managers, ensuring customer requirements validated before releases</li>
+</ul>
+<hr>
+<h3>Senior Software Engineer</h3>
+<p><strong>Puppet</strong><br>Portland, OR<br>01/2018 – 03/2020</p>
+<p>Puppet is the industry-leading automation solution for configuration management, compliance, CI/CD, patch management, IT automation, and more.</p>
+<p><strong>Performance Engineering &amp; Framework Development:</strong></p>
+<ul>
+<li>Extended gatling-puppet-load-test (GPLT) framework with scale testing, automated HTML comparison reports, and system tuning integration with comprehensive RSpec unit test coverage</li>
+<li>Built Ruby provisioning utility for Puppet ABS API, enabling automated infrastructure node deployment with JSON request handling and YAML configuration export</li>
+<li>Contributed to Reference Architecture Setup (RAS) CLI tool using Ruby and Puppet Bolt; implemented Docker-based acceptance tests with comprehensive RSpec coverage</li>
+</ul>
+<p><strong>Cross-Team Collaboration:</strong></p>
+<ul>
+<li>Drove performance testing standards through Reference Architectures Working Group, collaborating with Customer Success, Installer, and PuppetDB teams on architecture definition and test roadmap</li>
+<li>Served as Scrum Master for Installer and SLV teams, establishing Puppet Operating Model implementation and facilitating continuous process improvement</li>
+</ul>
+<hr>
+<h3>Senior Quality Engineer</h3>
+<p><strong>National Public Radio</strong><br>Washington, DC<br>05/2014 – 01/2018</p>
+<p>NPR is an independent, nonprofit media organization that was founded on a mission to create a more informed public.</p>
+<p><strong>Test Automation Architecture:</strong></p>
+<ul>
+<li>Led JavaScript framework evaluation across multiple teams; selected and implemented Nightwatch.js with cross-browser support integrated into Seamus CMS CI pipeline</li>
+<li>Architected hybrid test framework (keyword-driven + data-driven) in Java / Selenium serving cross-platform testing needs</li>
+<li>Built mobile testing capability using Appium for Android and iOS, establishing Jenkins-based infrastructure with simulators and emulators</li>
+</ul>
+<p><strong>Developer Tooling &amp; Infrastructure:</strong></p>
+<ul>
+<li>Created test documentation web app using Node.js / Express backend with React / Redux frontend, improving test suite visibility across teams</li>
+<li>Established Jenkins automation dashboards using Job DSL across Publishing, TechOps, and NPR One teams</li>
+<li>Modernized API test suite with modular architecture, adding coverage for new endpoints and improving maintainability</li>
+</ul>
+<hr>
+<h3>QA Automation Manager</h3>
+<p><strong>American Public University System</strong><br>Charles Town, WV<br>03/2012 – 05/2014</p>
+<p>American Public University System (APUS) is an online university system with its headquarters in Charles Town, West Virginia.</p>
+<ul>
+<li>Designed full-stack test automation architecture in .NET / C#: keyword-driven UI framework (Coded UI + Selenium) plus data-driven back-end framework verifying student registration and payment transactions</li>
+<li>Built QA Automation team from ground up: led recruiting for engineer and specialist roles, trained team members in automation tools, development practices, and organizational processes</li>
+<li>Established Agile test management workflow using HP ALM / Quality Center for workload planning and execution tracking</li>
+<li>Drove automation adoption organization-wide through stakeholder engagement and active participation in design, requirements, and test plan reviews</li>
+</ul>
+<hr>
+<h3>Lead QA Analyst</h3>
+<p><strong>FINRA</strong><br>Rockville, MD<br>09/2003 – 03/2012</p>
+<p>FINRA enables investors and firms to participate in the market with confidence by safeguarding its integrity.</p>
+<ul>
+<li>Ensured quality of critical securities industry infrastructure: Web CRD (central licensing system for U.S. securities industry) and IAPD, supporting regulatory compliance throughout 9-year tenure</li>
+<li>Evolved test automation platform from WinRunner to QTP, architecting improved dependency management for multi-application, multi-release, multi-environment testing</li>
+<li>Designed no-code test framework (QTP / VBScript + Excel parameterization) enabling manual testers to create and execute automated tests without programming knowledge</li>
+<li>Pioneered CI adoption: implemented automated test execution pipeline using CruiseControl → Hudson with Ant scripting</li>
+<li>Established requirements-based automation process with HP Quality Center for traceability, test organization, and defect management</li>
+</ul>
+<hr>
+<h3>Test Automation Specialist</h3>
+<p><strong>Fannie Mae</strong><br>Washington, DC<br>09/2002 – 09/2003</p>
+<p>Fannie Mae was chartered by U.S. Congress in 1938 to provide a reliable source of affordable mortgage financing across the country.</p>
+<ul>
+<li>Tested critical mortgage processing applications for federal housing finance agency</li>
+<li>Built WinRunner test automation framework with reusable business action functions; developed LoadRunner scripts for internal and hosted virtual user (HVU) performance testing</li>
+<li>Administered TestDirector server and managed test infrastructure including requirements traceability and defect coordination</li>
+</ul>
+<hr>
+<h3>Test Automation Specialist</h3>
+<p><strong>MedContrax</strong><br>Gaithersburg, MD<br>01/2001 – 02/2002</p>
+<p>MedContrax was a software company based in Rockville, Maryland, providing data processing and integration services to the healthcare industry.</p>
+<ul>
+<li>Tested pharmaceutical contract management application (ColdFusion / SQL Server) for healthcare data processing company</li>
+<li>Developed WinRunner automation framework with reusable function library enabling rapid test development</li>
+<li>Owned full QC environment: Windows NT Server, SQL Server, IIS, ColdFusion, TestDirector administration, and defect coordination</li>
+</ul>
+<hr>
+<h3>Test Automation Specialist</h3>
+<p><strong>US Census Bureau</strong><br>Suitland, MD<br>09/1998 – 01/2001</p>
+<p>The Census Bureau's mission is to serve as the nation's leading provider of quality data about its people and economy.</p>
+<ul>
+<li>Managed automated testing of federal data collection applications using Mercury Interactive TestSuite (WinRunner, LoadRunner, TestDirector)</li>
+<li>Conducted performance test engineering: identified key transactions, developed LoadRunner scripts, executed performance scenarios</li>
+<li>Built interactive test results intranet site (Windows 2000 Server/IIS) - early web development for test visibility</li>
+<li>Delivered Y2K compliance testing for critical government systems under federal deadline pressure</li>
+</ul>
+<hr>
+<h2>Education</h2>
+<p><strong>Towson University</strong> - English Studies<br>Coursework completed 1992–1994 | Towson, MD</p>
+<p><strong>Harford Community College</strong> - Business Management<br>Coursework completed 1990–1991 | Churchville, MD</p>
+<hr>
+<h2>Skills</h2>
+<p><strong>Core Expertise</strong>
+AI-Assisted QA Workflows | Test Automation Architecture | Software Development | QA Team Leadership | Performance Testing | CI/CD Integration | Test Strategy</p>
+<p><strong>Languages</strong>
+JavaScript, Ruby, Python, C#/.NET, Java, PowerShell, SQL</p>
+<p><strong>Test Automation</strong>
+Selenium, Playwright, Nightwatch.js, Appium, JMeter, Gatling, RSpec</p>
+<p><strong>DevOps &amp; Cloud</strong>
+Jenkins, Azure Pipelines, AWS, Git, GitHub, Docker, Grafana</p>
+<p><strong>AI Tools</strong>
+GitHub Copilot, Cursor, Claude, ChatGPT, Codex, Cline, Ollama, LM Studio, Jan</p>
+<p><strong>Practices</strong>
+Agile / Scrum, Test-Driven Development, API Testing, Cross-Platform Testing</p>
+
+  </div>
+  
+  <script type="text/markdown" id="markdownSource" style="display:none"># William Claytor
+
+Bel Air, MD | Tucson, AZ
+claytor1@gmail.com
+
+- US citizen willing to relocate within the US for the right location and opportunity
+
+## Links
+
+- Personal Website: https://wclaytor.github.io/
+- GitHub: https://github.com/wclaytor
+- LinkedIn: https://www.linkedin.com/in/billclaytor/
+
+## Summary
+
+Senior Quality Engineer and Automation Leader with 25+ years of experience transforming manual QA into scalable automated systems, currently pioneering AI-assisted QA workflows. Proven track record of building test frameworks, leading globally distributed teams, and embedding quality into CI/CD pipelines across SaaS, enterprise, and regulated environments.
+
+## Work Experience
+
+### Senior Automation QA Engineer
+
+**insightsoftware**  
+Remote  
+05/2023 – 12/2025
+
+insightsoftware is a global provider of reporting, analytics, and performance management solutions.
+
+**Automation & Innovation:**
+
+- Pioneered AI-assisted QA workflow (GitHub Copilot + PowerShell) automating end-to-end Jira/Xray operations from requirements analysis through test execution and reporting
+- Streamlined documentation by building an AI pipeline that converted legacy training videos into a searchable library using transcript analysis, automated screenshot extraction, and context-aware wiki generation
+- Automated sprint release verification via Azure Pipelines using in-house C# / Selenium framework across multiple product lines
+- Developed a test reporting dashboard tool for the automation triage process to quickly generate an HTML / email report with the daily Azure test results across multiple environments and releases, replacing the manual process and reducing report generation time from over 10 minutes to under 30 seconds
+- Created an automated pipeline to extract 5000+ automated test cases from the legacy Team Foundation Server and generate corresponding test cases and test steps in Jira / Xray
+- Coordinated test reporting across 7 globally distributed teams, establishing customer-facing delivery process for sanitized release reports
+
+**Leadership & Cross-Functional Initiatives:**
+
+- Led distributed QA organization: coordinated with India-based co-lead, established processes across onshore/offshore teams, transitioned manual testers to automation
+- Led disaster recovery testing for multiple products across global teams, coordinating with Production Support and Engineering through multiple DR iterations
+- Founded Automation Guild community of practice; delivered monthly sessions on UI testing, performance testing, and automation best practices
+- Established performance testing capability: led the initial development of the JMeter / Grafana framework and core test suite, helped to hire and onboard Principal Performance Engineer and Senior Performance Engineer
+
+---
+
+### Professional Development Sabbatical
+
+08/2022 – 03/2023
+
+Sabbatical to develop and ship a production Rails app and evaluate modern test frameworks.
+
+- Built and deployed Songbook (Rails, Dokku, DigitalOcean) - a setlist organizer for live music performance
+- Evaluated Playwright and Cypress by building Page Object Model implementations for each
+- Adopted GitHub Actions and GitHub Projects as CI/CD and project management alternatives to Jenkins / Jira
+
+---
+
+### Senior QA Engineer and QA Manager
+
+**Active911**  
+Corvallis, OR  
+03/2020 – 07/2022
+
+Active911 helps heroes save lives with software designed to get first responders on scene faster with fast alerting, easy scheduling and more.
+
+**Technical Leadership:**
+
+- Established end-to-end QA coverage for ActiveAlert and ActiveTeam across web, Android, and iOS platforms throughout the full SDLC
+- Architected Nightwatch.js test framework using Page Object Model; reusable module library accelerated new test development across the team
+- Built real-time test automation dashboard integrating Jenkins Job DSL with TestRail API for live execution status and reporting
+
+**Team Leadership:**
+
+- Grew and developed QA team: led hiring, identified and promoted internal candidates from Customer Support, mentored team members in automation practices
+- Embedded quality in development process by collaborating with product and engineering during backlog review and design sessions
+- Coordinated UAT with product managers, ensuring customer requirements validated before releases
+
+---
+
+### Senior Software Engineer
+
+**Puppet**  
+Portland, OR  
+01/2018 – 03/2020
+
+Puppet is the industry-leading automation solution for configuration management, compliance, CI/CD, patch management, IT automation, and more.
+
+**Performance Engineering & Framework Development:**
+
+- Extended gatling-puppet-load-test (GPLT) framework with scale testing, automated HTML comparison reports, and system tuning integration with comprehensive RSpec unit test coverage
+- Built Ruby provisioning utility for Puppet ABS API, enabling automated infrastructure node deployment with JSON request handling and YAML configuration export
+- Contributed to Reference Architecture Setup (RAS) CLI tool using Ruby and Puppet Bolt; implemented Docker-based acceptance tests with comprehensive RSpec coverage
+
+**Cross-Team Collaboration:**
+
+- Drove performance testing standards through Reference Architectures Working Group, collaborating with Customer Success, Installer, and PuppetDB teams on architecture definition and test roadmap
+- Served as Scrum Master for Installer and SLV teams, establishing Puppet Operating Model implementation and facilitating continuous process improvement
+
+---
+
+### Senior Quality Engineer
+
+**National Public Radio**  
+Washington, DC  
+05/2014 – 01/2018
+
+NPR is an independent, nonprofit media organization that was founded on a mission to create a more informed public.
+
+**Test Automation Architecture:**
+
+- Led JavaScript framework evaluation across multiple teams; selected and implemented Nightwatch.js with cross-browser support integrated into Seamus CMS CI pipeline
+- Architected hybrid test framework (keyword-driven + data-driven) in Java / Selenium serving cross-platform testing needs
+- Built mobile testing capability using Appium for Android and iOS, establishing Jenkins-based infrastructure with simulators and emulators
+
+**Developer Tooling & Infrastructure:**
+
+- Created test documentation web app using Node.js / Express backend with React / Redux frontend, improving test suite visibility across teams
+- Established Jenkins automation dashboards using Job DSL across Publishing, TechOps, and NPR One teams
+- Modernized API test suite with modular architecture, adding coverage for new endpoints and improving maintainability
+
+---
+
+### QA Automation Manager
+
+**American Public University System**  
+Charles Town, WV  
+03/2012 – 05/2014
+
+American Public University System (APUS) is an online university system with its headquarters in Charles Town, West Virginia.
+
+- Designed full-stack test automation architecture in .NET / C#: keyword-driven UI framework (Coded UI + Selenium) plus data-driven back-end framework verifying student registration and payment transactions
+- Built QA Automation team from ground up: led recruiting for engineer and specialist roles, trained team members in automation tools, development practices, and organizational processes
+- Established Agile test management workflow using HP ALM / Quality Center for workload planning and execution tracking
+- Drove automation adoption organization-wide through stakeholder engagement and active participation in design, requirements, and test plan reviews
+
+---
+
+### Lead QA Analyst
+
+**FINRA**  
+Rockville, MD  
+09/2003 – 03/2012
+
+FINRA enables investors and firms to participate in the market with confidence by safeguarding its integrity.
+
+- Ensured quality of critical securities industry infrastructure: Web CRD (central licensing system for U.S. securities industry) and IAPD, supporting regulatory compliance throughout 9-year tenure
+- Evolved test automation platform from WinRunner to QTP, architecting improved dependency management for multi-application, multi-release, multi-environment testing
+- Designed no-code test framework (QTP / VBScript + Excel parameterization) enabling manual testers to create and execute automated tests without programming knowledge
+- Pioneered CI adoption: implemented automated test execution pipeline using CruiseControl → Hudson with Ant scripting
+- Established requirements-based automation process with HP Quality Center for traceability, test organization, and defect management
+
+---
+
+### Test Automation Specialist
+
+**Fannie Mae**  
+Washington, DC  
+09/2002 – 09/2003
+
+Fannie Mae was chartered by U.S. Congress in 1938 to provide a reliable source of affordable mortgage financing across the country.
+
+- Tested critical mortgage processing applications for federal housing finance agency
+- Built WinRunner test automation framework with reusable business action functions; developed LoadRunner scripts for internal and hosted virtual user (HVU) performance testing
+- Administered TestDirector server and managed test infrastructure including requirements traceability and defect coordination
+
+---
+
+### Test Automation Specialist
+
+**MedContrax**  
+Gaithersburg, MD  
+01/2001 – 02/2002
+
+MedContrax was a software company based in Rockville, Maryland, providing data processing and integration services to the healthcare industry.
+
+- Tested pharmaceutical contract management application (ColdFusion / SQL Server) for healthcare data processing company
+- Developed WinRunner automation framework with reusable function library enabling rapid test development
+- Owned full QC environment: Windows NT Server, SQL Server, IIS, ColdFusion, TestDirector administration, and defect coordination
+
+---
+
+### Test Automation Specialist
+
+**US Census Bureau**  
+Suitland, MD  
+09/1998 – 01/2001
+
+The Census Bureau's mission is to serve as the nation's leading provider of quality data about its people and economy.
+
+- Managed automated testing of federal data collection applications using Mercury Interactive TestSuite (WinRunner, LoadRunner, TestDirector)
+- Conducted performance test engineering: identified key transactions, developed LoadRunner scripts, executed performance scenarios
+- Built interactive test results intranet site (Windows 2000 Server/IIS) - early web development for test visibility
+- Delivered Y2K compliance testing for critical government systems under federal deadline pressure
+
+---
+
+## Education
+
+**Towson University** - English Studies  
+Coursework completed 1992–1994 | Towson, MD
+
+**Harford Community College** - Business Management  
+Coursework completed 1990–1991 | Churchville, MD
+
+---
+
+## Skills
+
+**Core Expertise**
+AI-Assisted QA Workflows | Test Automation Architecture | Software Development | QA Team Leadership | Performance Testing | CI/CD Integration | Test Strategy
+
+**Languages**
+JavaScript, Ruby, Python, C#/.NET, Java, PowerShell, SQL
+
+**Test Automation**
+Selenium, Playwright, Nightwatch.js, Appium, JMeter, Gatling, RSpec
+
+**DevOps & Cloud**
+Jenkins, Azure Pipelines, AWS, Git, GitHub, Docker, Grafana
+
+**AI Tools**
+GitHub Copilot, Cursor, Claude, ChatGPT, Codex, Cline, Ollama, LM Studio, Jan
+
+**Practices**
+Agile / Scrum, Test-Driven Development, API Testing, Cross-Platform Testing
+</script>
+</body>
+</html>

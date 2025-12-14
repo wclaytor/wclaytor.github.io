@@ -3,9 +3,7 @@
 Bel Air, MD | Tucson, AZ
 claytor1@gmail.com
 
-- Authorized to work in the US for any employer
-- Willing to relocate within the US for a hybrid role for the right location and opportunity
-
+- US citizen willing to relocate within the US for the right location and opportunity
 
 ## Links
 
@@ -15,7 +13,7 @@ claytor1@gmail.com
 
 ## Summary
 
-Senior Software Engineer pioneering AI-assisted QA workflows and leading globally distributed testing initiatives. 25 years architecting test frameworks with a track record of transforming manual QA processes into scalable automated systems.
+Senior Quality Engineer and Automation Leader with 25+ years of experience transforming manual QA into scalable automated systems, currently pioneering AI-assisted QA workflows. Proven track record of building test frameworks, leading globally distributed teams, and embedding quality into CI/CD pipelines across SaaS, enterprise, and regulated environments.
 
 ## Work Experience
 
@@ -32,6 +30,8 @@ insightsoftware is a global provider of reporting, analytics, and performance ma
 - Pioneered AI-assisted QA workflow (GitHub Copilot + PowerShell) automating end-to-end Jira/Xray operations from requirements analysis through test execution and reporting
 - Streamlined documentation by building an AI pipeline that converted legacy training videos into a searchable library using transcript analysis, automated screenshot extraction, and context-aware wiki generation
 - Automated sprint release verification via Azure Pipelines using in-house C# / Selenium framework across multiple product lines
+- Developed a test reporting dashboard tool for the automation triage process to quickly generate an HTML / email report with the daily Azure test results across multiple environments and releases, replacing the manual process and reducing report generation time from over 10 minutes to under 30 seconds
+- Created an automated pipeline to extract 5000+ automated test cases from the legacy Team Foundation Server and generate corresponding test cases and test steps in Jira / Xray
 - Coordinated test reporting across 7 globally distributed teams, establishing customer-facing delivery process for sanitized release reports
 
 **Leadership & Cross-Functional Initiatives:**
@@ -47,11 +47,11 @@ insightsoftware is a global provider of reporting, analytics, and performance ma
 
 08/2022 – 03/2023
 
-Career break to evaluate modern frameworks, ship personal projects, and prepare for AI-augmented development practices.
+Sabbatical to develop and ship a production Rails app and evaluate modern test frameworks.
 
-- Shipped a Rails applications to production (Dokku, DigitalOcean): Songbook, a setlist organizer for live music performance
-- Evaluated modern test frameworks (Playwright, Cypress) by building Page Object Model implementations for each
-- Adopted GitHub Actions and GitHub Projects as CI/CD and project management alternatives to Jenkins/Jira
+- Built and deployed Songbook (Rails, Dokku, DigitalOcean) - a setlist organizer for live music performance
+- Evaluated Playwright and Cypress by building Page Object Model implementations for each
+- Adopted GitHub Actions and GitHub Projects as CI/CD and project management alternatives to Jenkins / Jira
 
 ---
 
@@ -189,14 +189,18 @@ The Census Bureau's mission is to serve as the nation's leading provider of qual
 
 - Managed automated testing of federal data collection applications using Mercury Interactive TestSuite (WinRunner, LoadRunner, TestDirector)
 - Conducted performance test engineering: identified key transactions, developed LoadRunner scripts, executed performance scenarios
-- Built interactive test results intranet site (Windows 2000 Server/IIS) — early web development for test visibility
+- Built interactive test results intranet site (Windows 2000 Server/IIS) - early web development for test visibility
 - Delivered Y2K compliance testing for critical government systems under federal deadline pressure
 
 ---
 
 ## Education
 
-**Towson University** — English Studies (Towson, MD)
+**Towson University** - English Studies  
+Coursework completed 1992–1994 | Towson, MD
+
+**Harford Community College** - Business Management  
+Coursework completed 1990–1991 | Churchville, MD
 
 ---
 
@@ -212,10 +216,10 @@ JavaScript, Ruby, Python, C#/.NET, Java, PowerShell, SQL
 Selenium, Playwright, Nightwatch.js, Appium, JMeter, Gatling, RSpec
 
 **DevOps & Cloud**
-Jenkins, Azure Pipelines, AWS, Git, GitHub Actions, Docker, Grafana
+Jenkins, Azure Pipelines, AWS, Git, GitHub, Docker, Grafana
 
 **AI Tools**
-GitHub Copilot, Claude, ChatGPT / Codex
+GitHub Copilot, Cursor, Claude, ChatGPT, Codex, Cline, Ollama, LM Studio, Jan
 
 **Practices**
 Agile / Scrum, Test-Driven Development, API Testing, Cross-Platform Testing
