@@ -1,0 +1,4 @@
+assets/resume/resume-example.md
+projects/alpine-markdown-presentation/index.html
+projects/alpine-resume/index.html
+projects/alpine-resume/resume-example.md

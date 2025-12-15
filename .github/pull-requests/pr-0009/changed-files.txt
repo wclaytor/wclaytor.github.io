@@ -1,0 +1,6 @@
+.github/copilot-instructions.md
+AGENTS.md
+CLAUDE.md
+projects/alpine-resume/index.html
+projects/index-original.html
+projects/index.html

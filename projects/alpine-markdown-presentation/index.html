@@ -692,12 +692,21 @@
         
         loadSamplePresentation() {
           // Load the example presentation
-          fetch('./presentation-sample.md')
-            .then(response => response.text())
+          // Use relative path that works on GitHub Pages
+          const samplePath = 'presentation-sample.md';
+          
+          fetch(samplePath)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              return response.text();
+            })
             .then(content => this.parseMarkdown(content))
             .catch(error => {
-              console.error('Could not load sample:', error);
-              // Fallback inline sample
+              console.error('Could not load sample file:', error);
+              console.log('Loading inline fallback presentation...');
+              // Fallback to inline sample
               this.parseMarkdown(this.getInlineSample());
             });
         },

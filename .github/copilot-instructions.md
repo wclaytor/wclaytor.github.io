@@ -214,6 +214,52 @@ Personal portfolio and project showcase website hosted on GitHub Pages. This sit
 - Suggest alternatives when appropriate
 - Provide context for technical decisions
 
+### Using Skills
+This project has specialized Claude skills available in `.claude/skills/` that provide domain-specific expertise:
+
+#### Available Skills
+1. **frontend-design** - Creates production-grade frontend interfaces with high design quality
+   - Use when building web components, pages, or UI layouts
+   - Generates creative, polished designs that avoid generic AI aesthetics
+   - Perfect for modernizing existing pages or creating new ones
+
+2. **canvas-design** - Creates beautiful visual art in .png and .pdf documents
+   - Use for posters, graphics, diagrams, or static design pieces
+   - Creates original designs avoiding copyright issues
+
+3. **theme-factory** - Styling toolkit with 10 pre-set themes
+   - Apply consistent themes to HTML pages, slides, docs, and reports
+   - Generate custom themes on-the-fly
+
+4. **webapp-testing** - Playwright-based testing toolkit
+   - Test local web applications
+   - Verify frontend functionality and debug UI behavior
+   - Capture screenshots and browser logs
+
+5. **pdf** - Comprehensive PDF manipulation
+   - Extract text and tables
+   - Create, merge, and split PDFs
+   - Handle form filling
+
+6. **brand-guidelines** - Applies Anthropic's official brand colors and typography
+   - Use when creating branded content or artifacts
+
+7. **skill-creator** - Guide for creating new skills
+   - Use when extending capabilities with custom skills
+
+#### When to Use Skills
+- **Design work**: Use `frontend-design` for any UI/UX enhancements
+- **Visual assets**: Use `canvas-design` for graphics and illustrations
+- **Consistent styling**: Use `theme-factory` when applying design themes
+- **Quality assurance**: Use `webapp-testing` before deploying changes
+- **Document handling**: Use `pdf` for resume generation or documentation
+
+#### Skill Best Practices
+- Reference skills explicitly when they apply to the task
+- Combine skills for comprehensive solutions (e.g., `frontend-design` + `theme-factory`)
+- Let the skill guide implementation details for their specialty areas
+- Skills contain specialized knowledge—trust their recommendations
+
 ## Current Priorities
 
 1. **Content Audit**: Review existing pages, identify missing content
