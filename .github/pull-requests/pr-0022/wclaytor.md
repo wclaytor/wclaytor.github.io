@@ -91,3 +91,11 @@ It is still broken, and I don't think the search is providing any value over jus
 python projects/dynamic-resume/releases/v2.3/build_resume.py projects/dynamic-resume/releases/v2.3/william-claytor-resume.md projects/dynamic-resume/releases/v2.3/test3.html
 
 python projects/dynamic-resume/releases/v2.3/build_resume.py projects/dynamic-resume/releases/v2.3/william-claytor-resume.md projects/dynamic-resume/releases/v2.3/william_claytor_resume.html
+
+---
+
+Please add a project card for the dynamic-resume project to the experiments sub-section. We should provide links to view the README.html and william_claytor_resume.html files in the v2.3 folder
+
+python scripts/utility/md2html/md2html.py projects/dynamic-resume/releases/v2.3/README.md 
+
+pip install -r requirements.txt
