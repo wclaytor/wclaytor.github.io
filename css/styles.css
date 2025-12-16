@@ -11687,23 +11687,420 @@ body {
 }
 
 .about-section {
-  padding-top: 10rem;
-  padding-bottom: 8rem;
+  padding-top: 8rem;
+  padding-bottom: 6rem;
   background: 
     linear-gradient(
       135deg,
-      rgba(25, 25, 60, 0.80) 0%,
-      rgba(15, 30, 60, 0.85) 50%,
-      rgba(0, 0, 0, 0.95) 100%
+      rgba(15, 23, 42, 0.92) 0%,
+      rgba(30, 41, 59, 0.88) 35%,
+      rgba(15, 30, 50, 0.90) 65%,
+      rgba(0, 0, 0, 0.98) 100%
     ),
     url("../assets/img/bg-masthead.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-size: cover;
+  position: relative;
+  overflow: hidden;
 }
+
+/* Subtle grain texture overlay */
+.about-section::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.about-section > .container {
+  position: relative;
+  z-index: 1;
+}
+
 .about-section p {
+  margin-bottom: 0;
+}
+
+/* ==========================================================================
+   About Hero - Headshot and Bio
+   ========================================================================== */
+
+.about-hero {
   margin-bottom: 5rem;
+}
+
+/* Headshot Container */
+.headshot-container {
+  position: relative;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+.headshot-frame {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(100, 161, 157, 0.2);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.headshot-frame:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    0 30px 60px -15px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(100, 161, 157, 0.3),
+    0 0 40px rgba(100, 161, 157, 0.1);
+}
+
+.headshot-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: contrast(1.02) saturate(0.95);
+  transition: filter 0.4s ease;
+}
+
+.headshot-frame:hover .headshot-img {
+  filter: contrast(1.05) saturate(1);
+}
+
+/* Accent lines */
+.headshot-accent {
+  position: absolute;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #64a19d, rgba(100, 161, 157, 0));
+  border-radius: 2px;
+}
+
+.headshot-accent-top {
+  top: -20px;
+  left: 0;
+}
+
+.headshot-accent-bottom {
+  bottom: -20px;
+  right: 0;
+  background: linear-gradient(90deg, rgba(100, 161, 157, 0), #64a19d);
+}
+
+/* Bio Styling */
+.about-bio {
+  padding-left: 1rem;
+}
+
+.about-lead {
+  font-size: 1.35rem;
+  font-weight: 300;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 1.75rem !important;
+  letter-spacing: 0.01em;
+}
+
+.about-lead em {
+  font-style: normal;
+  color: #64a19d;
+  font-weight: 400;
+}
+
+.about-summary {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 1.25rem !important;
+}
+
+.about-summary strong {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+}
+
+.about-summary:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* ==========================================================================
+   Expertise Cards Section
+   ========================================================================== */
+
+.expertise-section {
+  padding-top: 3rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.expertise-title {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 2.5rem;
+}
+
+.expertise-card {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 2rem;
+  height: 100%;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.expertise-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #64a19d, #7464a1);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.expertise-card:hover {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  border-color: rgba(100, 161, 157, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.expertise-card:hover::before {
+  opacity: 1;
+}
+
+.expertise-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 1.25rem;
+  color: #64a19d;
+}
+
+.expertise-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.expertise-heading {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 0.875rem;
+  letter-spacing: 0.02em;
+}
+
+.expertise-text {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.925rem;
+  line-height: 1.7;
+  margin-bottom: 1.25rem !important;
+}
+
+.expertise-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.expertise-tags .tag {
+  display: inline-block;
+  padding: 0.25rem 0.625rem;
+  background: rgba(100, 161, 157, 0.15);
+  border: 1px solid rgba(100, 161, 157, 0.25);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgba(100, 161, 157, 0.9);
+  letter-spacing: 0.02em;
+  transition: all 0.2s ease;
+}
+
+.expertise-card:hover .expertise-tags .tag {
+  background: rgba(100, 161, 157, 0.2);
+  border-color: rgba(100, 161, 157, 0.35);
+}
+
+/* ==========================================================================
+   About CTA
+   ========================================================================== */
+
+.about-cta {
+  text-align: center;
+  padding-top: 4rem;
+}
+
+.about-cta .btn-outline-light {
+  padding: 0.875rem 2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-width: 2px;
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.85);
+  background: transparent;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.about-cta .btn-outline-light:hover {
+  background: rgba(100, 161, 157, 0.15);
+  border-color: #64a19d;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(100, 161, 157, 0.2);
+}
+
+.about-cta .btn-outline-light .icon {
+  width: 1.1em;
+  height: 1.1em;
+  vertical-align: -0.15em;
+}
+
+/* ==========================================================================
+   About Section Responsive Styles
+   ========================================================================== */
+
+@media (max-width: 991.98px) {
+  .about-section {
+    padding-top: 6rem;
+    padding-bottom: 5rem;
+  }
+  
+  .about-hero {
+    margin-bottom: 4rem;
+  }
+  
+  .headshot-container {
+    max-width: 320px;
+    margin-bottom: 2rem;
+  }
+  
+  .about-bio {
+    padding-left: 0;
+    text-align: center;
+  }
+  
+  .about-lead {
+    font-size: 1.2rem;
+  }
+  
+  .about-summary {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .about-section {
+    padding-top: 5rem;
+    padding-bottom: 4rem;
+  }
+  
+  .about-hero {
+    margin-bottom: 3.5rem;
+  }
+  
+  .headshot-container {
+    max-width: 280px;
+  }
+  
+  .headshot-accent {
+    width: 40px;
+    height: 2px;
+  }
+  
+  .headshot-accent-top {
+    top: -15px;
+  }
+  
+  .headshot-accent-bottom {
+    bottom: -15px;
+  }
+  
+  .about-lead {
+    font-size: 1.1rem;
+    line-height: 1.65;
+  }
+  
+  .about-summary {
+    font-size: 0.95rem;
+  }
+  
+  .expertise-section {
+    padding-top: 2.5rem;
+  }
+  
+  .expertise-card {
+    padding: 1.5rem;
+  }
+  
+  .expertise-icon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .about-cta {
+    padding-top: 3rem;
+  }
+  
+  .about-cta .btn-outline-light {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .about-section {
+    padding-top: 4rem;
+    padding-bottom: 3.5rem;
+  }
+  
+  .headshot-container {
+    max-width: 240px;
+  }
+  
+  .about-lead {
+    font-size: 1rem;
+  }
+  
+  .about-summary {
+    font-size: 0.9rem;
+  }
+  
+  .expertise-title {
+    font-size: 0.75rem;
+    margin-bottom: 2rem;
+  }
+  
+  .expertise-heading {
+    font-size: 1.05rem;
+  }
+  
+  .expertise-text {
+    font-size: 0.875rem;
+  }
 }
 
 .projects-section {

@@ -2,14 +2,14 @@
 assignees:
 - wclaytor
 author: wclaytor
-closed_at: null
+closed_at: '2025-12-15T00:02:09Z'
 created_at: '2025-12-14T19:58:27Z'
 issue_number: 21
 labels: []
 milestone: null
-state: OPEN
+state: CLOSED
 title: More tweaks
-updated_at: '2025-12-14T19:58:31Z'
+updated_at: '2025-12-15T00:02:09Z'
 ---
 
 # Issue #21: More tweaks

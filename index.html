@@ -72,36 +72,132 @@
         </header>
 
         <!-- About-->
-        <section class="about-section text-center" id="about">
+        <section class="about-section" id="about">
             <div class="container px-4 px-lg-5">
-                <div class="row gx-4 gx-lg-5 justify-content-center">
-                    <div class="col-lg-8">
+                
+                <!-- Hero Profile Area -->
+                <div class="about-hero">
+                    <div class="row gx-5 align-items-center justify-content-center">
                         
-                        <h4 class="text-white">
-                            Senior Software Engineer with over 25 years of industry experience in software development, quality assurance, and test automation.
-                        </h4>
-
-                        <br>
-
-                        <div class="">
-    
-                            <div class="">
-                                <h4 class="text-white">Software Development</h4>
-                                <p class="text-white-50">Certified in Java and .NET web development with experience in Ruby, JavaScript, and Python</p>
+                        <!-- Headshot Column -->
+                        <div class="col-lg-5 col-md-6 mb-5 mb-lg-0">
+                            <div class="headshot-container">
+                                <div class="headshot-frame">
+                                    <img src="assets/img/headshot-dark.jpg" 
+                                         alt="William Claytor - Senior Software Engineer" 
+                                         class="headshot-img"
+                                         loading="lazy" />
+                                </div>
+                                <!-- Subtle accent lines -->
+                                <div class="headshot-accent headshot-accent-top"></div>
+                                <div class="headshot-accent headshot-accent-bottom"></div>
                             </div>
-    
-                            <div class="">
-                                <h4 class="text-white">Quality Assurance</h4>
-                                <p class="text-white-50">Proven track record managing and leading QA teams, implementing QA processes in every phase of the SDLC, and creating, managing, and executing comprehensive test plans</p>
-                            </div>
-
-                            <div class="">
-                                <h4 class="text-white">Test Automation</h4>
-                                <p class="text-white-50">Extensive experience in unit, integration, API, user interface, and performance testing using a variety of enterprise and open-source tools and frameworks</p>
-                            </div>
-    
                         </div>
+                        
+                        <!-- Bio Column -->
+                        <div class="col-lg-6 col-md-6">
+                            <div class="about-bio">
+                                <p class="about-lead">
+                                    A methodical problem-solver who believes that <em>quality is everyone's responsibility</em>—and that the best software is built when we bake testing in from the start, not bolt it on at the end.
+                                </p>
+                                <p class="about-summary">
+                                    With over <strong>25 years</strong> of hands-on experience spanning software development, quality assurance, and test automation, I've had the privilege of building teams, shipping products, and transforming how organizations think about quality.
+                                </p>
+                                <p class="about-summary">
+                                    Currently pioneering <strong>AI-assisted QA workflows</strong>—using tools like GitHub Copilot and automated pipelines to turn what used to take hours into minutes.
+                                </p>
+                            </div>
+                        </div>
+                        
                     </div>
+                </div>
+
+                <!-- Expertise Cards -->
+                <div class="expertise-section">
+                    <h3 class="expertise-title">Areas of Expertise</h3>
+                    <div class="row gx-4 gy-4 justify-content-center">
+                        
+                        <!-- Software Development -->
+                        <div class="col-lg-4 col-md-6">
+                            <div class="expertise-card">
+                                <div class="expertise-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="16 18 22 12 16 6"></polyline>
+                                        <polyline points="8 6 2 12 8 18"></polyline>
+                                    </svg>
+                                </div>
+                                <h4 class="expertise-heading">Software Development</h4>
+                                <p class="expertise-text">
+                                    Certified in Java and .NET web development. Fluent in Ruby, JavaScript, Python, and PowerShell. Building production systems from Rails apps to automation frameworks.
+                                </p>
+                                <div class="expertise-tags">
+                                    <span class="tag">Java</span>
+                                    <span class="tag">.NET</span>
+                                    <span class="tag">Ruby</span>
+                                    <span class="tag">Python</span>
+                                    <span class="tag">JavaScript</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Quality Assurance -->
+                        <div class="col-lg-4 col-md-6">
+                            <div class="expertise-card">
+                                <div class="expertise-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                        <path d="m9 12 2 2 4-4"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="expertise-heading">Quality Assurance</h4>
+                                <p class="expertise-text">
+                                    Led globally distributed QA teams across multiple time zones. Built quality into CI/CD pipelines. Established processes that make quality a shared responsibility across engineering.
+                                </p>
+                                <div class="expertise-tags">
+                                    <span class="tag">Team Leadership</span>
+                                    <span class="tag">CI/CD</span>
+                                    <span class="tag">SDLC</span>
+                                    <span class="tag">Test Strategy</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Test Automation -->
+                        <div class="col-lg-4 col-md-6">
+                            <div class="expertise-card">
+                                <div class="expertise-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="expertise-heading">Test Automation</h4>
+                                <p class="expertise-text">
+                                    Architected test frameworks using Selenium, Playwright, Cypress, and Gatling. From unit tests to performance suites—building automation that developers actually want to run.
+                                </p>
+                                <div class="expertise-tags">
+                                    <span class="tag">Selenium</span>
+                                    <span class="tag">Playwright</span>
+                                    <span class="tag">Gatling</span>
+                                    <span class="tag">API Testing</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <!-- CTA -->
+                <div class="about-cta">
+                    <a href="assets/resume/william_claytor_resume.html" class="btn btn-outline-light btn-lg">
+                        <svg class="icon me-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        View Full Resume
+                    </a>
                 </div>
                 
             </div>
