@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Dynamic Resume v2.3">
+  <title>Dynamic Resume v2.3</title>
+  
+  <!-- Bootstrap Icons CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  
+  <!-- Theme Initialization - Prevent FOUC -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  
+  <style>
+    /* CSS Variables for Theme */
+    :root {
+      /* Light theme colors */
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --bg-code: #f5f5f5;
+      --text-primary: #1a202c;
+      --text-secondary: #4a5568;
+      --text-muted: #718096;
+      --border-color: #e2e8f0;
+      --link-color: #3b82f6;
+      --link-hover: #2563eb;
+      --shadow: rgba(0, 0, 0, 0.1);
+      --code-text: #d63384;
+      --blockquote-border: #3b82f6;
+      --blockquote-bg: #eff6ff;
+      --table-header-bg: #f1f5f9;
+      --highlight-bg: #fef3c7;
+    }
+    
+    [data-theme="dark"] {
+      /* Dark theme colors */
+      --bg-primary: #1a202c;
+      --bg-secondary: #2d3748;
+      --bg-code: #2d3748;
+      --text-primary: #f7fafc;
+      --text-secondary: #e2e8f0;
+      --text-muted: #a0aec0;
+      --border-color: #4a5568;
+      --link-color: #60a5fa;
+      --link-hover: #93c5fd;
+      --shadow: rgba(0, 0, 0, 0.3);
+      --code-text: #f687b3;
+      --blockquote-border: #60a5fa;
+      --blockquote-bg: #1e3a5f;
+      --table-header-bg: #374151;
+      --highlight-bg: #7c2d12;
+    }
+    
+    /* Prevent FOUC */
+    [x-cloak] { display: none !important; }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background-color: var(--bg-primary);
+      transition: background-color 0.3s ease, color 0.3s ease;
+      overflow-x: hidden;
+    }
+    
+    /* Header Styling */
+    header {
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 4px var(--shadow);
+    }
+    
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .header-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    
+    /* Theme Toggle Button */
+    .theme-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+      border-radius: 0.375rem;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      font-size: 1.25rem;
+    }
+    
+    .theme-toggle:hover {
+      background-color: var(--bg-secondary);
+    }
+    
+    .theme-toggle:active {
+      transform: scale(0.95);
+    }
+    
+    .theme-toggle i {
+      transition: transform 0.3s ease;
+    }
+    
+    /* Main Content Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+    }
+    
+    /* Content Styling */
+    .content {
+      background-color: var(--bg-primary);
+      border-radius: 0.5rem;
+      padding: 2rem;
+      box-shadow: 0 1px 3px var(--shadow);
+    }
+    
+    @media (max-width: 768px) {
+      .content {
+        padding: 1.5rem;
+      }
+    }
+    
+    /* Typography */
+    h1, h2, h3, h4, h5, h6 {
+      color: var(--text-primary);
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    
+    h1 { font-size: 2.5rem; margin-top: 0; }
+    h2 { font-size: 2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; }
+    h3 { font-size: 1.5rem; }
+    h4 { font-size: 1.25rem; }
+    h5 { font-size: 1.125rem; }
+    h6 { font-size: 1rem; }
+    
+    @media (max-width: 768px) {
+      h1 { font-size: 2rem; }
+      h2 { font-size: 1.75rem; }
+      h3 { font-size: 1.375rem; }
+    }
+    
+    p {
+      margin-bottom: 1rem;
+      color: var(--text-secondary);
+    }
+    
+    /* Links */
+    a {
+      color: var(--link-color);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    
+    a:hover {
+      color: var(--link-hover);
+      text-decoration: underline;
+    }
+    
+    /* Lists */
+    ul, ol {
+      margin-bottom: 1rem;
+      padding-left: 2rem;
+      color: var(--text-secondary);
+    }
+    
+    li {
+      margin-bottom: 0.5rem;
+    }
+    
+    ul ul, ol ol, ul ol, ol ul {
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    /* Code */
+    code {
+      background-color: var(--bg-code);
+      color: var(--code-text);
+      padding: 0.2rem 0.4rem;
+      border-radius: 0.25rem;
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 0.875rem;
+    }
+    
+    pre {
+      background-color: var(--bg-code);
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      overflow-x: auto;
+      margin-bottom: 1rem;
+    }
+    
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+    
+    /* Blockquotes */
+    blockquote {
+      border-left: 4px solid var(--blockquote-border);
+      background-color: var(--blockquote-bg);
+      padding: 1rem 1.5rem;
+      margin: 1rem 0;
+      border-radius: 0.25rem;
+    }
+    
+    blockquote p {
+      margin-bottom: 0;
+      color: var(--text-primary);
+    }
+    
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1rem;
+      overflow-x: auto;
+      display: block;
+    }
+    
+    @media (min-width: 768px) {
+      table {
+        display: table;
+      }
+    }
+    
+    thead {
+      background-color: var(--table-header-bg);
+    }
+    
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    th {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    
+    td {
+      color: var(--text-secondary);
+    }
+    
+    tr:hover {
+      background-color: var(--bg-secondary);
+    }
+    
+    /* Horizontal Rule */
+    hr {
+      border: none;
+      border-top: 2px solid var(--border-color);
+      margin: 2rem 0;
+    }
+    
+    /* Images */
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 0.5rem;
+      margin: 1rem 0;
+    }
+    
+    /* Strong and Emphasis */
+    strong {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    
+    em {
+      font-style: italic;
+    }
+    
+    /* Smooth scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    /* Respect reduced motion preference */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+    
+    /* Print styles */
+    @media print {
+      body {
+        background: white;
+        color: black;
+      }
+      
+      header {
+        position: static;
+        box-shadow: none;
+      }
+      
+      .theme-toggle {
+        display: none;
+      }
+      
+      a {
+        color: #0066cc;
+        text-decoration: underline;
+      }
+      
+      pre, blockquote {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header with Theme Toggle -->
+  <header>
+    <div class="header-content">
+      <h1 class="header-title">Dynamic Resume v2.3</h1>
+      <button 
+        class="theme-toggle" 
+        onclick="toggleTheme()"
+        aria-label="Toggle theme"
+        title="Toggle light/dark theme">
+        <i class="bi bi-sun-fill" id="theme-icon-light" style="display: none;"></i>
+        <i class="bi bi-moon-stars-fill" id="theme-icon-dark" style="display: none;"></i>
+      </button>
+    </div>
+  </header>
+  
+  <!-- Main Content -->
+  <div class="container">
+    <div class="content">
+      <h1 id="dynamic-resume-v23">Dynamic Resume v2.3</h1>
+<p>A <strong>zero-dependency</strong> Markdown-to-HTML resume generator that creates a <strong>single, standalone HTML file</strong> suitable for GitHub Pages, local viewing, printing to PDF, and professional portfolio sites. Built for accessibility, mobile-first design, and easy regeneration.</p>
+<h2 id="files">Files</h2>
+<ul>
+<li><code>build_resume.py</code> — Python generator script</li>
+<li><code>resume_template_configurable.html</code> — HTML template with embedded CSS + JavaScript</li>
+<li><code>william-claytor-resume.md</code> — Example Markdown resume</li>
+<li><code>test.html</code> — Generated output for testing</li>
+</ul>
+<h2 id="quick-start">Quick Start</h2>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>build_resume.py<span class="w"> </span>resume.md<span class="w"> </span>output.html
+</code></pre></div>
+
+<p>Optional custom config:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>build_resume.py<span class="w"> </span>resume.md<span class="w"> </span>output.html<span class="w"> </span>--config<span class="w"> </span>custom.config.json
+</code></pre></div>
+
+<h2 id="features">Features</h2>
+<h3 id="theme-toggle">Theme Toggle</h3>
+<ul>
+<li>Cycles through Auto → Dark → Light</li>
+<li>Auto respects system preferences</li>
+<li>Stored in localStorage</li>
+</ul>
+<h3 id="content-views">Content Views</h3>
+<ul>
+<li><strong>Short</strong>: Recent 3 positions, top 3 bullets each, earlier experience summarized</li>
+<li><strong>Full</strong>: Complete resume with all details</li>
+<li>Smooth animated transitions</li>
+</ul>
+<h3 id="navigation">Navigation</h3>
+<ul>
+<li>Desktop sidebar, mobile drawer</li>
+<li>Home scrolls to top</li>
+<li>Active section highlighting</li>
+</ul>
+<h3 id="links-section">Links Section</h3>
+<ul>
+<li>Format: "Label — URL" with clickable links</li>
+<li>Removed from header for cleaner design</li>
+</ul>
+<h3 id="printpdf-ready">Print/PDF Ready</h3>
+<ul>
+<li>Clean layout with hidden controls</li>
+<li>Optimized for printing</li>
+</ul>
+<h2 id="accessibility">Accessibility</h2>
+<ul>
+<li>Semantic HTML5</li>
+<li>Full keyboard navigation</li>
+<li>Screen reader support</li>
+<li>WCAG color contrast</li>
+<li>Reduced motion support</li>
+<li>Mobile-first responsive</li>
+</ul>
+<h2 id="deployment">Deployment</h2>
+<h3 id="github-pages">GitHub Pages</h3>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>build_resume.py<span class="w"> </span>resume.md<span class="w"> </span>index.html
+<span class="c1"># Commit and enable GitHub Pages</span>
+</code></pre></div>
+
+<h3 id="local">Local</h3>
+<p>Double-click the HTML file. Works offline.</p>
+<h2 id="philosophy">Philosophy</h2>
+<p>Markdown is the source of truth. Edit Markdown, regenerate HTML, deploy. Never edit generated HTML directly.</p>
+<h2 id="v23-updates">v2.3 Updates</h2>
+<ul>
+<li>Navigation: Home as first nav item</li>
+<li>Links: Fixed rendering, "Label — URL" format  </li>
+<li>UI: Removed search (use browser Ctrl+F)</li>
+<li>View button: Clear "Content: Short/Full" labels</li>
+<li>Cleaner toolbar with essential controls only</li>
+</ul>
+<hr />
+<p><strong>Zero dependencies</strong> • <strong>Fully accessible</strong> • <strong>Print-ready</strong></p>
+    </div>
+  </div>
+  
+  <!-- Theme Toggle Script -->
+  <script>
+    // Initialize theme icons on page load
+    function updateThemeIcon() {
+      const theme = document.documentElement.getAttribute('data-theme');
+      const lightIcon = document.getElementById('theme-icon-light');
+      const darkIcon = document.getElementById('theme-icon-dark');
+      
+      if (theme === 'dark') {
+        lightIcon.style.display = 'block';
+        darkIcon.style.display = 'none';
+      } else {
+        lightIcon.style.display = 'none';
+        darkIcon.style.display = 'block';
+      }
+    }
+    
+    // Toggle theme function
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateThemeIcon();
+    }
+    
+    // Update icon on load
+    updateThemeIcon();
+    
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (!localStorage.getItem('theme')) {
+        const newTheme = e.matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        updateThemeIcon();
+      }
+    });
+  </script>
+</body>
+</html>

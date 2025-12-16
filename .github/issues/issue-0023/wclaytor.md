@@ -53,3 +53,14 @@ A methodical problem-solver who believes that quality is everyone's responsibili
 
 That feels solid. But we lose that nuance, which actually seems more like a dig. Shall we just smile and ignore it, try to spin it in a positive way, or call out that bullshit?
 
+---
+
+Nice! We have some good context so let's keep it going. We like our new Dynamic Resume page and we are leaning towards making it the default resume for the site!
+
+Our resident visionary had an idea that we could use the light / dark versions of the headshot photos in coordination with the light / dark theme of the resume, and the result would be epic!
+
+So we are thinking we should start by making the exported resume work with that new feature, and then update the script and template to support that. And that can bascially be our workflow... test out new ideas with the resume, then cycle them back into the script and template when they stick.
+
+So let us start by tweaking the current resume page to include the light and dark headshots that switch with the theme. Get It!
+
+
