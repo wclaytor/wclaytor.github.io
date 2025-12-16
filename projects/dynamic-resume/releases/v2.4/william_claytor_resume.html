@@ -108,14 +108,18 @@
     /* Headshot with theme switching */
     .headshot-wrap{flex-shrink:0}
     .headshot{width:90px;height:120px;border-radius:12px;object-fit:cover;object-position:center top;border:3px solid var(--border);box-shadow:var(--shadow);transition:opacity 0.3s ease}
+    /* Default: light headshot visible, dark hidden */
     .headshot-light{display:block}
     .headshot-dark{display:none}
+    /* Explicit dark theme override */
     [data-theme="dark"] .headshot-light{display:none}
     [data-theme="dark"] .headshot-dark{display:block}
-    /* System preference when no data-theme set */
+    /* System dark preference ONLY when in auto mode (no explicit theme set) */
     @media (prefers-color-scheme: dark){
-      :root:not([data-theme]) .headshot-light{display:none}
-      :root:not([data-theme]) .headshot-dark{display:block}
+      html:not([data-theme]) .headshot-light,
+      html[data-theme="system"] .headshot-light{display:none}
+      html:not([data-theme]) .headshot-dark,
+      html[data-theme="system"] .headshot-dark{display:block}
     }
     @media (max-width: 720px){
       .headshot{width:70px;height:93px}
