@@ -78,3 +78,16 @@ That is nice, but the system seems to prefer light by default, so that should be
 --
 
 We love the new version of the resume and have linked it from the nav bar as the live version. We are about to push it but we see that the image isn't loading. Likely a path issue. Please fix.
+
+---
+
+scripts/image/png2jpg.py assets/img/headshot-dark-03.png
+
+---
+
+scripts/image/png2jpg.py assets/img/headshot-dark-04.png
+
+scripts/image/png2jpg.py assets/img/headshot-dark-07.png
+scripts/image/png2jpg.py assets/img/headshot-light-07.png
+
+scripts/image/png2jpg.py assets/img/headshot-crop.png
