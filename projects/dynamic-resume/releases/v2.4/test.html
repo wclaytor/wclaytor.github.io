@@ -93,7 +93,7 @@
     /* Header card */
     .pagehead{margin:0 0 14px}
     .headcard{padding:18px 18px}
-    .headgrid{display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:flex-start}
+    .headgrid{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;justify-content:space-between}
     .h1{margin:0;font-size:clamp(26px, 3.2vw, 40px);letter-spacing:-0.02em;line-height:1.08}
     .contact{margin-top:8px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;color:var(--muted);font-weight:650}
     .contact a{color:inherit}
@@ -103,26 +103,6 @@
     .pill:hover{box-shadow:0 0 0 4px var(--ring);outline:none}
     @media (max-width: 720px){
       .headlinks{justify-content:flex-start}
-    }
-
-    /* Headshot with theme switching */
-    .headshot-wrap{flex-shrink:0}
-    .headshot{width:90px;height:120px;border-radius:12px;object-fit:cover;object-position:center top;border:3px solid var(--border);box-shadow:var(--shadow);transition:opacity 0.3s ease}
-    /* Default: light headshot visible, dark hidden */
-    .headshot-light{display:block}
-    .headshot-dark{display:none}
-    /* Explicit dark theme override */
-    [data-theme="dark"] .headshot-light{display:none}
-    [data-theme="dark"] .headshot-dark{display:block}
-    /* System dark preference ONLY when in auto mode (no explicit theme set) */
-    @media (prefers-color-scheme: dark){
-      html:not([data-theme]) .headshot-light,
-      html[data-theme="system"] .headshot-light{display:none}
-      html:not([data-theme]) .headshot-dark,
-      html[data-theme="system"] .headshot-dark{display:block}
-    }
-    @media (max-width: 720px){
-      .headshot{width:70px;height:93px}
     }
 
     .row{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline}
@@ -299,18 +279,9 @@ function buildPageHeader(model){
   if(location) contactParts.push(`<span>${location}</span>`);
   if(email) contactParts.push(`<a href="mailto:${email}">${email}</a>`);
 
-  // Headshot images - light version for light theme, dark version for dark theme
-  const headshotHtml = `
-    <div class="headshot-wrap">
-      <img src="../img/headshot-light.jpg" alt="${name}" class="headshot headshot-light" loading="lazy" />
-      <img src="../img/headshot-dark.jpg" alt="${name}" class="headshot headshot-dark" loading="lazy" />
-    </div>
-  `;
-
   return `
     <section class="card headcard" aria-labelledby="resumeName">
       <div class="headgrid">
-        ${headshotHtml}
         <div>
           <h1 id="resumeName" class="h1">${name}</h1>
           <div class="contact" aria-label="Contact information">${contactParts.join('<span class="dot" aria-hidden="true">•</span>')}</div>

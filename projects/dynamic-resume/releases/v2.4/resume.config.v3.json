@@ -1,0 +1,34 @@
+{
+  "ui": {
+    "defaultView": "short",
+    "labels": {
+      "contentShort": "Short",
+      "contentFull": "Full"
+    }
+  },
+  "storage": {
+    "themeKey": "resume_theme",
+    "viewKey": "resume_view"
+  },
+  "shortView": {
+    "sections": {
+      "include": [
+        "Summary",
+        "Links",
+        "Work Experience",
+        "Skills",
+        "Education"
+      ]
+    },
+    "workExperience": {
+      "jobsToKeep": 3,
+      "bulletsPerJob": 3,
+      "alwaysIncludeRoles": []
+    },
+    "earlierExperience": {
+      "enabled": true,
+      "label": "Earlier Experience",
+      "maxCompanies": 8
+    }
+  }
+}
