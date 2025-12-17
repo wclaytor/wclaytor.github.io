@@ -63,4 +63,18 @@ So we are thinking we should start by making the exported resume work with that 
 
 So let us start by tweaking the current resume page to include the light and dark headshots that switch with the theme. Get It!
 
+---
 
+You nailed it! That looks awesome! Please try a rectangular area so we can see how that compares.
+
+---
+
+Awesome! In testing we noticed the auto theme uses the dark headshot. That clashes when the auto theme uses the light mode. These need to be associated and handled accordingly.
+
+--
+
+That is nice, but the system seems to prefer light by default, so that should be the default image as well. We are seeing the dark image with the default light theme, and that breaks the system.
+
+--
+
+We love the new version of the resume and have linked it from the nav bar as the live version. We are about to push it but we see that the image isn't loading. Likely a path issue. Please fix.
