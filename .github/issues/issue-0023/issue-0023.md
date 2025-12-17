@@ -2,14 +2,14 @@
 assignees:
 - wclaytor
 author: wclaytor
-closed_at: null
+closed_at: '2025-12-17T00:05:14Z'
 created_at: '2025-12-16T20:13:10Z'
 issue_number: 23
 labels: []
 milestone: null
-state: OPEN
+state: CLOSED
 title: Add headshots
-updated_at: '2025-12-16T20:13:16Z'
+updated_at: '2025-12-17T00:05:14Z'
 ---
 
 # Issue #23: Add headshots
