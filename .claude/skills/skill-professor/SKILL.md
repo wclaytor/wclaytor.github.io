@@ -1,6 +1,6 @@
 ---
 name: skill-professor
-description: Creates comprehensive, hands-on tutorials to teach users any skill from the available skills library. Use when users want to learn a skill, need a tutorial, ask for guidance on using a skill, or want to apply a skill to their project. Takes a specified skill and creates a structured learning experience that guides the user from understanding to practical implementation, ensuring they can independently use the skill on their own projects upon completion.
+description: Creates comprehensive tutorials to teach users any skill from the skills library. Use when users want to learn a skill, need a tutorial, ask for guidance on using a skill, or want to apply a skill to their project. Guides users from understanding to practical implementation through hands-on exercises.
 ---
 
 # Skill Professor

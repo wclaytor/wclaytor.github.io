@@ -101,18 +101,20 @@ Best practices for creating effective, hands-on tutorials that help users master
 - Start with complete code, then have users write from scratch
 
 ### Explanatory Examples
-```markdown
-**Good example pattern:**
-"Let's create a PDF report from data. Here's how:
 
-```python
-# This code extracts data and generates a PDF
-import pdfplumber
-# [code with inline comments explaining each part]
-```
+Provide complete, working examples with explanations. For instance, when teaching PDF processing:
 
-Notice how we [key insight about the code]."
-```
+**Structure your examples like this:**
+- Show the complete code first
+- Add inline comments explaining each part
+- Follow with a prose explanation of key insights
+- Highlight non-obvious details
+
+**Example format:**
+"Let's create a PDF report from data. Here's the complete code:"
+
+Then show the Python code with inline comments, followed by:
+"Notice how we [key insight about the code]."
 
 ### Checkpoint Questions
 - "Before moving on, verify your output looks like [expected result]"
