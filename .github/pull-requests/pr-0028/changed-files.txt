@@ -1,0 +1,4 @@
+.github/issues/issue-0027/issue-0027.md
+.github/issues/issue-0027/wclaytor.md
+assets/resume/william_claytor_resume.html
+assets/resume/william_claytor_resume.pdf

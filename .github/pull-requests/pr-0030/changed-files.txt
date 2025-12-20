@@ -1,0 +1,2 @@
+.claude/skills/skill-professor/SKILL.md
+.claude/skills/skill-professor/references/tutorial-patterns.md

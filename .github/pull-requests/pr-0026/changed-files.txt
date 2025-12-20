@@ -1,0 +1,4 @@
+.github/issues/issue-0023/wclaytor.md
+assets/img/headshot-crop.jpg
+assets/img/headshot-crop.png
+assets/resume/william_claytor_resume.html
