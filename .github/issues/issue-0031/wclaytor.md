@@ -13,4 +13,4 @@ Here is what we know:
 
 ---
 
-T
+We are seeing lots of errors when attempting to run the tests.
