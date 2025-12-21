@@ -43,13 +43,11 @@ RECORDINGS_DIR = TESTS_DIR / "recordings"
 # =============================================================================
 
 def pytest_addoption(parser: pytest.Parser) -> None:
-    """Add custom command line options."""
-    parser.addoption(
-        "--base-url",
-        action="store",
-        default=LOCAL_URL,
-        help=f"Base URL for tests (default: {LOCAL_URL})",
-    )
+    """Add custom command line options.
+    
+    Note: --base-url is already provided by pytest-base-url plugin.
+    Use it via: pytest --base-url=http://localhost:8000
+    """
     parser.addoption(
         "--production",
         action="store_true",
@@ -75,12 +73,14 @@ def base_url(request: pytest.FixtureRequest) -> str:
     
     Priority:
     1. --production flag uses production URL
-    2. --base-url option
+    2. --base-url option (from pytest-base-url plugin)
     3. Default local URL
     """
     if request.config.getoption("--production"):
         return PRODUCTION_URL
-    return request.config.getoption("--base-url")
+    # Use the base_url from pytest-base-url plugin, or fall back to LOCAL_URL
+    url = request.config.getoption("base_url")
+    return url if url else LOCAL_URL
 
 
 @pytest.fixture(scope="session")

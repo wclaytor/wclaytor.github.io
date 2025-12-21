@@ -1,0 +1,51 @@
+{
+  "name": "wclaytor.github.io - Playwright Testing",
+  "image": "mcr.microsoft.com/playwright/python:v1.49.0-jammy",
+  
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-playwright.playwright",
+        "bradlc.vscode-tailwindcss",
+        "esbenp.prettier-vscode",
+        "ritwickdey.LiveServer"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/bin/python3",
+        "python.testing.pytestEnabled": true,
+        "python.testing.pytestArgs": ["tests/playwright"],
+        "editor.formatOnSave": true,
+        "liveServer.settings.port": 8000,
+        "liveServer.settings.root": "/"
+      }
+    }
+  },
+
+  "postCreateCommand": "cd tests/playwright && pip install uv && uv sync",
+  
+  "forwardPorts": [8000, 5500],
+  
+  "portsAttributes": {
+    "8000": {
+      "label": "Local Server",
+      "onAutoForward": "notify"
+    },
+    "5500": {
+      "label": "Live Server",
+      "onAutoForward": "notify"
+    }
+  },
+
+  "remoteUser": "pwuser"
+}
