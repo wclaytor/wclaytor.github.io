@@ -1,0 +1,72 @@
+[project]
+name = "wclaytor-playwright-tests"
+version = "1.0.0"
+description = "Playwright test suite for wclaytor.github.io portfolio website"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "William Claytor", email = "wclaytor@fastmail.com" }
+]
+keywords = ["playwright", "testing", "e2e", "visual-regression"]
+
+dependencies = [
+    "playwright>=1.40.0",
+    "pytest>=7.4.0",
+    "pytest-playwright>=0.4.4",
+    "pytest-html>=4.1.0",
+    "pytest-xdist>=3.5.0",  # Parallel test execution
+    "axe-playwright-python>=0.1.4",  # Accessibility testing
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.1.0",  # Linting
+    "mypy>=1.7.0",  # Type checking
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+# Test discovery
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+# Markers
+markers = [
+    "smoke: Critical path tests that must always pass",
+    "functional: Feature-specific functional tests",
+    "visual: Visual regression tests",
+    "a11y: Accessibility tests",
+    "performance: Performance tests",
+    "slow: Tests that take longer than 10 seconds",
+    "flaky: Known flaky tests (quarantined)",
+]
+
+# Default options
+addopts = [
+    "-v",
+    "--tb=short",
+    "--strict-markers",
+]
+
+# Playwright settings
+base_url = "http://localhost:8000"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+ignore = ["E501"]  # Line too long handled by formatter
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_ignores = true
+disallow_untyped_defs = true

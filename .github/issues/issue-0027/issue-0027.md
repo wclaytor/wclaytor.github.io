@@ -2,14 +2,14 @@
 assignees:
 - wclaytor
 author: wclaytor
-closed_at: null
+closed_at: '2025-12-21T16:53:41Z'
 created_at: '2025-12-17T20:50:46Z'
 issue_number: 27
 labels: []
 milestone: null
-state: OPEN
+state: CLOSED
 title: Add PDF download
-updated_at: '2025-12-17T20:50:51Z'
+updated_at: '2025-12-21T16:53:41Z'
 ---
 
 # Issue #27: Add PDF download
