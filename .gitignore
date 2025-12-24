@@ -136,8 +136,9 @@ __pycache__/
 *.pyc
 
 # playwright
-tests/playwright/recordings/failures
-tests/playwright/recordings/videos
+tests/playwright/recordings
+tests/playwright/reports
+tests/playwright/test-results
 
 # ~ personal
 ~
