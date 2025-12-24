@@ -42,17 +42,46 @@ uv run pytest --production
 
 # Run against custom URL
 uv run pytest --base-url https://wclaytor.github.io
+
+# Generate timestamped reports with all artifacts
+./run-smoke.sh
 ```
+
+### Timestamped Test Reports
+
+The `run-smoke.sh` script generates comprehensive test reports in a timestamped directory:
+
+```bash
+# Run smoke tests with timestamped reports
+./run-smoke.sh
+```
+
+**Output structure:**
+
+```
+reports/
+└── 20251224-190908/
+    ├── report.html              # Human-readable HTML report
+    ├── report.xml               # Machine-readable JUnit XML (for AI assistants)
+    └── test-results/            # Screenshots, videos, traces
+```
+
+**Benefits:**
+
+- **Organized**: Each test run in its own timestamped folder
+- **Complete**: Includes HTML report, XML report, and all test artifacts
+- **Shareable**: Easy to share specific test runs with team or AI assistants
+- **Traceable**: Historical record of test runs over time
 
 ## Test Categories
 
-| Category | Command | Purpose |
-|----------|---------|---------|
-| Smoke | `pytest tests/smoke` | Critical path - must always pass |
-| Functional | `pytest tests/functional` | Feature verification |
-| Visual | `pytest tests/visual` | Visual regression |
-| Accessibility | `pytest tests/accessibility` | WCAG compliance |
-| Performance | `pytest tests/performance` | Performance checks |
+| Category      | Command                      | Purpose                          |
+| ------------- | ---------------------------- | -------------------------------- |
+| Smoke         | `pytest tests/smoke`         | Critical path - must always pass |
+| Functional    | `pytest tests/functional`    | Feature verification             |
+| Visual        | `pytest tests/visual`        | Visual regression                |
+| Accessibility | `pytest tests/accessibility` | WCAG compliance                  |
+| Performance   | `pytest tests/performance`   | Performance checks               |
 
 ## Project Structure
 
@@ -152,6 +181,6 @@ Tests are designed to run in CI pipelines:
 
 ## Philosophy
 
-> *"Make it work, make it right, make it fast."* — Kent Beck
+> _"Make it work, make it right, make it fast."_ — Kent Beck
 
 These tests protect the quality we've already achieved and enable confident future changes. See [TESTING_STRATEGY.md](TESTING_STRATEGY.md) for our full testing philosophy.
