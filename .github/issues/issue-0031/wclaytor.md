@@ -125,3 +125,7 @@ Please update the README to include our new run-smoke.sh script.
 ---
 
 It appears our devcontainer does not have the gh command line tool. Please add it.
+
+---
+
+We are reviewing the test results. We want to discuss each failure and determine whether the test identified a bug or if the test needs to be updated.
