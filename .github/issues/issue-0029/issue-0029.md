@@ -2,14 +2,14 @@
 assignees:
 - Copilot
 author: wclaytor
-closed_at: null
+closed_at: '2025-12-20T17:02:35Z'
 created_at: '2025-12-18T02:10:03Z'
 issue_number: 29
 labels: []
 milestone: null
-state: OPEN
+state: CLOSED
 title: Create skill-professor skill
-updated_at: '2025-12-18T02:10:30Z'
+updated_at: '2025-12-20T17:02:35Z'
 ---
 
 # Issue #29: Create skill-professor skill

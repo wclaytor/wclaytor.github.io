@@ -129,6 +129,17 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+#####
+
+# Python temp files
+__pycache__/
+*.pyc
+
+# playwright
+tests/playwright/recordings
+tests/playwright/test-results
+#tests/playwright/reports
+
 # ~ personal
 ~
 tmp
