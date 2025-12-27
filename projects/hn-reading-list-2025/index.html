@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HN Reading Dashboard (Ask HN: What did you read in 2025?)</title>
+
+  <!-- AlpineJS -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <!-- Tailwind (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* Keep long HN HTML from breaking layouts */
+    .hn-html p { margin: 0.25rem 0; }
+    .hn-html a { text-decoration: underline; }
+    .mono { font-variant-ligatures: none; }
+  </style>
+</head>
+
+<body class="bg-slate-950 text-slate-100">
+  <div x-data="hnDashboard()" x-init="init()" class="max-w-7xl mx-auto px-4 py-6">
+    <header class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-semibold tracking-tight">
+          HN Reading Dashboard
+        </h1>
+        <p class="text-slate-300 mt-1">
+          Snapshot explorer for Ask HN thread
+          <a class="underline" :href="hnItemUrl" target="_blank" rel="noreferrer">
+            #<span x-text="itemId"></span>
+          </a>
+        </p>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
+        <div class="text-sm text-slate-300">
+          <div>
+            Loaded: <span class="mono" x-text="loadedAt ?? '—'"></span>
+          </div>
+          <div>
+            Comments scanned: <span x-text="stats.commentsScanned"></span>
+            <span class="text-slate-400" x-show="stats.truncated">
+              (truncated at max)
+            </span>
+          </div>
+        </div>
+
+        <button
+          class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 transition"
+          @click="reload()"
+          :disabled="loading"
+        >
+          <span x-show="!loading">Reload snapshot</span>
+          <span x-show="loading">Loading…</span>
+        </button>
+      </div>
+    </header>
+
+    <section class="mt-5 grid grid-cols-1 lg:grid-cols-12 gap-4">
+      <!-- Controls -->
+      <div class="lg:col-span-4 rounded-2xl bg-slate-900/60 border border-slate-800 p-4">
+        <h2 class="text-lg font-semibold">Explore</h2>
+
+        <div class="mt-3 space-y-3">
+          <label class="block">
+            <div class="text-sm text-slate-300 mb-1">Search title</div>
+            <input
+              class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-600"
+              placeholder="e.g. Monte Cristo, Dalio, Sanderson…"
+              x-model.trim="filters.search"
+            />
+          </label>
+
+          <div class="grid grid-cols-2 gap-2">
+            <label class="block">
+              <div class="text-sm text-slate-300 mb-1">Min mentions</div>
+              <input
+                type="number" min="1"
+                class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800"
+                x-model.number="filters.minMentions"
+              />
+            </label>
+
+            <label class="block">
+              <div class="text-sm text-slate-300 mb-1">Sort</div>
+              <select
+                class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800"
+                x-model="filters.sortBy"
+              >
+                <option value="mentions">Mentions</option>
+                <option value="net">Net sentiment</option>
+                <option value="controversy">Controversy</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <label class="block">
+              <div class="text-sm text-slate-300 mb-1">Show</div>
+              <select
+                class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800"
+                x-model="filters.showBucket"
+              >
+                <option value="all">All books</option>
+                <option value="consensus">Consensus positive</option>
+                <option value="controversial">Controversial</option>
+              </select>
+            </label>
+
+            <label class="block">
+              <div class="text-sm text-slate-300 mb-1">Max rows</div>
+              <input
+                type="number" min="10" max="200"
+                class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800"
+                x-model.number="filters.maxRows"
+              />
+            </label>
+          </div>
+
+          <details class="rounded-xl bg-slate-950 border border-slate-800 p-3">
+            <summary class="cursor-pointer text-sm text-slate-200">
+              Extraction tuning (optional)
+            </summary>
+            <div class="mt-2 text-xs text-slate-300 space-y-2">
+              <div>
+                <div class="text-slate-400 mb-1">Max comments to fetch</div>
+                <input type="number" min="100" max="3000"
+                       class="w-full px-2 py-1 rounded-lg bg-slate-950 border border-slate-800"
+                       x-model.number="settings.maxComments" />
+              </div>
+
+              <div>
+                <div class="text-slate-400 mb-1">Mention window (words)</div>
+                <input type="number" min="6" max="40"
+                       class="w-full px-2 py-1 rounded-lg bg-slate-950 border border-slate-800"
+                       x-model.number="settings.windowWords" />
+              </div>
+
+              <div class="text-slate-400">
+                Tip: if you see too many false “book titles”, add phrases to <span class="mono">STOP_PHRASES</span> in the code.
+              </div>
+            </div>
+          </details>
+        </div>
+
+        <div class="mt-4 text-xs text-slate-400">
+          Data source: official HN Firebase v0 API (<span class="mono">/v0/item/&lt;id&gt;.json</span>). 1
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="rounded-2xl bg-slate-900/60 border border-slate-800 p-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-semibold">Top mentioned (filtered)</h2>
+            <div class="text-xs text-slate-400" x-text="chartNote"></div>
+          </div>
+          <canvas id="mentionsChart" class="mt-3"></canvas>
+        </div>
+
+        <div class="rounded-2xl bg-slate-900/60 border border-slate-800 p-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-semibold">Positive vs negative</h2>
+            <div class="text-xs text-slate-400">heuristic sentiment</div>
+          </div>
+          <canvas id="sentimentChart" class="mt-3"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tables -->
+    <section class="mt-4 grid grid-cols-1 lg:grid-cols-12 gap-4">
+      <div class="lg:col-span-7 rounded-2xl bg-slate-900/60 border border-slate-800 p-4">
+        <div class="flex items-center justify-between gap-3">
+          <h2 class="text-lg font-semibold">Books</h2>
+          <div class="text-xs text-slate-400">
+            Click a row to see quotes + mentions
+          </div>
+        </div>
+
+        <div class="mt-3 overflow-auto rounded-xl border border-slate-800">
+          <table class="min-w-full text-sm">
+            <thead class="bg-slate-950/60 text-slate-300">
+              <tr>
+                <th class="text-left px-3 py-2">Title</th>
+                <th class="text-right px-3 py-2">Mentions</th>
+                <th class="text-right px-3 py-2">+ / −</th>
+                <th class="text-right px-3 py-2">Controversy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="row in filteredRows()" :key="row.title">
+                <tr
+                  class="border-t border-slate-800 hover:bg-slate-950/40 cursor-pointer"
+                  @click="selectBook(row.title)"
+                >
+                  <td class="px-3 py-2">
+                    <div class="font-medium" x-text="row.title"></div>
+                    <div class="text-xs text-slate-400" x-text="row.badge"></div>
+                  </td>
+                  <td class="px-3 py-2 text-right mono" x-text="row.mentions"></td>
+                  <td class="px-3 py-2 text-right mono">
+                    <span class="text-slate-200" x-text="row.pos"></span>
+                    <span class="text-slate-500">/</span>
+                    <span class="text-slate-200" x-text="row.neg"></span>
+                  </td>
+                  <td class="px-3 py-2 text-right mono" x-text="row.controversy.toFixed(2)"></td>
+                </tr>
+              </template>
+              <tr x-show="!loading && filteredRows().length === 0">
+                <td colspan="4" class="px-3 py-6 text-center text-slate-400">
+                  No matches. Try lowering min mentions or clearing search.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Details -->
+      <div class="lg:col-span-5 rounded-2xl bg-slate-900/60 border border-slate-800 p-4">
+        <h2 class="text-lg font-semibold">Details</h2>
+
+        <div class="mt-3" x-show="!selectedBook">
+          <div class="text-slate-300">
+            Select a book to view standout quotes and context.
+          </div>
+          <div class="mt-3 text-xs text-slate-400">
+            Tip: “Consensus positive” = multiple positives, zero negatives (heuristic).
+          </div>
+        </div>
+
+        <template x-if="selectedBook">
+          <div>
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <div class="text-xl font-semibold" x-text="selectedBook"></div>
+                <div class="text-sm text-slate-300 mt-1">
+                  <span class="mono" x-text="selectedMeta?.mentions"></span> mentions •
+                  <span class="mono" x-text="selectedMeta?.pos"></span> pos •
+                  <span class="mono" x-text="selectedMeta?.neg"></span> neg •
+                  controversy <span class="mono" x-text="(selectedMeta?.controversy ?? 0).toFixed(2)"></span>
+                </div>
+              </div>
+
+              <a
+                class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 transition text-sm"
+                :href="hnItemUrl"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Open thread
+              </a>
+            </div>
+
+            <div class="mt-4">
+              <h3 class="text-sm font-semibold text-slate-200">Standout quotes</h3>
+              <div class="mt-2 space-y-2 max-h-[420px] overflow-auto pr-1">
+                <template x-for="q in selectedQuotes()" :key="q.id">
+                  <div class="rounded-xl border border-slate-800 bg-slate-950/50 p-3">
+                    <div class="flex items-center justify-between gap-2">
+                      <div class="text-xs text-slate-400">
+                        <span class="font-medium text-slate-200" x-text="q.by"></span>
+                        • <span class="mono" x-text="q.scoreLabel"></span>
+                      </div>
+                      <a
+                        class="text-xs underline text-slate-300"
+                        :href="q.url"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        permalink
+                      </a>
+                    </div>
+                    <div class="mt-2 text-sm text-slate-100 hn-html" x-html="q.html"></div>
+                  </div>
+                </template>
+
+                <div x-show="selectedQuotes().length === 0" class="text-slate-400 text-sm">
+                  No quotes found (try lowering min mentions or widen window).
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </section>
+
+    <!-- Footer / errors -->
+    <section class="mt-4">
+      <div x-show="error" class="rounded-2xl border border-red-800 bg-red-950/40 p-4 text-red-200">
+        <div class="font-semibold">Error</div>
+        <div class="mt-1 text-sm mono" x-text="error"></div>
+      </div>
+
+      <div class="mt-4 text-xs text-slate-500">
+        Built with AlpineJS + Chart.js. Heuristics are transparent in code (search for <span class="mono">extractMentions</span> and <span class="mono">scoreSentiment</span>).
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function hnDashboard() {
+      // --- Thread you linked ---
+      const ITEM_ID = 46391572;
+
+      // --- Official HN API base (Firebase v0) ---
+      // Docs: /v0/item/<id>.json returns story/comment items with fields like: by, time, kids, text (HTML), etc. 2
+      const HN_BASE = "https://hacker-news.firebaseio.com/v0";
+
+      // --- Heuristic tuning: reduce false positives here ---
+      const STOP_PHRASES = new Set([
+        "Hacker News", "Ask HN", "YC", "HN", "GitHub", "Kindle", "Audible",
+        "New York Times", "Wall Street Journal", "The Economist",
+        "Project Gutenberg", "Wikipedia", "Goodreads",
+        "United States", "Silicon Valley",
+      ]);
+
+      const POS_WORDS = [
+        "love","loved","great","amazing","excellent","fantastic","incredible","brilliant",
+        "enjoy","enjoyed","recommend","recommended","favorite","favourite","best","masterpiece",
+        "so good","highly recommend","worth it","blew me away","page-turner"
+      ];
+      const NEG_WORDS = [
+        "hate","hated","awful","terrible","boring","overrated","bad","worse","worst",
+        "didn't like","did not like","dnf","couldn't finish","could not finish","not good",
+        "disappointing","letdown","cringe","tedious"
+      ];
+
+      const escapeHtml = (s) => (s ?? "").replace(/[&<>"']/g, m => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      }[m]));
+
+      const stripHtml = (html) => {
+        const div = document.createElement("div");
+        div.innerHTML = html || "";
+        return (div.textContent || div.innerText || "").replace(/\s+/g, " ").trim();
+      };
+
+      // Simple concurrency-limited pool
+      async function mapPool(items, limit, mapper) {
+        const results = new Array(items.length);
+        let i = 0;
+        const workers = new Array(Math.min(limit, items.length)).fill(0).map(async () => {
+          while (i < items.length) {
+            const idx = i++;
+            results[idx] = await mapper(items[idx], idx);
+          }
+        });
+        await Promise.all(workers);
+        return results;
+      }
+
+      return {
+        itemId: ITEM_ID,
+        hnItemUrl: `https://news.ycombinator.com/item?id=${ITEM_ID}`,
+
+        loading: false,
+        error: null,
+        loadedAt: null,
+
+        // Settings (user-tunable in UI)
+        settings: {
+          maxComments: 1200,     // safety cap (thread may be huge)
+          concurrency: 25,       // parallel item fetches
+          windowWords: 18,       // sentiment window around mention
+          topChartN: 12,
+        },
+
+        // Filters
+        filters: {
+          search: "",
+          minMentions: 2,
+          sortBy: "mentions",      // mentions | net | controversy
+          showBucket: "all",       // all | consensus | controversial
+          maxRows: 80,
+        },
+
+        // Data
+        story: null,
+        comments: [],  // flattened comments {id, by, time, html, text, parent}
+        books: new Map(), // title -> {title, mentions, pos, neg, net, controversy, mentionsArr: [...]}
+        stats: { commentsScanned: 0, truncated: false },
+
+        // UI selection
+        selectedBook: null,
+        selectedMeta: null,
+
+        // Charts
+        mentionsChart: null,
+        sentimentChart: null,
+        chartNote: "",
+
+        async init() {
+          await this.reload();
+        },
+
+        async reload() {
+          this.loading = true;
+          this.error = null;
+          this.selectedBook = null;
+          this.selectedMeta = null;
+          this.books = new Map();
+          this.comments = [];
+          this.stats = { commentsScanned: 0, truncated: false };
+          this.chartNote = "";
+
+          try {
+            // Load story item
+            this.story = await this.fetchItem(this.itemId);
+            if (!this.story || !this.story.kids) {
+              throw new Error("Story has no kids/comments (or failed to load).");
+            }
+
+            // Fetch comments (BFS over kids)
+            await this.loadCommentsBFS(this.story.kids);
+
+            // Extract book mentions + compute stats
+            this.buildBookIndex();
+
+            // Render charts
+            this.renderCharts();
+
+            // Timestamp
+            this.loadedAt = new Date().toLocaleString();
+          } catch (e) {
+            this.error = String(e?.message || e);
+          } finally {
+            this.loading = false;
+          }
+        },
+
+        async fetchJson(url) {
+          const res = await fetch(url, { cache: "no-store" });
+          if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
+          return await res.json();
+        },
+
+        async fetchItem(id) {
+          return await this.fetchJson(`${HN_BASE}/item/${id}.json`);
+        },
+
+        async loadCommentsBFS(rootKids) {
+          const seen = new Set();
+          const queue = [...rootKids];
+          const fetched = [];
+
+          const takeBatch = () => {
+            const batch = [];
+            while (queue.length && batch.length < this.settings.concurrency * 4) {
+              const id = queue.shift();
+              if (!seen.has(id)) {
+                seen.add(id);
+                batch.push(id);
+              }
+            }
+            return batch;
+          };
+
+          while (queue.length && fetched.length < this.settings.maxComments) {
+            const batch = takeBatch();
+            if (!batch.length) break;
+
+            const items = await mapPool(batch, this.settings.concurrency, async (id) => {
+              try { return await this.fetchItem(id); }
+              catch { return null; }
+            });
+
+            for (const it of items) {
+              if (!it || it.deleted || it.dead || it.type !== "comment") continue;
+
+              const html = it.text || "";
+              const text = stripHtml(html);
+
+              // Store flattened comment
+              fetched.push({
+                id: it.id,
+                by: it.by || "unknown",
+                time: it.time,
+                parent: it.parent,
+                html,
+                text,
+              });
+
+              // Enqueue children
+              if (Array.isArray(it.kids)) {
+                for (const kid of it.kids) {
+                  if (!seen.has(kid)) queue.push(kid);
+                }
+              }
+
+              if (fetched.length >= this.settings.maxComments) break;
+            }
+          }
+
+          this.stats.commentsScanned = fetched.length;
+          this.stats.truncated = queue.length > 0;
+
+          this.comments = fetched;
+        },
+
+        // ---- Heuristic book extraction ----
+        extractMentions(text) {
+          // Return array of candidate "titles" found in comment text.
+          // 1) Quoted strings (single or double)
+          // 2) Title Case phrases (2-6 words), allowing small words like "of", "the", "and"
+          const candidates = [];
+
+          const t = (text || "").replace(/\s+/g, " ").trim();
+          if (!t) return candidates;
+
+          // Quoted segments: "The Count of Monte Cristo", ‘…’, “…” etc.
+          const quoteRe = /["“”'‘’]([^"“”'‘’]{4,90})["“”'‘’]/g;
+          let m;
+          while ((m = quoteRe.exec(t)) !== null) {
+            const s = m[1].trim();
+            if
