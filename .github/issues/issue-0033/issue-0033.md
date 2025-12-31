@@ -4,20 +4,20 @@ assignees:
 author: wclaytor
 closed_at: null
 comment_count: 0
-created_at: '2025-11-21T00:08:17Z'
-issue_number: 10
+created_at: '2025-12-30T16:45:46Z'
+issue_number: 33
 labels: []
 milestone: null
 state: OPEN
-title: Makeover
-updated_at: '2025-11-21T00:08:30Z'
+title: Improve test coverage
+updated_at: '2025-12-30T16:45:46Z'
 ---
 
-# Issue #10: Makeover
+# Issue #33: Improve test coverage
 
 ## Description
 
-As The Designer, this is your chance to give this site a complete Makeover! Go for it!
+Improve test coverage
 
 ## Notes
 

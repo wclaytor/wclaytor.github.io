@@ -1,2 +1,14 @@
 .claude/skills/skill-professor/SKILL.md
 .claude/skills/skill-professor/references/tutorial-patterns.md
+.claude/skills/webapp-testing/TUTORIAL.md
+.github/issues/issue-0027/issue-0027.md
+.github/issues/issue-0029/issue-0029.md
+.github/pull-requests/pr-0025/changed-files.txt
+.github/pull-requests/pr-0025/pr-0025.md
+.github/pull-requests/pr-0026/changed-files.txt
+.github/pull-requests/pr-0026/pr-0026.md
+.github/pull-requests/pr-0028/changed-files.txt
+.github/pull-requests/pr-0028/pr-0028.md
+.github/pull-requests/pr-0030/changed-files.txt
+.github/pull-requests/pr-0030/pr-0030.md
+.github/pull-requests/pr-0030/wclaytor.md
