@@ -10,6 +10,8 @@ echo "Results will be saved to: ${REPORT_DIR}"
 
 # Run tests with all reports going to the timestamped directory
 uv run pytest tests/functional -v \
+  -r fEsxX \
+  --tb=short \
   --html="${REPORT_DIR}/report.html" --self-contained-html \
   --junit-xml="${REPORT_DIR}/report.xml" \
   --screenshot=on \
