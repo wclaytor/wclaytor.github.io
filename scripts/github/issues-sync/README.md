@@ -1,10 +1,10 @@
 # GitHub Issues Sync
 
-A Python script to synchronize GitHub issues with local markdown documentation in your repository.
+A Python tool to synchronize GitHub issues with local markdown documentation in your repository.
 
 ## Overview
 
-This script maintains a local mirror of your GitHub issues in `.github/issues/` directory, allowing you to:
+This tool maintains a local mirror of your GitHub issues in `.github/issues/` directory, allowing you to:
 - Keep issue documentation alongside your code
 - Add implementation notes and decisions to issues
 - Track the complete history of issue resolution
@@ -13,21 +13,83 @@ This script maintains a local mirror of your GitHub issues in `.github/issues/` 
 
 ## Prerequisites
 
-- Python 3.6+
+- Python 3.12+
+- [uv](https://docs.astral.sh/uv/) (recommended) or pip
 - GitHub CLI (`gh`) installed and authenticated
-- PyYAML library
 
-## Installation
+## Quick Start with uv
 
-1. Ensure GitHub CLI is installed and authenticated:
+The easiest way to use this tool is with [uv](https://docs.astral.sh/uv/). No need to manually create virtual environments or install dependencies—`uv` handles everything automatically.
+
 ```bash
-gh auth status
+# From the issues-sync directory
+cd scripts/github/issues-sync
+uv run issues-sync pull
+
+# Run tests
+uv run pytest
 ```
 
-2. Install required Python package:
+### Running from the Repository Root
+
+Use the `--output` flag to specify where the `.github/issues/` folder should be created:
+
 ```bash
-pip install pyyaml
+# From repo root - output issues to the repo root
+uv run --directory ./scripts/github/issues-sync \
+  issues-sync pull --output "$PWD"
+
+# Create an issue from a file, output to repo root
+uv run --directory ./scripts/github/issues-sync \
+  issues-sync create "$PWD/docs/features/new-feature.md" --output "$PWD"
 ```
+
+> **Why `$PWD`?** The `--directory` flag changes the working directory before running, so relative paths would resolve from the wrong location. Using `$PWD` converts your paths to absolute before the directory switch.
+
+### Command-Line Options
+
+```
+issues-sync [-h] [-o DIR] {pull,create,epic} ...
+
+Options:
+  -h, --help          Show help message
+  -o, --output DIR    Output directory for .github/issues/ folder
+                      (default: current directory)
+
+Commands:
+  pull                Pull all issues from GitHub
+  create <file.md>    Create issue from markdown file
+  epic <file.md>      Create epic with child issues
+```
+
+---
+
+## Alternative: pip Installation
+
+If you prefer pip:
+
+```bash
+pip install -e .
+issues-sync pull
+```
+
+---
+
+## Repository Contents
+
+```
+issues-sync/
+├── pyproject.toml                    # Project configuration & dependencies
+├── src/
+│   └── issues_sync/
+│       ├── __init__.py
+│       └── sync.py                   # Main sync script
+├── tests/
+│   └── test_sync.py                  # Unit tests
+├── README.md                         # Documentation (this file)
+```
+
+---
 
 ## Usage
 
@@ -36,7 +98,7 @@ pip install pyyaml
 Sync all issues (open and closed) from your GitHub repository to local folders:
 
 ```bash
-python scripts/github/issues-sync/issues-sync.py pull
+uv run issues-sync pull
 ```
 
 This creates the following structure:
@@ -60,7 +122,7 @@ Each markdown file contains:
 Create a new GitHub issue from a markdown file:
 
 ```bash
-python scripts/github/issues-sync/issues-sync.py create path/to/issue.md
+uv run issues-sync create path/to/issue.md
 ```
 
 The markdown file should use this format:
@@ -91,7 +153,7 @@ Your issue description here...
 Create an epic issue along with multiple child issues from a single file:
 
 ```bash
-python scripts/github/issues-sync/issues-sync.py epic path/to/epic.md
+uv run issues-sync epic path/to/epic.md
 ```
 
 The epic file format uses `---` separators between issues:
@@ -129,25 +191,12 @@ labels:
 Second child issue description...
 ```
 
-## File Structure
-
-```
-scripts/github/issues-sync/
-├── issues-sync.py          # Main sync script
-├── README.md               # This file
-├── examples/
-│   ├── single-issue.md     # Example single issue template
-│   ├── epic-with-tasks.md  # Example epic with children
-│   └── bug-report.md       # Example bug report template
-└── test/
-    └── test-sync.sh        # Test script for validation
-```
-
 ## Features
 
 ### Current Features
 
 - ✅ Pull all issues from GitHub to local folders
+- ✅ Sync issue comments with author and timestamp
 - ✅ Create issues from markdown files with YAML frontmatter
 - ✅ Create epics with multiple child issues
 - ✅ Preserve issue metadata (labels, assignees, milestones)
@@ -157,7 +206,6 @@ scripts/github/issues-sync/
 ### Planned Features
 
 - 🔄 Two-way sync (update GitHub from local changes)
-- 💬 Sync issue comments
 - 📎 Download and store issue attachments
 - 🔗 Auto-link related issues
 - 📋 Issue templates support
@@ -199,7 +247,7 @@ After pulling issues, each issue gets its own folder:
 
 ```bash
 # Pull latest issues
-python scripts/github/issues-sync/issues-sync.py pull
+uv run issues-sync pull
 
 # Add your notes to an issue
 echo "## Solution\nImplemented using strategy pattern" >> .github/issues/issue-0042/implementation.md
@@ -228,7 +276,7 @@ Users have requested a dark mode option for better viewing at night.
 
 Then run:
 ```bash
-python scripts/github/issues-sync/issues-sync.py create feature.md
+uv run issues-sync create feature.md
 ```
 
 ### Example 3: Create Sprint Backlog
@@ -269,7 +317,7 @@ Update docs for new features
 
 Then run:
 ```bash
-python scripts/github/issues-sync/issues-sync.py epic sprint-23.md
+uv run issues-sync epic sprint-23.md
 ```
 
 ## Troubleshooting
@@ -277,8 +325,8 @@ python scripts/github/issues-sync/issues-sync.py epic sprint-23.md
 ### Issue: `gh: command not found`
 **Solution**: Install GitHub CLI from https://cli.github.com
 
-### Issue: `No module named 'yaml'`
-**Solution**: Install PyYAML: `pip install pyyaml`
+### Issue: `uv: command not found`
+**Solution**: Install uv from https://docs.astral.sh/uv/getting-started/installation/
 
 ### Issue: `gh auth status` shows not authenticated
 **Solution**: Run `gh auth login` and follow the prompts
@@ -288,11 +336,11 @@ python scripts/github/issues-sync/issues-sync.py epic sprint-23.md
 
 ## Contributing
 
-When adding features to this script:
-1. Keep the script simple and focused
-2. Add examples to the `examples/` folder
+When adding features to this tool:
+1. Keep the code simple and focused
+2. Add tests to the `tests/` folder
 3. Update this README with new functionality
-4. Test with the test script before committing
+4. Run `uv run pytest` before committing
 
 ## License
 
@@ -301,5 +349,4 @@ This script is part of the project repository and follows the same license.
 ## Related Scripts
 
 - `scripts/github/issues-create-epic/` - Specialized epic creation
-- `scripts/github/issues-bulk-update/` - Bulk update operations
-- `scripts/github/issues-export/` - Export issues to various formats
+- `scripts/linked-in/job-export-parser/` - LinkedIn job posting parser

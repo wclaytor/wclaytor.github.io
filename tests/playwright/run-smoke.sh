@@ -14,7 +14,8 @@ uv run pytest tests/smoke -v \
   --junit-xml="${REPORT_DIR}/report.xml" \
   --screenshot=on \
   --video=on \
-  --tracing=retain-on-failure
+  --tracing=retain-on-failure \
+  2>&1 | tee "${REPORT_DIR}/test-output.txt"
 
 # Copy Playwright artifacts to the report directory
 if [ -d "test-results" ]; then
@@ -25,4 +26,5 @@ fi
 echo "Test run complete!"
 echo "View HTML report: ${REPORT_DIR}/report.html"
 echo "View XML report: ${REPORT_DIR}/report.xml"
+echo "View test output: ${REPORT_DIR}/test-output.txt"
 echo "Screenshots and videos are in: ${REPORT_DIR}/test-results"
