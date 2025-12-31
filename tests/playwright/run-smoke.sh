@@ -23,8 +23,13 @@ if [ -d "test-results" ]; then
     cp -r test-results/* "${REPORT_DIR}/test-results/" 2>/dev/null || true
 fi
 
+# Generate Markdown report from XML
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+uv run --directory "${SCRIPT_DIR}/utilities/xml2md" xml2md "${SCRIPT_DIR}/${REPORT_DIR}/report.xml"
+
 echo "Test run complete!"
 echo "View HTML report: ${REPORT_DIR}/report.html"
 echo "View XML report: ${REPORT_DIR}/report.xml"
+echo "View Markdown report: ${REPORT_DIR}/report.md"
 echo "View test output: ${REPORT_DIR}/test-output.txt"
 echo "Screenshots and videos are in: ${REPORT_DIR}/test-results"
