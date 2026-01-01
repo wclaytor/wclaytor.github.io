@@ -2,15 +2,15 @@
 assignees:
 - wclaytor
 author: wclaytor
-closed_at: null
+closed_at: '2026-01-01T01:28:17Z'
 comment_count: 0
 created_at: '2025-12-30T16:45:46Z'
 issue_number: 33
 labels: []
 milestone: null
-state: OPEN
+state: CLOSED
 title: Improve test coverage
-updated_at: '2025-12-30T16:45:46Z'
+updated_at: '2026-01-01T01:28:17Z'
 ---
 
 # Issue #33: Improve test coverage
