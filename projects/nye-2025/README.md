@@ -37,16 +37,28 @@ _— From our screens to yours, Happy New Year 2025! 🥂_
 ## 🎮 Features
 
 - **Instant Action** — Fireworks launch immediately when the page loads
-- **6 Explosion Types** — Spherical, Chrysanthemum, Ring, Willow, Double Burst, Crossette
+- **10 Explosion Types** — Spherical, Chrysanthemum, Ring, Willow, Double Burst, Crossette, ❤️ Heart, ⭐ Star, 🌀 Spiral, 💥 Mega Crackle
 - **10 Color Palettes** — Gold, Ruby, Sapphire, Emerald, Amethyst, Silver, Sunset, Azure, Rose, Lime
 - **Particle Physics** — Gravity, drag, and realistic motion
 - **Glowing Trails** — Rockets and particles leave luminous trails
 - **Twinkling Starfield** — Hundreds of animated background stars
 - **Falling Confetti** — Celebratory confetti with realistic physics
 - **Click Interaction** — Click anywhere to launch bonus fireworks
+- **🔊 Sound Effects** — Synthesized launch whooshes, booms, and crackles (Press `S`)
+- **💥 Screen Flash** — Dynamic screen flash on explosions
+- **🌊 Screen Shake** — Subtle shake on big explosions
+- **🎊 Grand Finale** — Press `F` for an epic 10-second fireworks barrage!
 - **Fully Responsive** — Works on any screen size
 - **Zero Dependencies** — Pure vanilla JavaScript, no libraries needed
 - **Performance Optimized** — Smooth 60fps with capped particles and efficient rendering
+
+### 🎹 Controls
+
+| Key     | Action                                            |
+| ------- | ------------------------------------------------- |
+| `F`     | Trigger Grand Finale (10 seconds of epic mayhem!) |
+| `S`     | Toggle sound effects on/off                       |
+| `Click` | Launch fireworks at cursor position               |
 
 ---
 
@@ -436,17 +448,19 @@ These optimizations maintain visual appeal while ensuring smooth performance on 
 
 | Metric                   | Value                             |
 | ------------------------ | --------------------------------- |
-| Lines of Code            | ~500                              |
-| File Size                | ~16 KB                            |
+| Lines of Code            | ~700                              |
+| File Size                | ~22 KB                            |
 | Dependencies             | 0                                 |
 | Canvases                 | 1                                 |
 | Particle Types           | 4 (normal, comet, sparkle, flash) |
-| Explosion Types          | 6                                 |
+| Explosion Types          | 10 (including special shapes!)    |
 | Color Palettes           | 10                                |
-| Max Concurrent Particles | 800 (optimized)                   |
-| Max Rockets              | 15                                |
-| Max Confetti             | 100                               |
+| Max Concurrent Particles | 1000 (optimized)                  |
+| Max Rockets              | 20                                |
+| Max Confetti             | 120                               |
 | Target Frame Rate        | 60 fps                            |
+| Sound Effects            | 3 (launch, boom, crackle)         |
+| Awesomeness Level        | SO AWESOME!!!                     |
 
 ---
 
