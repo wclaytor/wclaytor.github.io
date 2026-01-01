@@ -3,6 +3,7 @@ assignees:
 - Copilot
 author: wclaytor
 closed_at: '2025-12-20T17:02:35Z'
+comment_count: 0
 created_at: '2025-12-18T02:10:03Z'
 issue_number: 29
 labels: []

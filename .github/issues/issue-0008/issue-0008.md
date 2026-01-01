@@ -3,6 +3,7 @@ assignees:
 - wclaytor
 author: wclaytor
 closed_at: '2025-11-20T21:36:33Z'
+comment_count: 0
 created_at: '2025-11-18T22:38:34Z'
 issue_number: 8
 labels: []

@@ -2,6 +2,7 @@
 assignees: []
 author: wclaytor
 closed_at: '2025-11-09T19:02:32Z'
+comment_count: 0
 created_at: '2025-11-08T22:17:36Z'
 issue_number: 5
 labels: []

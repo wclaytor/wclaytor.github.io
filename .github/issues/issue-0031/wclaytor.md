@@ -129,3 +129,60 @@ It appears our devcontainer does not have the gh command line tool. Please add i
 ---
 
 We are reviewing the test results. We want to discuss each failure and determine whether the test identified a bug or if the test needs to be updated.
+
+---
+
+# From the repository root
+
+python -m http.server 8000
+
+# Then run tests in another terminal
+
+cd tests/playwright && ./run-smoke.sh
+
+---
+
+Please update the script to include the list reporter.
+
+---
+
+We have the run-smoke script to run the smoke tests. Please create corresponding scripts to run the other categories, and a 'run-all' version to run all tests.
+
+-rwxr-xr-x 1 pwuser pwuser 1006 Dec 31 18:24 run-accessibility.sh
+-rwxr-xr-x 1 pwuser pwuser 1075 Dec 31 18:24 run-all.sh
+-rwxr-xr-x 1 pwuser pwuser 1000 Dec 31 18:24 run-functional.sh
+-rwxr-xr-x 1 pwuser pwuser 1002 Dec 31 18:24 run-performance.sh
+-rwxr-xr-x 1 pwuser pwuser 989 Dec 30 18:36 run-smoke.sh
+-rwxr-xr-x 1 pwuser pwuser 1003 Dec 31 18:24 run-visual.sh
+
+---
+
+We are implementing our testing approach per the test plan. Please become familiar with it and the supporting docs it references.
+
+We have the initial smoke tests in place. Let us proceed with the Functional Tests - Homepage section of the plan.
+
+We want to use an iterative approach where we implement the tests for each section, run them via the corresponding run script (i.e. run-functional), review the results, fix any issues, and then move on to the next section.
+
+Let us start with the 3.2.1 Masthead Section. Please implement those tests per the plan and then we can review them.
+
+---
+
+Nice! At the end of each run, we would like to take the xml test report that we copy to the timestamped folder and create a nicely formatted Markdown version of the test report with a summary and then detailed results.
+
+So we should create a Python script in our utilities folder **using our uv pattern** that converts the XML report into our sweet Markdown report. The default should be to save the Markdown file to the same location as the XML file but should have an output option if the user wants to save it elsewhere.
+
+---
+
+We have our test plan and we have some tests in place. At this point we realize that we need a way to track our progress. We are already using GitHub issues, so we should create an epic for each of the categories in '3. Test Categories' with an issue for each test. We can use our `scripts/github/issues-create-epic` script to create the epics and issues in GitHub. We just need to create the epic Markdown files for each epic. Please create those epic files for each category one at a time. We will review each and then proceed with the next.
+
+uv run --directory ./scripts/github/issues-create-epic \
+ issues-create-epic "$PWD/tests/playwright/epics/epic-smoke-tests.md" --dry-run
+
+uv run --directory ./scripts/github/issues-create-epic \
+ issues-create-epic "$PWD/scripts/github/issues-create-epic/test-epic.md" --dry-run
+
+---
+
+Let us create a README.md file for each of the test categories that describes what they are, what test files / tests they contain, and the current status of those tests. This should map to the test plan contents for that category.
+
+Please start with the smoke tests.

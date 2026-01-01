@@ -1,0 +1,21 @@
+[project]
+name = "xml2md"
+version = "0.1.0"
+description = "Convert JUnit XML test reports to beautiful Markdown reports"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "click>=8.1.0",
+]
+
+[project.scripts]
+xml2md = "xml2md:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.0",
+]

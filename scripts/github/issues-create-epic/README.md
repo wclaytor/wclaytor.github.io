@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `create-epic.py` script creates GitHub issues from structured markdown files with YAML frontmatter. It automatically handles label creation, issue linking, and epic management using the GitHub CLI (`gh`).
+The `issues-create-epic` tool creates GitHub issues from structured markdown files with YAML frontmatter. It automatically handles label creation, issue linking, and epic management using the GitHub CLI (`gh`).
 
 ## Features
 
@@ -16,50 +16,98 @@ The `create-epic.py` script creates GitHub issues from structured markdown files
 
 ## Prerequisites
 
-### 1. GitHub CLI (gh)
+- Python 3.12+
+- [uv](https://docs.astral.sh/uv/) (recommended) or pip
+- GitHub CLI (`gh`) installed and authenticated
 
-The script requires GitHub CLI to be installed and authenticated:
+## Quick Start with uv
 
-```bash
-# Check if gh is installed
-gh --version
-
-# If not installed, see: https://cli.github.com/
-
-# Authenticate with GitHub
-gh auth login
-```
-
-**Note**: GitHub Codespaces come with `gh` pre-installed and authenticated.
-
-### 2. Python 3
-
-Python 3.6 or higher is required:
+The easiest way to use this tool is with [uv](https://docs.astral.sh/uv/). No need to manually create virtual environments or install dependencies—`uv` handles everything automatically.
 
 ```bash
-python3 --version
+# From the issues-create-epic directory
+cd scripts/github/issues-create-epic
+
+# Preview (dry run)
+uv run issues-create-epic test-epic.md --dry-run
+
+# Create actual issues
+uv run issues-create-epic test-epic.md
+
+# Run tests
+uv run pytest
 ```
 
-### 3. Python Dependencies
+### Running from the Repository Root
 
-Install required packages:
+Use the `--directory` flag with uv:
 
 ```bash
-pip install pyyaml
+# From repo root - preview
+uv run --directory ./scripts/github/issues-create-epic \
+  issues-create-epic "$PWD/path/to/epic.md" --dry-run
+
+# From repo root - create issues
+uv run --directory ./scripts/github/issues-create-epic \
+  issues-create-epic "$PWD/path/to/epic.md"
 ```
 
-## Quick Start
+> **Why `$PWD`?** The `--directory` flag changes the working directory before running, so relative paths would resolve from the wrong location. Using `$PWD` converts your paths to absolute before the directory switch.
+
+### Command-Line Options
+
+```
+issues-create-epic [-h] [--repo REPO] [--dry-run] [-v] file
+
+positional arguments:
+  file           Path to markdown file with tickets
+
+options:
+  -h, --help     Show help message and exit
+  --repo REPO    GitHub repo (owner/repo). If not specified, uses current repo.
+  --dry-run      Preview without creating issues
+  -v, --verbose  Show detailed command output
+```
+
+---
+
+## Alternative: pip Installation
+
+If you prefer pip:
+
+```bash
+pip install -e .
+issues-create-epic test-epic.md --dry-run
+```
+
+---
+
+## Repository Contents
+
+```
+issues-create-epic/
+├── pyproject.toml                    # Project configuration & dependencies
+├── README.md                         # Documentation (this file)
+├── src/
+│   └── issues_create_epic/
+│       ├── __init__.py
+│       └── create_epic.py            # Main script
+├── tests/
+│   └── test_create_epic.py           # Unit tests
+├── epic-template.md                  # Template for creating epics
+└── test-epic.md                      # Example test file
+```
+
+---
+
+## Usage
 
 ### 1. Preview (Dry Run)
 
 Test your markdown file without creating issues:
 
 ```bash
-# Using current repository
-python3 scripts/github/issues-create-epic/create-epic.py test-epic.md --dry-run
-
-# Or specify a repository
-python3 scripts/github/issues-create-epic/create-epic.py test-epic.md --repo owner/repo --dry-run
+uv run issues-create-epic test-epic.md --dry-run
 ```
 
 ### 2. Create Issues
@@ -67,11 +115,7 @@ python3 scripts/github/issues-create-epic/create-epic.py test-epic.md --repo own
 Once satisfied with the preview, create the actual issues:
 
 ```bash
-# Using current repository
-python3 scripts/github/issues-create-epic/create-epic.py test-epic.md
-
-# Or specify a repository
-python3 scripts/github/issues-create-epic/create-epic.py test-epic.md --repo owner/repo
+uv run issues-create-epic test-epic.md
 ```
 
 ### 3. Verbose Mode
@@ -79,8 +123,10 @@ python3 scripts/github/issues-create-epic/create-epic.py test-epic.md --repo own
 For detailed debugging information:
 
 ```bash
-python3 scripts/github/issues-create-epic/create-epic.py test-epic.md --verbose
+uv run issues-create-epic test-epic.md --verbose
 ```
+
+---
 
 ## Command Line Options
 

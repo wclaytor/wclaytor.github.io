@@ -1,0 +1,25 @@
+[project]
+name = "img-utils"
+version = "0.1.0"
+description = "Image utility scripts for cropping, optimizing, and converting images"
+readme = "README.md"
+authors = [
+    { name = "William Claytor", email = "wclaytor@fastmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "pillow>=10.0.0",
+]
+
+[project.scripts]
+img-crop = "img_utils.crop:main"
+img-optimize = "img_utils.optimize:main"
+
+[build-system]
+requires = ["uv_build>=0.9.18,<0.10.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+]

@@ -1,0 +1,24 @@
+[project]
+name = "issues-create-epic"
+version = "0.1.0"
+description = "Create GitHub epics and child issues from structured markdown with YAML frontmatter"
+readme = "README.md"
+authors = [
+    { name = "wclaytor", email = "wclaytor@fastmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "pyyaml>=6.0.2",
+]
+
+[project.scripts]
+issues-create-epic = "issues_create_epic.create_epic:main"
+
+[build-system]
+requires = ["uv_build>=0.9.18,<0.10.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+]

@@ -1,0 +1,35 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.12, pytest-9.0.2, pluggy-1.6.0 -- /workspaces/wclaytor.github.io/tests/playwright/.venv/bin/python
+cachedir: .pytest_cache
+metadata: {'Python': '3.12.12', 'Platform': 'Linux-6.14.0-37-generic-x86_64-with-glibc2.35', 'Packages': {'pytest': '9.0.2', 'pluggy': '1.6.0'}, 'Plugins': {'playwright': '0.7.2', 'metadata': '3.1.1', 'xdist': '3.8.0', 'base-url': '2.1.0', 'html': '4.1.1'}, 'Base URL': 'http://localhost:8000'}
+baseurl: http://localhost:8000
+rootdir: /workspaces/wclaytor.github.io/tests/playwright
+configfile: pyproject.toml
+plugins: playwright-0.7.2, metadata-3.1.1, xdist-3.8.0, base-url-2.1.0, html-4.1.1
+collecting ... collected 21 items
+
+tests/smoke/test_critical_navigation.py::TestNavigationLinks::test_about_link_scrolls_to_section[chromium] PASSED [  4%]
+tests/smoke/test_critical_navigation.py::TestNavigationLinks::test_brand_link_goes_home[chromium] PASSED [  9%]
+tests/smoke/test_critical_navigation.py::TestKeyboardNavigation::test_can_tab_to_nav_links[chromium] PASSED [ 14%]
+tests/smoke/test_critical_navigation.py::TestNavigationLinks::test_contact_link_scrolls_to_section[chromium] PASSED [ 19%]
+tests/smoke/test_site_loads.py::TestSiteLoads::test_featured_project_alpine_presentation_loads[chromium] PASSED [ 23%]
+tests/smoke/test_site_loads.py::TestSiteLoads::test_featured_project_alpine_resume_loads[chromium] PASSED [ 28%]
+tests/smoke/test_site_loads.py::TestCriticalContent::test_homepage_has_about_section[chromium] PASSED [ 33%]
+tests/smoke/test_site_loads.py::TestCriticalContent::test_homepage_has_contact_section[chromium] PASSED [ 38%]
+tests/smoke/test_site_loads.py::TestCriticalContent::test_homepage_has_name[chromium] PASSED [ 42%]
+tests/smoke/test_site_loads.py::TestCriticalContent::test_homepage_has_navigation[chromium] PASSED [ 47%]
+tests/smoke/test_site_loads.py::TestCriticalContent::test_homepage_has_projects_section[chromium] PASSED [ 52%]
+tests/smoke/test_site_loads.py::TestSiteLoads::test_homepage_loads[chromium] PASSED [ 57%]
+tests/smoke/test_site_loads.py::TestNoConsoleErrors::test_homepage_no_console_errors[chromium] PASSED [ 61%]
+tests/smoke/test_critical_navigation.py::TestNavigationVisible::test_navigation_visible_on_page[chromium-/-Homepage] PASSED [ 66%]
+tests/smoke/test_critical_navigation.py::TestNavigationVisible::test_navigation_visible_on_page[chromium-/projects/-Projects page] PASSED [ 71%]
+tests/smoke/test_critical_navigation.py::TestNavigationLinks::test_projects_link_scrolls_to_section[chromium] PASSED [ 76%]
+tests/smoke/test_site_loads.py::TestSiteLoads::test_projects_page_loads[chromium] PASSED [ 80%]
+tests/smoke/test_site_loads.py::TestNoConsoleErrors::test_projects_page_no_console_errors[chromium] PASSED [ 85%]
+tests/smoke/test_critical_navigation.py::TestNavigationLinks::test_resume_link_opens_resume[chromium] PASSED [ 90%]
+tests/smoke/test_site_loads.py::TestSiteLoads::test_resume_page_loads[chromium] PASSED [ 95%]
+tests/smoke/test_critical_navigation.py::TestKeyboardNavigation::test_skip_link_exists[chromium] PASSED [100%]
+
+- generated xml file: /workspaces/wclaytor.github.io/tests/playwright/reports/20251230-183648/report.xml -
+- Generated html report: file:///workspaces/wclaytor.github.io/tests/playwright/reports/20251230-183648/report.html -
+============================= 21 passed in 43.76s ==============================

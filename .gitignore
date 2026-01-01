@@ -138,7 +138,7 @@ __pycache__/
 # playwright
 tests/playwright/recordings
 tests/playwright/test-results
-#tests/playwright/reports
+tests/playwright/reports
 
 # ~ personal
 ~

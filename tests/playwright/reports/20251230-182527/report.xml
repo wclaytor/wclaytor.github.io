@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="21" skipped="0" tests="21" time="20.168" timestamp="2025-12-30T18:25:30.031597+00:00" hostname="3d88d89257f0"><testcase classname="tests.smoke.test_critical_navigation.TestNavigationLinks" name="test_about_link_scrolls_to_section[chromium]" time="2.429"><failure message="playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/&#10;Call log:&#10;  - navigating to &quot;http://localhost:8000/&quot;, waiting until &quot;load&quot;">tests/smoke/test_critical_navigation.py:60: in test_about_link_scrolls_to_section
+    page.goto(f"{base_url}{URLs.HOME}")
+.venv/lib/python3.12/site-packages/playwright/sync_api/_generated.py:9050: in goto
+    self._sync(
+.venv/lib/python3.12/site-packages/playwright/_impl/_page.py:552: in goto
+    return await self._main_frame.goto(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/_impl/_frame.py:153: in goto
+    await self._channel.send(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/
+E   Call log:
+E     - navigating to "http://localhost:8000/", waiting until "load"</failure></testcase><testcase classname="tests.smoke.test_critical_navigation.TestNavigationLinks" name="test_brand_link_goes_home[chromium]" time="0.613"><failure message="playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/projects/&#10;Call log:&#10;  - navigating to &quot;http://localhost:8000/projects/&quot;, waiting until &quot;load&quot;">tests/smoke/test_critical_navigation.py:47: in test_brand_link_goes_home
+    page.goto(f"{base_url}{URLs.PROJECTS}")
+.venv/lib/python3.12/site-packages/playwright/sync_api/_generated.py:9050: in goto
+    self._sync(
+.venv/lib/python3.12/site-packages/playwright/_impl/_page.py:552: in goto
+    return await self._main_frame.goto(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/_impl/_frame.py:153: in goto
+    await self._channel.send(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/projects/
+E   Call log:
+E     - navigating to "http://localhost:8000/projects/", waiting until "load"</failure></testcase><testcase classname="tests.smoke.test_critical_navigation.TestKeyboardNavigation" name="test_can_tab_to_nav_links[chromium]" time="0.627"><failure message="playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/&#10;Call log:&#10;  - navigating to &quot;http://localhost:8000/&quot;, waiting until &quot;load&quot;">tests/smoke/test_critical_navigation.py:116: in test_can_tab_to_nav_links
+    page.goto(f"{base_url}{URLs.HOME}")
+.venv/lib/python3.12/site-packages/playwright/sync_api/_generated.py:9050: in goto
+    self._sync(
+.venv/lib/python3.12/site-packages/playwright/_impl/_page.py:552: in goto
+    return await self._main_frame.goto(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/_impl/_frame.py:153: in goto
+    await self._channel.send(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/
+E   Call log:
+E     - navigating to "http://localhost:8000/", waiting until "load"</failure></testcase><testcase classname="tests.smoke.test_critical_navigation.TestNavigationLinks" name="test_contact_link_scrolls_to_section[chromium]" time="0.602"><failure message="playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/&#10;Call log:&#10;  - navigating to &quot;http://localhost:8000/&quot;, waiting until &quot;load&quot;">tests/smoke/test_critical_navigation.py:84: in test_contact_link_scrolls_to_section
+    page.goto(f"{base_url}{URLs.HOME}")
+.venv/lib/python3.12/site-packages/playwright/sync_api/_generated.py:9050: in goto
+    self._sync(
+.venv/lib/python3.12/site-packages/playwright/_impl/_page.py:552: in goto
+    return await self._main_frame.goto(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/_impl/_frame.py:153: in goto
+    await self._channel.send(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/
+E   Call log:
+E     - navigating to "http://localhost:8000/", waiting until "load"</failure></testcase><testcase classname="tests.smoke.test_site_loads.TestSiteLoads" name="test_featured_project_alpine_presentation_loads[chromium]" time="0.526"><failure message="playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/projects/alpine-markdown-presentation/index.html&#10;Call log:&#10;  - navigating to &quot;http://localhost:8000/projects/alpine-markdown-presentation/index.html&quot;, waiting until &quot;load&quot;">tests/smoke/test_site_loads.py:79: in test_featured_project_alpine_presentation_loads
+    response = page.goto(f"{base_url}{URLs.ALPINE_PRESENTATION}")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/sync_api/_generated.py:9050: in goto
+    self._sync(
+.venv/lib/python3.12/site-packages/playwright/_impl/_page.py:552: in goto
+    return await self._main_frame.goto(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/_impl/_frame.py:153: in goto
+    await self._channel.send(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/projects/alpine-markdown-presentation/index.html
+E   Call log:
+E     - navigating to "http://localhost:8000/projects/alpine-markdown-presentation/index.html", waiting until "load"</failure></testcase><testcase classname="tests.smoke.test_site_loads.TestSiteLoads" name="test_featured_project_alpine_resume_loads[chromium]" time="0.626"><failure message="playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/projects/alpine-resume/releases/20251214/index.html&#10;Call log:&#10;  - navigating to &quot;http://localhost:8000/projects/alpine-resume/releases/20251214/index.html&quot;, waiting until &quot;load&quot;">tests/smoke/test_site_loads.py:70: in test_featured_project_alpine_resume_loads
+    response = page.goto(f"{base_url}{URLs.ALPINE_RESUME}")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/sync_api/_generated.py:9050: in goto
+    self._sync(
+.venv/lib/python3.12/site-packages/playwright/_impl/_page.py:552: in goto
+    return await self._main_frame.goto(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/_impl/_frame.py:153: in goto
+    await self._channel.send(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/projects/alpine-resume/releases/20251214/index.html
+E   Call log:
+E     - navigating to "http://localhost:8000/projects/alpine-resume/releases/20251214/index.html", waiting until "load"</failure></testcase><testcase classname="tests.smoke.test_site_loads.TestCriticalContent" name="test_homepage_has_about_section[chromium]" time="0.614"><failure message="playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/&#10;Call log:&#10;  - navigating to &quot;http://localhost:8000/&quot;, waiting until &quot;load&quot;">tests/smoke/test_site_loads.py:157: in test_homepage_has_about_section
+    page.goto(f"{base_url}{URLs.HOME}")
+.venv/lib/python3.12/site-packages/playwright/sync_api/_generated.py:9050: in goto
+    self._sync(
+.venv/lib/python3.12/site-packages/playwright/_impl/_page.py:552: in goto
+    return await self._main_frame.goto(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/_impl/_frame.py:153: in goto
+    await self._channel.send(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/
+E   Call log:
+E     - navigating to "http://localhost:8000/", waiting until "load"</failure></testcase><testcase classname="tests.smoke.test_site_loads.TestCriticalContent" name="test_homepage_has_contact_section[chromium]" time="0.553"><failure message="playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/&#10;Call log:&#10;  - navigating to &quot;http://localhost:8000/&quot;, waiting until &quot;load&quot;">tests/smoke/test_site_loads.py:177: in test_homepage_has_contact_section
+    page.goto(f"{base_url}{URLs.HOME}")
+.venv/lib/python3.12/site-packages/playwright/sync_api/_generated.py:9050: in goto
+    self._sync(
+.venv/lib/python3.12/site-packages/playwright/_impl/_page.py:552: in goto
+    return await self._main_frame.goto(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/_impl/_frame.py:153: in goto
+    await self._channel.send(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/
+E   Call log:
+E     - navigating to "http://localhost:8000/", waiting until "load"</failure></testcase><testcase classname="tests.smoke.test_site_loads.TestCriticalContent" name="test_homepage_has_name[chromium]" time="0.558"><failure message="playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/&#10;Call log:&#10;  - navigating to &quot;http://localhost:8000/&quot;, waiting until &quot;load&quot;">tests/smoke/test_site_loads.py:135: in test_homepage_has_name
+    page.goto(f"{base_url}{URLs.HOME}")
+.venv/lib/python3.12/site-packages/playwright/sync_api/_generated.py:9050: in goto
+    self._sync(
+.venv/lib/python3.12/site-packages/playwright/_impl/_page.py:552: in goto
+    return await self._main_frame.goto(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/_impl/_frame.py:153: in goto
+    await self._channel.send(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/
+E   Call log:
+E     - navigating to "http://localhost:8000/", waiting until "load"</failure></testcase><testcase classname="tests.smoke.test_site_loads.TestCriticalContent" name="test_homepage_has_navigation[chromium]" time="0.616"><failure message="playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/&#10;Call log:&#10;  - navigating to &quot;http://localhost:8000/&quot;, waiting until &quot;load&quot;">tests/smoke/test_site_loads.py:147: in test_homepage_has_navigation
+    page.goto(f"{base_url}{URLs.HOME}")
+.venv/lib/python3.12/site-packages/playwright/sync_api/_generated.py:9050: in goto
+    self._sync(
+.venv/lib/python3.12/site-packages/playwright/_impl/_page.py:552: in goto
+    return await self._main_frame.goto(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/_impl/_frame.py:153: in goto
+    await self._channel.send(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/
+E   Call log:
+E     - navigating to "http://localhost:8000/", waiting until "load"</failure></testcase><testcase classname="tests.smoke.test_site_loads.TestCriticalContent" name="test_homepage_has_projects_section[chromium]" time="0.553"><failure message="playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/&#10;Call log:&#10;  - navigating to &quot;http://localhost:8000/&quot;, waiting until &quot;load&quot;">tests/smoke/test_site_loads.py:167: in test_homepage_has_projects_section
+    page.goto(f"{base_url}{URLs.HOME}")
+.venv/lib/python3.12/site-packages/playwright/sync_api/_generated.py:9050: in goto
+    self._sync(
+.venv/lib/python3.12/site-packages/playwright/_impl/_page.py:552: in goto
+    return await self._main_frame.goto(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/_impl/_frame.py:153: in goto
+    await self._channel.send(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/
+E   Call log:
+E     - navigating to "http://localhost:8000/", waiting until "load"</failure></testcase><testcase classname="tests.smoke.test_site_loads.TestSiteLoads" name="test_homepage_loads[chromium]" time="0.586"><failure message="playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/&#10;Call log:&#10;  - navigating to &quot;http://localhost:8000/&quot;, waiting until &quot;load&quot;">tests/smoke/test_site_loads.py:35: in test_homepage_loads
+    response = page.goto(f"{base_url}{URLs.HOME}")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/sync_api/_generated.py:9050: in goto
+    self._sync(
+.venv/lib/python3.12/site-packages/playwright/_impl/_page.py:552: in goto
+    return await self._main_frame.goto(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/_impl/_frame.py:153: in goto
+    await self._channel.send(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/
+E   Call log:
+E     - navigating to "http://localhost:8000/", waiting until "load"</failure></testcase><testcase classname="tests.smoke.test_site_loads.TestNoConsoleErrors" name="test_homepage_no_console_errors[chromium]" time="0.544"><failure message="playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/&#10;Call log:&#10;  - navigating to &quot;http://localhost:8000/&quot;, waiting until &quot;load&quot;">tests/smoke/test_site_loads.py:98: in test_homepage_no_console_errors
+    page.goto(f"{base_url}{URLs.HOME}")
+.venv/lib/python3.12/site-packages/playwright/sync_api/_generated.py:9050: in goto
+    self._sync(
+.venv/lib/python3.12/site-packages/playwright/_impl/_page.py:552: in goto
+    return await self._main_frame.goto(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/_impl/_frame.py:153: in goto
+    await self._channel.send(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/
+E   Call log:
+E     - navigating to "http://localhost:8000/", waiting until "load"</failure></testcase><testcase classname="tests.smoke.test_critical_navigation.TestNavigationVisible" name="test_navigation_visible_on_page[chromium-/-Homepage]" time="0.551"><failure message="playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/&#10;Call log:&#10;  - navigating to &quot;http://localhost:8000/&quot;, waiting until &quot;load&quot;">tests/smoke/test_critical_navigation.py:29: in test_navigation_visible_on_page
+    page.goto(f"{base_url}{path}")
+.venv/lib/python3.12/site-packages/playwright/sync_api/_generated.py:9050: in goto
+    self._sync(
+.venv/lib/python3.12/site-packages/playwright/_impl/_page.py:552: in goto
+    return await self._main_frame.goto(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/_impl/_frame.py:153: in goto
+    await self._channel.send(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/
+E   Call log:
+E     - navigating to "http://localhost:8000/", waiting until "load"</failure></testcase><testcase classname="tests.smoke.test_critical_navigation.TestNavigationVisible" name="test_navigation_visible_on_page[chromium-/projects/-Projects page]" time="0.678"><failure message="playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/projects/&#10;Call log:&#10;  - navigating to &quot;http://localhost:8000/projects/&quot;, waiting until &quot;load&quot;">tests/smoke/test_critical_navigation.py:29: in test_navigation_visible_on_page
+    page.goto(f"{base_url}{path}")
+.venv/lib/python3.12/site-packages/playwright/sync_api/_generated.py:9050: in goto
+    self._sync(
+.venv/lib/python3.12/site-packages/playwright/_impl/_page.py:552: in goto
+    return await self._main_frame.goto(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/_impl/_frame.py:153: in goto
+    await self._channel.send(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/projects/
+E   Call log:
+E     - navigating to "http://localhost:8000/projects/", waiting until "load"</failure></testcase><testcase classname="tests.smoke.test_critical_navigation.TestNavigationLinks" name="test_projects_link_scrolls_to_section[chromium]" time="0.576"><failure message="playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/&#10;Call log:&#10;  - navigating to &quot;http://localhost:8000/&quot;, waiting until &quot;load&quot;">tests/smoke/test_critical_navigation.py:73: in test_projects_link_scrolls_to_section
+    page.goto(f"{base_url}{URLs.HOME}")
+.venv/lib/python3.12/site-packages/playwright/sync_api/_generated.py:9050: in goto
+    self._sync(
+.venv/lib/python3.12/site-packages/playwright/_impl/_page.py:552: in goto
+    return await self._main_frame.goto(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/_impl/_frame.py:153: in goto
+    await self._channel.send(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/
+E   Call log:
+E     - navigating to "http://localhost:8000/", waiting until "load"</failure></testcase><testcase classname="tests.smoke.test_site_loads.TestSiteLoads" name="test_projects_page_loads[chromium]" time="0.570"><failure message="playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/projects/&#10;Call log:&#10;  - navigating to &quot;http://localhost:8000/projects/&quot;, waiting until &quot;load&quot;">tests/smoke/test_site_loads.py:50: in test_projects_page_loads
+    response = page.goto(f"{base_url}{URLs.PROJECTS}")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/sync_api/_generated.py:9050: in goto
+    self._sync(
+.venv/lib/python3.12/site-packages/playwright/_impl/_page.py:552: in goto
+    return await self._main_frame.goto(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/_impl/_frame.py:153: in goto
+    await self._channel.send(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/projects/
+E   Call log:
+E     - navigating to "http://localhost:8000/projects/", waiting until "load"</failure></testcase><testcase classname="tests.smoke.test_site_loads.TestNoConsoleErrors" name="test_projects_page_no_console_errors[chromium]" time="0.614"><failure message="playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/projects/&#10;Call log:&#10;  - navigating to &quot;http://localhost:8000/projects/&quot;, waiting until &quot;load&quot;">tests/smoke/test_site_loads.py:111: in test_projects_page_no_console_errors
+    page.goto(f"{base_url}{URLs.PROJECTS}")
+.venv/lib/python3.12/site-packages/playwright/sync_api/_generated.py:9050: in goto
+    self._sync(
+.venv/lib/python3.12/site-packages/playwright/_impl/_page.py:552: in goto
+    return await self._main_frame.goto(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/_impl/_frame.py:153: in goto
+    await self._channel.send(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/projects/
+E   Call log:
+E     - navigating to "http://localhost:8000/projects/", waiting until "load"</failure></testcase><testcase classname="tests.smoke.test_critical_navigation.TestNavigationLinks" name="test_resume_link_opens_resume[chromium]" time="0.543"><failure message="playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/&#10;Call log:&#10;  - navigating to &quot;http://localhost:8000/&quot;, waiting until &quot;load&quot;">tests/smoke/test_critical_navigation.py:95: in test_resume_link_opens_resume
+    page.goto(f"{base_url}{URLs.HOME}")
+.venv/lib/python3.12/site-packages/playwright/sync_api/_generated.py:9050: in goto
+    self._sync(
+.venv/lib/python3.12/site-packages/playwright/_impl/_page.py:552: in goto
+    return await self._main_frame.goto(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/_impl/_frame.py:153: in goto
+    await self._channel.send(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/
+E   Call log:
+E     - navigating to "http://localhost:8000/", waiting until "load"</failure></testcase><testcase classname="tests.smoke.test_site_loads.TestSiteLoads" name="test_resume_page_loads[chromium]" time="0.547"><failure message="playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/assets/resume/william_claytor_resume.html&#10;Call log:&#10;  - navigating to &quot;http://localhost:8000/assets/resume/william_claytor_resume.html&quot;, waiting until &quot;load&quot;">tests/smoke/test_site_loads.py:59: in test_resume_page_loads
+    response = page.goto(f"{base_url}{URLs.RESUME}")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/sync_api/_generated.py:9050: in goto
+    self._sync(
+.venv/lib/python3.12/site-packages/playwright/_impl/_page.py:552: in goto
+    return await self._main_frame.goto(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/_impl/_frame.py:153: in goto
+    await self._channel.send(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/assets/resume/william_claytor_resume.html
+E   Call log:
+E     - navigating to "http://localhost:8000/assets/resume/william_claytor_resume.html", waiting until "load"</failure></testcase><testcase classname="tests.smoke.test_critical_navigation.TestKeyboardNavigation" name="test_skip_link_exists[chromium]" time="0.675"><failure message="playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/&#10;Call log:&#10;  - navigating to &quot;http://localhost:8000/&quot;, waiting until &quot;load&quot;">tests/smoke/test_critical_navigation.py:140: in test_skip_link_exists
+    page.goto(f"{base_url}{URLs.HOME}")
+.venv/lib/python3.12/site-packages/playwright/sync_api/_generated.py:9050: in goto
+    self._sync(
+.venv/lib/python3.12/site-packages/playwright/_impl/_page.py:552: in goto
+    return await self._main_frame.goto(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/playwright/_impl/_frame.py:153: in goto
+    await self._channel.send(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+.venv/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8000/
+E   Call log:
+E     - navigating to "http://localhost:8000/", waiting until "load"</failure></testcase></testsuite></testsuites>

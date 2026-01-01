@@ -1,10 +1,10 @@
 # GitHub Pull Requests Sync
 
-A Python script to synchronize GitHub pull requests with local markdown documentation in your repository.
+A Python tool to synchronize GitHub pull requests with local markdown documentation in your repository.
 
 ## Overview
 
-This script maintains a local mirror of your GitHub pull requests in `.github/pull-requests/` directory, allowing you to:
+This tool maintains a local mirror of your GitHub pull requests in `.github/pull-requests/` directory, allowing you to:
 - Keep PR documentation alongside your code
 - Add implementation, testing, and review notes to PRs
 - Track the complete history of PR reviews and changes
@@ -13,21 +13,93 @@ This script maintains a local mirror of your GitHub pull requests in `.github/pu
 
 ## Prerequisites
 
-- Python 3.6+
+- Python 3.12+
+- [uv](https://docs.astral.sh/uv/) (recommended) or pip
 - GitHub CLI (`gh`) installed and authenticated
-- PyYAML library
 
-## Installation
+## Quick Start with uv
 
-1. Ensure GitHub CLI is installed and authenticated:
+The easiest way to use this tool is with [uv](https://docs.astral.sh/uv/). No need to manually create virtual environments or install dependencies—`uv` handles everything automatically.
+
 ```bash
-gh auth status
+# From the pull-requests-sync directory
+cd scripts/github/pull-requests-sync
+
+# Pull all PRs
+uv run pull-requests-sync pull
+
+# Pull a specific PR
+uv run pull-requests-sync pull 69
+
+# Show summary
+uv run pull-requests-sync summary
+
+# Run tests
+uv run pytest
 ```
 
-2. Install required Python package:
+### Running from the Repository Root
+
+Use the `--directory` flag with uv and `-o` flag for output:
+
 ```bash
-pip install pyyaml
+# From repo root - pull all PRs to repo root
+uv run --directory ./scripts/github/pull-requests-sync \
+  pull-requests-sync -o "$PWD" pull
+
+# Pull a specific PR
+uv run --directory ./scripts/github/pull-requests-sync \
+  pull-requests-sync -o "$PWD" pull 69
 ```
+
+> **Why `$PWD`?** The `--directory` flag changes the working directory before running, so relative paths would resolve from the wrong location. Using `$PWD` converts your paths to absolute before the directory switch.
+
+### Command-Line Options
+
+```
+pull-requests-sync [-h] [-o OUTPUT] {pull,summary} ...
+
+Options:
+  -h, --help            Show help message and exit
+  -o, --output OUTPUT   Output directory for .github/pull-requests/ folder
+                        (default: current directory)
+
+Commands:
+  pull [PR_NUMBER]      Pull PRs from GitHub (all or specific PR)
+  summary               Show summary of local PRs
+```
+
+---
+
+## Alternative: pip Installation
+
+If you prefer pip:
+
+```bash
+pip install -e .
+pull-requests-sync pull
+```
+
+---
+
+## Repository Contents
+
+```
+pull-requests-sync/
+├── pyproject.toml                    # Project configuration & dependencies
+├── README.md                         # Documentation (this file)
+├── QUICK-REFERENCE.md               # Quick reference guide
+├── src/
+│   └── pull_requests_sync/
+│       ├── __init__.py
+│       └── sync.py                   # Main sync script
+├── tests/
+│   └── test_sync.py                  # Unit tests
+└── examples/
+    └── pr-template.md                # Example PR template
+```
+
+---
 
 ## Usage
 
@@ -36,7 +108,7 @@ pip install pyyaml
 Sync all PRs (open, closed, draft, merged) from your GitHub repository to local folders:
 
 ```bash
-python scripts/github/pull-requests-sync/pull-requests-sync.py pull
+uv run pull-requests-sync pull
 ```
 
 This creates the following structure:
@@ -65,7 +137,7 @@ Each markdown file contains:
 Sync a specific PR by number:
 
 ```bash
-python scripts/github/pull-requests-sync/pull-requests-sync.py pull 69
+uv run pull-requests-sync pull 69
 ```
 
 This is useful when you want to update documentation for a specific PR without pulling all PRs.
@@ -75,7 +147,7 @@ This is useful when you want to update documentation for a specific PR without p
 Display a summary of all PRs in your local directory:
 
 ```bash
-python scripts/github/pull-requests-sync/pull-requests-sync.py summary
+uv run pull-requests-sync summary
 ```
 
 Output example:
