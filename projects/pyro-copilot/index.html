@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pyrotechnica - Fireworks Simulator</title>
+    <meta name="description" content="An interactive fireworks simulator with custom sequences, performances, and stunning visual effects.">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Pyrotechnica - Fireworks Simulator">
+    <meta property="og:description" content="Create, launch, and choreograph spectacular fireworks displays.">
+    <meta property="og:type" content="website">
+    
+    <!-- Alpine.js for reactive UI -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <style>
+        /* ============================================
+           CSS CUSTOM PROPERTIES
+           ============================================ */
+        :root {
+            /* Night sky colors */
+            --sky-top: #0a0a1a;
+            --sky-middle: #1a1a3a;
+            --sky-bottom: #2a2a4a;
+            --sky-horizon: #3a3a5a;
+            
+            /* UI Colors */
+            --panel-bg: rgba(20, 20, 40, 0.95);
+            --panel-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --accent: #ffd700;
+            --accent-hover: #ffed4a;
+            
+            /* Firework Colors */
+            --fw-gold: #ffd700;
+            --fw-ruby: #e31c3d;
+            --fw-sapphire: #0071bc;
+            --fw-emerald: #2e8540;
+            --fw-amethyst: #9b59b6;
+            --fw-silver: #c0c0c0;
+            --fw-copper: #b87333;
+            --fw-pink: #ff69b4;
+            --fw-cyan: #00ced1;
+            --fw-white: #ffffff;
+            
+            /* Spacing */
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+        }
+
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(
+                to bottom,
+                var(--sky-top) 0%,
+                var(--sky-middle) 40%,
+                var(--sky-bottom) 70%,
+                var(--sky-horizon) 100%
+            );
+            color: var(--text-primary);
+        }
+
+        /* ============================================
+           MAIN CANVAS CONTAINER
+           ============================================ */
+        #pyrotechnica-app {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #sky-canvas {
+            flex: 1;
+            width: 100%;
+            cursor: crosshair;
+        }
+
+        /* ============================================
+           HEADER
+           ============================================ */
+        .app-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: var(--space-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .app-header > * {
+            pointer-events: auto;
+        }
+
+        .app-title {
+            font-size: 1.5rem;
+            font-weight: 300;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            background: var(--panel-bg);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-fast);
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent);
+        }
+
+        .icon-btn:focus {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        /* ============================================
+           STATUS BAR
+           ============================================ */
+        .status-bar {
+            position: absolute;
+            bottom: var(--space-md);
+            left: 50%;
+            transform: translateX(-50%);
+            padding: var(--space-sm) var(--space-lg);
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 20px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            z-index: 10;
+        }
+
+        .status-bar kbd {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.75rem;
+        }
+
+        /* ============================================
+           STARS BACKGROUND
+           ============================================ */
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: twinkle 3s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* ============================================
+           ACCESSIBILITY
+           ============================================ */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Focus visible for keyboard users */
+        :focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Application Container -->
+    <div id="pyrotechnica-app" x-data="pyrotechnica">
+        <!-- Stars Background -->
+        <div class="stars" aria-hidden="true">
+            <template x-for="star in stars" :key="star.id">
+                <div class="star" 
+                     :style="`left: ${star.x}%; top: ${star.y}%; animation-delay: ${star.delay}s; opacity: ${star.opacity};`">
+                </div>
+            </template>
+        </div>
+
+        <!-- Header -->
+        <header class="app-header">
+            <h1 class="app-title">Pyrotechnica</h1>
+            <div class="header-controls">
+                <button class="icon-btn" 
+                        @click="toggleFullscreen()" 
+                        :title="isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'"
+                        aria-label="Toggle fullscreen">
+                    <span x-text="isFullscreen ? '⛶' : '⛶'">⛶</span>
+                </button>
+                <button class="icon-btn" 
+                        @click="showInfo = !showInfo" 
+                        title="About Pyrotechnica"
+                        aria-label="Show information">
+                    ℹ
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Canvas -->
+        <canvas id="sky-canvas" 
+                @click="launchAtPosition($event)"
+                @touchstart.prevent="launchAtPosition($event)"
+                aria-label="Fireworks display canvas. Click anywhere to launch a firework.">
+        </canvas>
+
+        <!-- Status Bar -->
+        <div class="status-bar" role="status" aria-live="polite">
+            <span x-text="statusMessage">Click anywhere to launch • Press <kbd>Space</kbd> for random</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+         JAVASCRIPT: MODULAR FIREWORK ENGINE
+         ============================================ -->
+    <script>
+        /**
+         * ============================================
+         * FIREWORK COLOR PALETTES
+         * ============================================
+         */
+        const PALETTES = {
+            gold: ['#ffd700', '#ffed4a', '#ffb700', '#fff8dc'],
+            ruby: ['#e31c3d', '#ff4d4d', '#c9190b', '#ff6b6b'],
+            sapphire: ['#0071bc', '#4dabf7', '#1c7ed6', '#74c0fc'],
+            emerald: ['#2e8540', '#51cf66', '#37b24d', '#8ce99a'],
+            amethyst: ['#9b59b6', '#be4bdb', '#7950f2', '#da77f2'],
+            silver: ['#c0c0c0', '#e8e8e8', '#a8a8a8', '#ffffff'],
+            copper: ['#b87333', '#cd853f', '#d2691e', '#daa520'],
+            pink: ['#ff69b4', '#ff85c8', '#ff1493', '#ffb6c1'],
+            cyan: ['#00ced1', '#48d1cc', '#40e0d0', '#7fffd4'],
+            white: ['#ffffff', '#f8f9fa', '#e9ecef', '#dee2e6'],
+            rainbow: ['#e31c3d', '#ffd700', '#2e8540', '#0071bc', '#9b59b6', '#ff69b4']
+        };
+
+        /**
+         * ============================================
+         * FIREWORK TYPES CONFIGURATION
+         * ============================================
+         */
+        const FIREWORK_TYPES = {
+            spherical: {
+                name: 'Spherical',
+                particleCount: 100,
+                spread: 360,
+                velocity: { min: 2, max: 6 },
+                lifetime: { min: 60, max: 90 },
+                gravity: 0.03,
+                trail: true,
+                sparkle: false
+            },
+            chrysanthemum: {
+                name: 'Chrysanthemum',
+                particleCount: 150,
+                spread: 360,
+                velocity: { min: 3, max: 7 },
+                lifetime: { min: 80, max: 120 },
+                gravity: 0.02,
+                trail: true,
+                sparkle: true
+            },
+            ring: {
+                name: 'Ring',
+                particleCount: 60,
+                spread: 360,
+                velocity: { min: 4, max: 4.5 },
+                lifetime: { min: 50, max: 70 },
+                gravity: 0.02,
+                trail: false,
+                sparkle: false
+            },
+            willow: {
+                name: 'Willow',
+                particleCount: 120,
+                spread: 360,
+                velocity: { min: 2, max: 5 },
+                lifetime: { min: 100, max: 150 },
+                gravity: 0.06,
+                trail: true,
+                sparkle: false
+            },
+            doubleBurst: {
+                name: 'Double Burst',
+                particleCount: 80,
+                spread: 360,
+                velocity: { min: 3, max: 6 },
+                lifetime: { min: 60, max: 90 },
+                gravity: 0.03,
+                trail: true,
+                sparkle: false,
+                secondary: true
+            },
+            crossette: {
+                name: 'Crossette',
+                particleCount: 40,
+                spread: 360,
+                velocity: { min: 4, max: 6 },
+                lifetime: { min: 40, max: 60 },
+                gravity: 0.02,
+                trail: true,
+                sparkle: false,
+                splits: true
+            },
+            heart: {
+                name: 'Heart',
+                particleCount: 80,
+                spread: 360,
+                velocity: { min: 3, max: 5 },
+                lifetime: { min: 70, max: 100 },
+                gravity: 0.025,
+                trail: true,
+                sparkle: true,
+                shape: 'heart'
+            },
+            star: {
+                name: 'Star',
+                particleCount: 60,
+                spread: 360,
+                velocity: { min: 3, max: 5 },
+                lifetime: { min: 70, max: 100 },
+                gravity: 0.025,
+                trail: true,
+                sparkle: true,
+                shape: 'star'
+            },
+            spiral: {
+                name: 'Spiral',
+                particleCount: 100,
+                spread: 360,
+                velocity: { min: 2, max: 4 },
+                lifetime: { min: 80, max: 120 },
+                gravity: 0.02,
+                trail: true,
+                sparkle: false,
+                spiral: true
+            },
+            megaCrackle: {
+                name: 'Mega Crackle',
+                particleCount: 200,
+                spread: 360,
+                velocity: { min: 1, max: 4 },
+                lifetime: { min: 40, max: 80 },
+                gravity: 0.04,
+                trail: false,
+                sparkle: true,
+                crackle: true
+            }
+        };
+
+        /**
+         * ============================================
+         * PARTICLE CLASS
+         * ============================================
+         */
+        class Particle {
+            constructor(x, y, vx, vy, color, config) {
+                this.x = x;
+                this.y = y;
+                this.vx = vx;
+                this.vy = vy;
+                this.color = color;
+                this.alpha = 1;
+                this.life = config.lifetime.min + Math.random() * (config.lifetime.max - config.lifetime.min);
+                this.maxLife = this.life;
+                this.gravity = config.gravity;
+                this.trail = config.trail;
+                this.sparkle = config.sparkle;
+                this.size = 2 + Math.random() * 2;
+                this.history = [];
+                this.historyLength = config.trail ? 8 : 0;
+            }
+
+            update() {
+                // Store position history for trails
+                if (this.trail && this.historyLength > 0) {
+                    this.history.unshift({ x: this.x, y: this.y, alpha: this.alpha });
+                    if (this.history.length > this.historyLength) {
+                        this.history.pop();
+                    }
+                }
+
+                // Physics
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += this.gravity;
+                this.vx *= 0.99; // Air resistance
+                this.vy *= 0.99;
+
+                // Life decay
+                this.life--;
+                this.alpha = Math.max(0, this.life / this.maxLife);
+            }
+
+            draw(ctx) {
+                // Draw trail
+                if (this.trail && this.history.length > 0) {
+                    for (let i = 0; i < this.history.length; i++) {
+                        const point = this.history[i];
+                        const trailAlpha = (1 - i / this.history.length) * this.alpha * 0.5;
+                        ctx.beginPath();
+                        ctx.arc(point.x, point.y, this.size * (1 - i / this.history.length), 0, Math.PI * 2);
+                        ctx.fillStyle = this.colorWithAlpha(trailAlpha);
+                        ctx.fill();
+                    }
+                }
+
+                // Draw main particle
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.colorWithAlpha(this.alpha);
+                ctx.fill();
+
+                // Sparkle effect
+                if (this.sparkle && Math.random() > 0.7) {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2);
+                    ctx.fillStyle = this.colorWithAlpha(this.alpha * 0.3);
+                    ctx.fill();
+                }
+            }
+
+            colorWithAlpha(alpha) {
+                // Convert hex to rgba
+                const hex = this.color.replace('#', '');
+                const r = parseInt(hex.substring(0, 2), 16);
+                const g = parseInt(hex.substring(2, 4), 16);
+                const b = parseInt(hex.substring(4, 6), 16);
+                return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+            }
+
+            get isDead() {
+                return this.life <= 0;
+            }
+        }
+
+        /**
+         * ============================================
+         * ROCKET CLASS (Rising firework)
+         * ============================================
+         */
+        class Rocket {
+            constructor(x, targetY, type, palette) {
+                this.x = x;
+                this.y = window.innerHeight;
+                this.targetY = targetY;
+                this.type = type;
+                this.palette = palette;
+                this.vy = -12 - Math.random() * 4;
+                this.trail = [];
+                this.exploded = false;
+            }
+
+            update() {
+                // Store trail
+                this.trail.unshift({ x: this.x, y: this.y });
+                if (this.trail.length > 15) {
+                    this.trail.pop();
+                }
+
+                // Move up
+                this.y += this.vy;
+                this.vy += 0.15; // Gravity slowing it down
+
+                // Check if reached target or slowed enough
+                if (this.y <= this.targetY || this.vy >= -2) {
+                    this.exploded = true;
+                }
+            }
+
+            draw(ctx) {
+                // Draw trail
+                for (let i = 0; i < this.trail.length; i++) {
+                    const point = this.trail[i];
+                    const alpha = 1 - i / this.trail.length;
+                    ctx.beginPath();
+                    ctx.arc(point.x, point.y, 3 - i * 0.15, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 200, 100, ${alpha * 0.8})`;
+                    ctx.fill();
+                }
+
+                // Draw rocket head
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = '#fff';
+                ctx.fill();
+            }
+        }
+
+        /**
+         * ============================================
+         * FIREWORK ENGINE CLASS
+         * ============================================
+         */
+        class FireworkEngine {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.particles = [];
+                this.rockets = [];
+                this.running = false;
+                this.resize();
+            }
+
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+
+            launch(x, y, type = 'spherical', paletteName = 'gold') {
+                const normalizedX = x * this.canvas.width;
+                const targetY = y * this.canvas.height;
+                const rocket = new Rocket(normalizedX, targetY, type, paletteName);
+                this.rockets.push(rocket);
+            }
+
+            explode(x, y, type, paletteName) {
+                const config = FIREWORK_TYPES[type] || FIREWORK_TYPES.spherical;
+                const palette = PALETTES[paletteName] || PALETTES.gold;
+
+                // Handle special shapes
+                if (config.shape === 'heart') {
+                    this.createHeartExplosion(x, y, config, palette);
+                } else if (config.shape === 'star') {
+                    this.createStarExplosion(x, y, config, palette);
+                } else if (config.spiral) {
+                    this.createSpiralExplosion(x, y, config, palette);
+                } else {
+                    this.createSphericalExplosion(x, y, config, palette);
+                }
+
+                // Secondary burst for double burst type
+                if (config.secondary) {
+                    setTimeout(() => {
+                        this.createSphericalExplosion(x, y, { ...config, particleCount: 40 }, palette);
+                    }, 200);
+                }
+            }
+
+            createSphericalExplosion(x, y, config, palette) {
+                for (let i = 0; i < config.particleCount; i++) {
+                    const angle = (Math.PI * 2 * i) / config.particleCount + Math.random() * 0.2;
+                    const velocity = config.velocity.min + Math.random() * (config.velocity.max - config.velocity.min);
+                    const vx = Math.cos(angle) * velocity;
+                    const vy = Math.sin(angle) * velocity;
+                    const color = palette[Math.floor(Math.random() * palette.length)];
+                    this.particles.push(new Particle(x, y, vx, vy, color, config));
+                }
+            }
+
+            createHeartExplosion(x, y, config, palette) {
+                for (let i = 0; i < config.particleCount; i++) {
+                    const t = (i / config.particleCount) * Math.PI * 2;
+                    // Heart parametric equations
+                    const heartX = 16 * Math.pow(Math.sin(t), 3);
+                    const heartY = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                    const scale = 0.3;
+                    const vx = heartX * scale * 0.15;
+                    const vy = heartY * scale * 0.15;
+                    const color = palette[Math.floor(Math.random() * palette.length)];
+                    this.particles.push(new Particle(x, y, vx, vy, color, config));
+                }
+            }
+
+            createStarExplosion(x, y, config, palette) {
+                const points = 5;
+                const outerRadius = 5;
+                const innerRadius = 2;
+                
+                for (let i = 0; i < config.particleCount; i++) {
+                    const angle = (i / config.particleCount) * Math.PI * 2;
+                    const pointIndex = Math.floor((angle / (Math.PI * 2)) * points * 2);
+                    const radius = pointIndex % 2 === 0 ? outerRadius : innerRadius;
+                    const velocity = radius * (config.velocity.min + Math.random() * 0.5);
+                    const vx = Math.cos(angle) * velocity;
+                    const vy = Math.sin(angle) * velocity;
+                    const color = palette[Math.floor(Math.random() * palette.length)];
+                    this.particles.push(new Particle(x, y, vx, vy, color, config));
+                }
+            }
+
+            createSpiralExplosion(x, y, config, palette) {
+                for (let i = 0; i < config.particleCount; i++) {
+                    const angle = (i / config.particleCount) * Math.PI * 8; // Multiple rotations
+                    const radius = (i / config.particleCount) * 6;
+                    const vx = Math.cos(angle) * radius;
+                    const vy = Math.sin(angle) * radius;
+                    const color = palette[Math.floor(Math.random() * palette.length)];
+                    const particle = new Particle(x, y, vx, vy, color, config);
+                    particle.delay = i * 0.5; // Stagger for spiral effect
+                    this.particles.push(particle);
+                }
+            }
+
+            update() {
+                // Update rockets
+                for (let i = this.rockets.length - 1; i >= 0; i--) {
+                    const rocket = this.rockets[i];
+                    rocket.update();
+                    if (rocket.exploded) {
+                        this.explode(rocket.x, rocket.y, rocket.type, rocket.palette);
+                        this.rockets.splice(i, 1);
+                    }
+                }
+
+                // Update particles
+                for (let i = this.particles.length - 1; i >= 0; i--) {
+                    const particle = this.particles[i];
+                    particle.update();
+                    if (particle.isDead) {
+                        this.particles.splice(i, 1);
+                    }
+                }
+            }
+
+            draw() {
+                // Semi-transparent clear for trail effect
+                this.ctx.fillStyle = 'rgba(10, 10, 26, 0.2)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+                // Draw rockets
+                for (const rocket of this.rockets) {
+                    rocket.draw(this.ctx);
+                }
+
+                // Draw particles
+                for (const particle of this.particles) {
+                    particle.draw(this.ctx);
+                }
+            }
+
+            start() {
+                if (this.running) return;
+                this.running = true;
+                this.loop();
+            }
+
+            stop() {
+                this.running = false;
+            }
+
+            loop() {
+                if (!this.running) return;
+                this.update();
+                this.draw();
+                requestAnimationFrame(() => this.loop());
+            }
+
+            clear() {
+                this.particles = [];
+                this.rockets = [];
+                this.ctx.fillStyle = 'rgba(10, 10, 26, 1)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            }
+        }
+
+        /**
+         * ============================================
+         * ALPINE.JS APPLICATION STATE
+         * ============================================
+         */
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('pyrotechnica', () => ({
+                // State
+                engine: null,
+                stars: [],
+                isFullscreen: false,
+                showInfo: false,
+                statusMessage: 'Click anywhere to launch • Press Space for random',
+                
+                // Current launch settings
+                currentType: 'spherical',
+                currentPalette: 'gold',
+                
+                // Initialize
+                init() {
+                    const canvas = document.getElementById('sky-canvas');
+                    this.engine = new FireworkEngine(canvas);
+                    this.engine.start();
+                    
+                    // Generate stars
+                    this.generateStars();
+                    
+                    // Handle resize
+                    window.addEventListener('resize', () => {
+                        this.engine.resize();
+                    });
+                    
+                    // Keyboard controls
+                    window.addEventListener('keydown', (e) => this.handleKeydown(e));
+                    
+                    console.log('🎆 Pyrotechnica initialized');
+                    console.log('Available types:', Object.keys(FIREWORK_TYPES));
+                    console.log('Available palettes:', Object.keys(PALETTES));
+                },
+                
+                generateStars() {
+                    this.stars = [];
+                    for (let i = 0; i < 100; i++) {
+                        this.stars.push({
+                            id: i,
+                            x: Math.random() * 100,
+                            y: Math.random() * 60, // Only in upper portion
+                            delay: Math.random() * 3,
+                            opacity: 0.3 + Math.random() * 0.7
+                        });
+                    }
+                },
+                
+                launchAtPosition(event) {
+                    const rect = this.engine.canvas.getBoundingClientRect();
+                    let clientX, clientY;
+                    
+                    if (event.touches) {
+                        clientX = event.touches[0].clientX;
+                        clientY = event.touches[0].clientY;
+                    } else {
+                        clientX = event.clientX;
+                        clientY = event.clientY;
+                    }
+                    
+                    const x = (clientX - rect.left) / rect.width;
+                    const y = (clientY - rect.top) / rect.height;
+                    
+                    this.engine.launch(x, y, this.currentType, this.currentPalette);
+                    this.statusMessage = `Launched ${FIREWORK_TYPES[this.currentType].name} in ${this.currentPalette}`;
+                },
+                
+                launchRandom() {
+                    const types = Object.keys(FIREWORK_TYPES);
+                    const palettes = Object.keys(PALETTES);
+                    const type = types[Math.floor(Math.random() * types.length)];
+                    const palette = palettes[Math.floor(Math.random() * palettes.length)];
+                    const x = 0.2 + Math.random() * 0.6;
+                    const y = 0.2 + Math.random() * 0.4;
+                    
+                    this.engine.launch(x, y, type, palette);
+                    this.statusMessage = `Random: ${FIREWORK_TYPES[type].name} in ${palette}`;
+                },
+                
+                handleKeydown(e) {
+                    if (e.code === 'Space') {
+                        e.preventDefault();
+                        this.launchRandom();
+                    }
+                    
+                    // Number keys 1-0 for firework types
+                    const typeKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+                    const typeIndex = typeKeys.indexOf(e.key);
+                    if (typeIndex !== -1) {
+                        const types = Object.keys(FIREWORK_TYPES);
+                        if (typeIndex < types.length) {
+                            this.currentType = types[typeIndex];
+                            this.statusMessage = `Selected: ${FIREWORK_TYPES[this.currentType].name}`;
+                        }
+                    }
+                },
+                
+                toggleFullscreen() {
+                    if (!document.fullscreenElement) {
+                        document.documentElement.requestFullscreen();
+                        this.isFullscreen = true;
+                    } else {
+                        document.exitFullscreen();
+                        this.isFullscreen = false;
+                    }
+                }
+            }));
+        });
+    </script>
+</body>
+</html>

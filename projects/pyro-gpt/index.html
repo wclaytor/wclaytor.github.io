@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>🎆 Pyrotechnica — Fireworks Simulator</title>
+  <style>
+    :root{
+      --bg:#050611;
+      --panel:#0c1022cc;
+      --panel2:#0c1022ee;
+      --text:#eaf0ff;
+      --muted:#a9b4d6;
+      --line:#2a355f;
+      --accent:#7cf0ff;
+      --accent2:#ff7cf0;
+      --danger:#ff5e7a;
+      --ok:#77ff9a;
+      --shadow: 0 10px 30px rgba(0,0,0,.45);
+      --radius: 14px;
+    }
+    *{ box-sizing:border-box; }
+    html,body{ margin:0; padding:0; background:var(--bg); color:var(--text); height:100%; overflow:hidden; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;}
+    #canvas{ position:fixed; inset:0; width:100vw; height:100vh; display:block; }
+    .flash-overlay{ position:fixed; inset:0; pointer-events:none; opacity:0; background:white; mix-blend-mode:screen; z-index:50; }
+
+    /* Top HUD */
+    .topbar{
+      position:fixed; top:12px; left:12px; right:12px;
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+      z-index:100;
+      pointer-events:none;
+    }
+    .badge{
+      pointer-events:auto;
+      display:flex; gap:10px; align-items:center;
+      padding:10px 12px;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:999px;
+      background:rgba(10,12,24,.45);
+      backdrop-filter: blur(8px);
+      box-shadow: var(--shadow);
+      font-size:12px;
+      color:var(--muted);
+    }
+    .badge strong{ color:var(--text); font-weight:650; }
+    .badge .dot{ width:8px; height:8px; border-radius:50%; background:var(--ok); box-shadow:0 0 12px rgba(119,255,154,.55); }
+    .badge .dot.off{ background:var(--danger); box-shadow:0 0 12px rgba(255,94,122,.35); }
+
+    /* Bottom control panel */
+    .panel{
+      position:fixed; left:12px; right:12px; bottom:12px;
+      z-index:200;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      background:var(--panel);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .panel .row{
+      display:flex;
+      gap:12px;
+      padding:10px;
+      align-items:stretch;
+      flex-wrap:wrap;
+    }
+    .panel .row + .row{
+      border-top:1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.10);
+    }
+    .group{
+      min-width: 220px;
+      flex: 1 1 260px;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: 12px;
+      padding:10px;
+      background: rgba(0,0,0,.14);
+    }
+    .group h3{
+      margin:0 0 8px 0;
+      font-size:12px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--muted);
+      font-weight:700;
+    }
+    label{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
+      font-size:12px;
+      color:var(--muted);
+      margin:6px 0;
+    }
+    select, input[type="range"], input[type="number"], input[type="text"], textarea{
+      width: 180px;
+      max-width: 100%;
+      background: rgba(3,6,18,.55);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 10px;
+      padding: 7px 9px;
+      outline: none;
+    }
+    input[type="range"]{ padding:0; height: 24px; }
+    textarea{
+      width:100%;
+      height: 180px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      font-size: 12px;
+      line-height: 1.35;
+      resize: vertical;
+    }
+    .btnrow{ display:flex; flex-wrap:wrap; gap:8px; }
+    button{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(3,6,18,.55);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-size: 12px;
+      font-weight:650;
+      transition: transform .06s ease, border-color .15s ease, background .15s ease;
+      user-select:none;
+    }
+    button:hover{ border-color: rgba(124,240,255,.35); }
+    button:active{ transform: translateY(1px) scale(.99); }
+    button.primary{ border-color: rgba(124,240,255,.45); box-shadow: 0 0 0 3px rgba(124,240,255,.10) inset; }
+    button.danger{ border-color: rgba(255,94,122,.45); }
+    button.ghost{ background: transparent; }
+    button.on{ border-color: rgba(119,255,154,.45); }
+    .tiny{
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .tiles{
+      display:grid;
+      grid-template-columns: repeat(5, minmax(88px, 1fr));
+      gap:8px;
+    }
+    @media (max-width: 920px){
+      .tiles{ grid-template-columns: repeat(4, minmax(88px,1fr)); }
+    }
+    @media (max-width: 720px){
+      .tiles{ grid-template-columns: repeat(3, minmax(88px,1fr)); }
+    }
+    .tile{
+      text-align:left;
+      padding:10px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(3,6,18,.50);
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .tile .name{ font-weight:800; font-size:12px; }
+    .tile .meta{ color:var(--muted); font-size:11px; }
+    .tile .hotkey{ font-size:10px; color:rgba(124,240,255,.75); letter-spacing:.08em; text-transform:uppercase;}
+    .split{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 980px){ .split{ grid-template-columns: 1fr; } }
+
+    /* Timeline / cue list */
+    .cueList{
+      max-height: 220px;
+      overflow:auto;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:12px;
+      padding:8px;
+      background: rgba(0,0,0,.10);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      font-size: 11px;
+      line-height: 1.45;
+      color: rgba(234,240,255,.92);
+    }
+    .cueRow{
+      display:flex; gap:10px; align-items:baseline;
+      padding:4px 6px;
+      border-radius:10px;
+    }
+    .cueRow:nth-child(odd){ background: rgba(255,255,255,.03); }
+    .cueRow .t{ width: 72px; color: rgba(124,240,255,.85); }
+    .cueRow .a{ flex:1; color: rgba(234,240,255,.92); }
+    .cueRow .x{ color: rgba(169,180,214,.9); }
+    .statusline{
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+      margin-top:8px;
+    }
+    .pill{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:11px;
+      color:var(--muted);
+      background: rgba(0,0,0,.10);
+    }
+    .kbd{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace; padding:2px 6px; border-radius:8px; border:1px solid rgba(255,255,255,.12); background: rgba(0,0,0,.18); font-size: 11px; color: rgba(234,240,255,.92); }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <div class="flash-overlay" id="flashOverlay"></div>
+
+  <div class="topbar">
+    <div class="badge" id="statusBadge">
+      <span class="dot" id="playDot"></span>
+      <strong>Pyrotechnica</strong>
+      <span id="statusText">Manual</span>
+      <span class="tiny">·</span>
+      <span class="tiny">Click canvas to set aim + fire</span>
+    </div>
+    <div class="badge">
+      <span class="tiny">Hotkeys:</span>
+      <span class="kbd">1-0</span><span class="tiny">firework</span>
+      <span class="kbd">Space</span><span class="tiny">Play/Pause</span>
+      <span class="kbd">R</span><span class="tiny">Record</span>
+      <span class="kbd">S</span><span class="tiny">Sound</span>
+    </div>
+  </div>
+
+  <div class="panel" id="panel">
+    <div class="row">
+      <div class="group" style="flex: 1 1 320px;">
+        <h3>Scene</h3>
+        <label>Background
+          <select id="bgSelect"></select>
+        </label>
+        <label>Launcher
+          <select id="launcherSelect"></select>
+        </label>
+        <label>Mode
+          <select id="modeSelect">
+            <option value="manual">Manual</option>
+            <option value="show">Show</option>
+            <option value="demo">Demo</option>
+          </select>
+        </label>
+        <div class="btnrow">
+          <button id="toggleSound" class="on">Sound: On</button>
+          <button id="toggleConfetti" class="on">Confetti: On</button>
+          <button id="toggleStars" class="on">Stars: On</button>
+          <button id="clearBtn" class="danger">Clear Sky</button>
+        </div>
+        <div class="statusline">
+          <span class="pill" id="perfTitle">No performance loaded</span>
+          <span class="pill" id="timePill">00:00.000</span>
+        </div>
+      </div>
+
+      <div class="group" style="flex: 2 1 520px;">
+        <h3>Firework launcher strip</h3>
+        <div class="split">
+          <div>
+            <label>Height
+              <input id="heightRange" type="range" min="0.15" max="0.85" step="0.01" value="0.45" />
+            </label>
+            <label>Size
+              <input id="sizeRange" type="range" min="0.6" max="2.2" step="0.05" value="1.0" />
+            </label>
+            <label>Palette
+              <select id="paletteSelect"></select>
+            </label>
+            <label>Seed (optional)
+              <input id="seedInput" type="number" value="" placeholder="random" />
+            </label>
+            <div class="tiny">Tip: choose a seed to make a repeatable shot. Use <span class="kbd">Shift</span> while clicking to “arm” for recording.</div>
+          </div>
+          <div class="tiles" id="tiles"></div>
+        </div>
+      </div>
+
+      <div class="group" style="flex: 1 1 320px;">
+        <h3>Transport</h3>
+        <div class="btnrow">
+          <button class="primary" id="playBtn">Play</button>
+          <button id="pauseBtn">Pause</button>
+          <button id="stopBtn">Stop</button>
+          <button id="demoBtn">Load Demo</button>
+        </div>
+        <label>Scrub (ms)
+          <input id="scrubInput" type="number" value="0" min="0" step="50" />
+        </label>
+        <div class="btnrow">
+          <button id="recordBtn">Record: Off</button>
+          <button id="newSeqBtn" class="ghost">New Sequence</button>
+          <button id="newPerfBtn" class="ghost">New Performance</button>
+        </div>
+        <div class="cueList" id="cueList"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="group" style="flex: 1 1 460px;">
+        <h3>Performance Markdown</h3>
+        <textarea id="mdEditor" spellcheck="false"></textarea>
+        <div class="btnrow" style="margin-top:8px;">
+          <button id="applyMdBtn" class="primary">Apply Markdown</button>
+          <button id="saveMdBtn">Save .md</button>
+          <label style="margin:0; gap:8px; color:var(--muted);">
+            Load .md
+            <input id="loadMdInput" type="file" accept=".md,.markdown,.txt" style="width:220px;" />
+          </label>
+        </div>
+        <div class="tiny" id="mdStatus">Edit the Markdown, then “Apply”. It supports YAML frontmatter + fenced JSON blocks.</div>
+      </div>
+
+      <div class="group" style="flex: 1 1 460px;">
+        <h3>Quick help</h3>
+        <div class="tiny" style="line-height:1.6;">
+          <div><span class="kbd">1</span>–<span class="kbd">0</span> launches a firework type from the current launcher.</div>
+          <div><span class="kbd">Click</span> on the canvas sets an <em>aim point</em> (x position + height) and fires your selected type.</div>
+          <div><span class="kbd">R</span> toggles recording. Fired shots become cues in the current sequence/performance.</div>
+          <div>Performances are driven by a simple timeline: <span class="kbd">t</span> (ms) + an <span class="kbd">action</span> (fire, sequence, background).</div>
+          <div style="margin-top:8px;" class="pill">V1: dependency-free, single HTML file</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  // ============================================================
+  // Pyrotechnica — Fireworks Simulator (single-file, no deps)
+  // ============================================================
+
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const flashOverlay = document.getElementById('flashOverlay');
+  let W=0, H=0, DPR=1;
+
+  function resize(){
+    DPR = Math.max(1, Math.min(2.5, window.devicePixelRatio || 1));
+    W = Math.floor(window.innerWidth);
+    H = Math.floor(window.innerHeight);
+    canvas.width = Math.floor(W * DPR);
+    canvas.height = Math.floor(H * DPR);
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // ---- Audio
+  let soundOn = true;
+  let audioCtx = null;
+  function ensureAudio(){
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  function playBoom(intensity=1){
+    if(!soundOn) return;
+    ensureAudio();
+    const t = audioCtx.currentTime;
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    const f = audioCtx.createBiquadFilter();
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(90 + Math.random()*30, t);
+    o.frequency.exponentialRampToValueAtTime(35 + Math.random()*15, t + 0.14);
+    f.type = 'lowpass';
+    f.frequency.setValueAtTime(900, t);
+    f.frequency.exponentialRampToValueAtTime(140, t + 0.18);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.12*intensity, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.25);
+    o.connect(f); f.connect(g); g.connect(audioCtx.destination);
+    o.start(t); o.stop(t + 0.27);
+  }
+  function playLaunch(){
+    if(!soundOn) return;
+    ensureAudio();
+    const t = audioCtx.currentTime;
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'sawtooth';
+    o.frequency.setValueAtTime(240 + Math.random()*120, t);
+    o.frequency.exponentialRampToValueAtTime(760 + Math.random()*160, t + 0.08);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.045, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(t); o.stop(t + 0.13);
+  }
+
+  // ---- Helpers
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const lerp = (a,b,t)=>a+(b-a)*t;
+  const rand = (a,b)=>a + Math.random()*(b-a);
+  const nowMs = ()=>performance.now();
+
+  function mulberry32(seed){
+    let a = seed >>> 0;
+    return function() {
+      a |= 0;
+      a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  // ============================================================
+  // Backgrounds (stylized silhouettes)
+  // ============================================================
+  const Backgrounds = {
+    "Baltimore Harbor": { horizon: 0.72, draw(){
+      drawGradientSky('#071026', '#03030a'); drawStars(); drawWater(0.72);
+      drawCitySilhouette(0.74, [[0.06,0.20],[0.10,0.35],[0.12,0.28],[0.16,0.42],[0.20,0.30],[0.24,0.50],[0.30,0.38],[0.36,0.55],[0.42,0.32],[0.50,0.60],[0.58,0.36],[0.66,0.52],[0.74,0.40],[0.84,0.48],[0.92,0.30]]);
+      drawHarborProps(0.73);
+    }},
+    "Brooklyn Bridge": { horizon: 0.70, draw(){
+      drawGradientSky('#081a34', '#04040d'); drawStars(); drawWater(0.70);
+      drawBridge(0.72);
+      drawCitySilhouette(0.74, [[0.04,0.26],[0.10,0.46],[0.16,0.30],[0.20,0.52],[0.26,0.34],[0.32,0.58],[0.40,0.30],[0.46,0.62],[0.56,0.38],[0.64,0.56],[0.72,0.34],[0.82,0.50],[0.92,0.30]]);
+    }},
+    "Mount Rushmore": { horizon: 0.78, draw(){
+      drawGradientSky('#0b1530', '#04040c'); drawStars(); drawMountains(0.80);
+    }},
+    "Paris": { horizon: 0.73, draw(){
+      drawGradientSky('#0a1632', '#03030a'); drawStars(); drawEiffel(0.75);
+      drawCitySilhouette(0.78, [[0.06,0.20],[0.14,0.30],[0.20,0.24],[0.28,0.36],[0.36,0.22],[0.44,0.40],[0.54,0.26],[0.62,0.34],[0.72,0.20],[0.82,0.32],[0.92,0.24]]);
+    }},
+    "London": { horizon: 0.73, draw(){
+      drawGradientSky('#07142b', '#03030a'); drawStars(); drawLondon(0.76);
+    }},
+    "Sydney": { horizon: 0.74, draw(){
+      drawGradientSky('#061a2b', '#03030a'); drawStars(); drawWater(0.74);
+      drawSydneyBridge(0.76); drawOperaHouse(0.80);
+    }},
+    "Tokyo": { horizon: 0.72, draw(){
+      drawGradientSky('#08143a', '#03030a'); drawStars(); drawTokyoTower(0.76);
+      drawCitySilhouette(0.78, [[0.06,0.18],[0.12,0.40],[0.18,0.22],[0.24,0.46],[0.30,0.26],[0.36,0.56],[0.44,0.30],[0.52,0.60],[0.60,0.28],[0.70,0.52],[0.80,0.34],[0.90,0.44]]);
+    }},
+  };
+
+  let starsOn = true;
+  let confettiOn = true;
+
+  function drawGradientSky(topColor, bottomColor){
+    const g = ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0, topColor);
+    g.addColorStop(1, bottomColor);
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,W,H);
+  }
+  const starField = Array.from({length: 220}, () => ({ x: Math.random(), y: Math.random(), r: Math.random()*1.2 + 0.2, a: Math.random()*0.55 + 0.25, tw: Math.random()*2 + 0.5 }));
+  function drawStars(){
+    if(!starsOn) return;
+    ctx.save(); ctx.globalCompositeOperation = 'lighter';
+    for(const s of starField){
+      const tw = 0.6 + 0.4*Math.sin((nowMs()/1000)*s.tw + s.x*10);
+      ctx.globalAlpha = s.a * tw;
+      ctx.fillStyle = '#d9e6ff';
+      ctx.beginPath(); ctx.arc(s.x*W, s.y*H*0.65, s.r, 0, Math.PI*2); ctx.fill();
+    }
+    ctx.restore();
+  }
+  function drawWater(horizonNorm){
+    const y = H*horizonNorm;
+    ctx.save();
+    const g = ctx.createLinearGradient(0,y,0,H);
+    g.addColorStop(0, 'rgba(20,40,80,.55)');
+    g.addColorStop(1, 'rgba(3,6,18,.95)');
+    ctx.fillStyle = g; ctx.fillRect(0,y,W,H-y);
+    const t = nowMs()/1000;
+    ctx.globalAlpha = 0.22;
+    for(let i=0;i<40;i++){
+      const yy = y + (i/40)*(H-y);
+      const amp = 10*(1 - i/40);
+      ctx.fillStyle = 'rgba(124,240,255,.10)';
+      ctx.fillRect(0, yy + Math.sin(t*1.2 + i)*amp, W, 1);
+    }
+    ctx.restore();
+  }
+  function drawCitySilhouette(baseNorm, profilePairs){
+    const baseY = H*baseNorm;
+    ctx.save();
+    ctx.fillStyle = 'rgba(0,0,0,.55)';
+    ctx.beginPath();
+    ctx.moveTo(0,H); ctx.lineTo(0, baseY);
+    for(const [x,h] of profilePairs){
+      const xx = x*W;
+      const yy = baseY - h*H*0.5;
+      ctx.lineTo(xx, yy);
+      ctx.lineTo(xx + W*0.02, baseY);
+    }
+    ctx.lineTo(W, baseY); ctx.lineTo(W, H);
+    ctx.closePath(); ctx.fill();
+
+    ctx.globalAlpha = 0.25;
+    ctx.fillStyle = 'rgba(255,220,120,.9)';
+    for(let i=0;i<220;i++){
+      const xx = Math.random()*W;
+      const yy = baseY - Math.random()*H*0.20;
+      if(yy < baseY && yy > baseY - H*0.22) ctx.fillRect(xx, yy, 1.2, 1.2);
+    }
+    ctx.restore();
+  }
+  function drawHarborProps(horizonNorm){
+    const y = H*horizonNorm;
+    ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,.10)'; ctx.lineWidth = 2;
+    for(const x of [0.22,0.50,0.76]){
+      ctx.beginPath(); ctx.moveTo(x*W-50, y+18); ctx.lineTo(x*W+50, y+18); ctx.stroke();
+    }
+    ctx.restore();
+  }
+  function drawBridge(horizonNorm){
+    const y = H*horizonNorm;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(0,0,0,.7)'; ctx.lineWidth = 6;
+    ctx.beginPath(); ctx.moveTo(0, y+20); ctx.quadraticCurveTo(W*0.5, y-80, W, y+20); ctx.stroke();
+    ctx.fillStyle = 'rgba(0,0,0,.75)';
+    const tw = 26;
+    ctx.fillRect(W*0.33 - tw/2, y-140, tw, 180);
+    ctx.fillRect(W*0.67 - tw/2, y-140, tw, 180);
+    ctx.strokeStyle = 'rgba(0,0,0,.55)'; ctx.lineWidth = 2;
+    for(let i=0;i<=14;i++){
+      const t = i/14;
+      const xx = lerp(0,W,t);
+      const yy = y+20 - 80*Math.sin(Math.PI*t);
+      ctx.beginPath(); ctx.moveTo(xx, y+20); ctx.lineTo(xx, yy); ctx.stroke();
+    }
+    ctx.restore();
+  }
+  function drawMountains(horizonNorm){
+    const y = H*horizonNorm;
+    ctx.save();
+    ctx.fillStyle = 'rgba(0,0,0,.65)'; ctx.fillRect(0,y,W,H-y);
+    ctx.fillStyle = 'rgba(0,0,0,.55)';
+    ctx.beginPath();
+    ctx.moveTo(0,y);
+    ctx.lineTo(W*0.10, y-80);
+    ctx.lineTo(W*0.22, y-40);
+    ctx.lineTo(W*0.36, y-120);
+    ctx.lineTo(W*0.50, y-60);
+    ctx.lineTo(W*0.62, y-140);
+    ctx.lineTo(W*0.74, y-70);
+    ctx.lineTo(W*0.88, y-110);
+    ctx.lineTo(W, y-50);
+    ctx.lineTo(W, y);
+    ctx.closePath(); ctx.fill();
+
+    ctx.fillStyle = 'rgba(0,0,0,.75)';
+    ctx.beginPath();
+    ctx.moveTo(W*0.38, y-110);
+    ctx.lineTo(W*0.46, y-150);
+    ctx.lineTo(W*0.56, y-140);
+    ctx.lineTo(W*0.62, y-100);
+    ctx.lineTo(W*0.56, y-70);
+    ctx.lineTo(W*0.44, y-75);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+  function drawEiffel(baseNorm){
+    const baseY = H*baseNorm, x = W*0.52;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(0,0,0,.70)'; ctx.lineWidth = 6;
+    ctx.beginPath(); ctx.moveTo(x-120, baseY); ctx.lineTo(x, baseY-210); ctx.lineTo(x+120, baseY); ctx.stroke();
+    ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(x-86, baseY-80); ctx.lineTo(x+86, baseY-80); ctx.stroke();
+    ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(x-44, baseY-150); ctx.lineTo(x+44, baseY-150); ctx.stroke();
+    ctx.restore();
+  }
+  function drawLondon(baseNorm){
+    const baseY = H*baseNorm;
+    ctx.save();
+    ctx.fillStyle = 'rgba(0,0,0,.68)';
+    ctx.fillRect(W*0.20, baseY-180, 60, 180);
+    ctx.fillRect(W*0.19, baseY-210, 80, 30);
+
+    ctx.strokeStyle = 'rgba(0,0,0,.65)'; ctx.lineWidth = 6;
+    ctx.beginPath(); ctx.arc(W*0.72, baseY-110, 90, 0, Math.PI*2); ctx.stroke();
+    ctx.lineWidth = 2;
+    for(let i=0;i<12;i++){
+      const a = (i/12)*Math.PI*2;
+      ctx.beginPath();
+      ctx.moveTo(W*0.72, baseY-110);
+      ctx.lineTo(W*0.72 + Math.cos(a)*90, baseY-110 + Math.sin(a)*90);
+      ctx.stroke();
+    }
+    ctx.fillRect(0, baseY, W, H-baseY);
+    ctx.restore();
+  }
+  function drawSydneyBridge(baseNorm){
+    const y = H*baseNorm;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(0,0,0,.70)'; ctx.lineWidth = 8;
+    ctx.beginPath(); ctx.moveTo(W*0.12, y+10); ctx.quadraticCurveTo(W*0.50, y-140, W*0.88, y+10); ctx.stroke();
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(W*0.14, y+20); ctx.lineTo(W*0.14, y-20);
+    ctx.moveTo(W*0.86, y+20); ctx.lineTo(W*0.86, y-20);
+    ctx.stroke();
+    ctx.restore();
+  }
+  function drawOperaHouse(baseNorm){
+    const y = H*baseNorm;
+    ctx.save();
+    ctx.fillStyle = 'rgba(0,0,0,.62)';
+    for(const [cx, w,h] of [[0.44,120,70],[0.52,150,90],[0.60,110,60]]){
+      ctx.beginPath();
+      ctx.moveTo(W*cx - w, y+20);
+      ctx.quadraticCurveTo(W*cx, y-h, W*cx + w, y+20);
+      ctx.closePath(); ctx.fill();
+    }
+    ctx.fillRect(0,y+20,W,H-(y+20));
+    ctx.restore();
+  }
+  function drawTokyoTower(baseNorm){
+    const baseY = H*baseNorm, x = W*0.70;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(0,0,0,.70)'; ctx.lineWidth = 6;
+    ctx.beginPath(); ctx.moveTo(x-70, baseY); ctx.lineTo(x, baseY-210); ctx.lineTo(x+70, baseY); ctx.stroke();
+    ctx.lineWidth = 3;
+    for(const yy of [baseY-50, baseY-95, baseY-140, baseY-175]){
+      ctx.beginPath(); ctx.moveTo(x-40, yy); ctx.lineTo(x+40, yy); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  // ============================================================
+  // Fireworks engine
+  // ============================================================
+  const particles = [];
+  const rockets = [];
+  const confetti = [];
+  const GRAVITY = 0.06;
+  const DRAG = 0.985;
+
+  const Palettes = {
+    "Auto (Random)": null,
+    "Classic": ['#ff3b3b','#ffd93b','#3bff77','#3bd7ff','#b43bff','#ff3bd7'],
+    "Gold": ['#ffd06b','#ffb84d','#ffe6b0','#ffcf3a'],
+    "Neon": ['#7cf0ff','#ff7cf0','#77ff9a','#fffa7c'],
+    "Cool": ['#7cf0ff','#3bd7ff','#9aa8ff','#c27cff'],
+    "Warm": ['#ff7a5c','#ffd06b','#ff3bd7','#fffa7c'],
+    "Red/Pink": ['#ff3b3b','#ff7cf0','#ff5e7a','#ff3bd7'],
+  };
+
+  const FireworkTypes = [
+    { id: "chrysanthemum", label: "Chrysanthemum", typeIndex: 0, hotkey:"1" },
+    { id: "peony",         label: "Peony",         typeIndex: 1, hotkey:"2" },
+    { id: "ring",          label: "Ring",          typeIndex: 2, hotkey:"3" },
+    { id: "willow",        label: "Willow",        typeIndex: 3, hotkey:"4" },
+    { id: "crackle",       label: "Crackle",       typeIndex: 4, hotkey:"5" },
+    { id: "palm",          label: "Palm",          typeIndex: 5, hotkey:"6" },
+    { id: "comet",         label: "Comet",         typeIndex: 6, hotkey:"7" },
+    { id: "crossette",     label: "Crossette",     typeIndex: 7, hotkey:"8" },
+    { id: "heart",         label: "Heart",         typeIndex: 8, hotkey:"9" },
+    { id: "mega",          label: "Mega Burst",    typeIndex: 9, hotkey:"0" },
+  ];
+
+  function pickColor(palette, rng=Math.random){
+    const arr = palette || Palettes["Classic"];
+    return arr[Math.floor(rng()*arr.length)];
+  }
+
+  function flash(intensity=0.35){
+    flashOverlay.style.transition = 'none';
+    flashOverlay.style.opacity = String(clamp(intensity, 0, 0.9));
+    requestAnimationFrame(() => {
+      flashOverlay.style.transition = 'opacity 380ms ease';
+      flashOverlay.style.opacity = '0';
+    });
+  }
+
+  function makeRocket({xNorm,targetHeightNorm,typeIndex,paletteName,sizeMul,seed}){
+    const rng = (seed !== null && seed !== undefined && seed !== '') ? mulberry32(Number(seed) >>> 0) : Math.random;
+    const startX = clamp(xNorm, 0.03, 0.97) * W;
+    const startY = H + 12;
+    const targetY = clamp(targetHeightNorm, 0.12, 0.88) * H;
+    const dx = rand(-0.6,0.6);
+    const dy = -rand(6.8,9.2);
+    return { x:startX, y:startY, vx:dx, vy:dy, targetY, typeIndex, palette: Palettes[paletteName] || null, sizeMul:sizeMul||1, seed: (seed!==''&&seed!==null&&seed!==undefined)?(Number(seed)>>>0):null, rng, trail:[] };
+  }
+
+  function launch(params){
+    rockets.push(makeRocket(params));
+    playLaunch();
+  }
+
+  function spawnParticle(x,y,vx,vy,color,life,size,fade=1){
+    particles.push({x,y,vx,vy,color,life,maxLife:life,size,fade});
+  }
+  function spawnConfettiBurst(x,y,amount=60){
+    if(!confettiOn) return;
+    for(let i=0;i<amount;i++){
+      confetti.push({ x,y, vx: rand(-2.5,2.5), vy: rand(-2.5,1.5), w: rand(4,9), h: rand(4,9), r: rand(0,Math.PI*2), vr: rand(-0.2,0.2), color: pickColor(Palettes["Neon"]), life: rand(160, 260), maxLife: 260 });
+    }
+  }
+
+  function explode(rocket){
+    const {x,y,typeIndex,palette,sizeMul,rng} = rocket;
+    const baseN = 70 * sizeMul;
+    flash(0.22 + 0.06*sizeMul);
+    playBoom(0.8 + 0.35*sizeMul);
+    const color = () => pickColor(palette || Palettes["Classic"], rng);
+
+    function burstSphere(n, speedMin, speedMax, lifeMin, lifeMax, sizeMin, sizeMax){
+      for(let i=0;i<n;i++){
+        const a = rng()*Math.PI*2;
+        const sp = lerp(speedMin, speedMax, rng());
+        spawnParticle(x, y, Math.cos(a)*sp, Math.sin(a)*sp, color(), lerp(lifeMin, lifeMax, rng()), lerp(sizeMin,sizeMax,rng()), 1);
+      }
+    }
+
+    switch(typeIndex){
+      case 0: burstSphere(Math.floor(baseN), 1.6, 4.0, 55, 95, 1.6, 2.6); break;
+      case 1: burstSphere(Math.floor(baseN*0.85), 1.9, 4.6, 50, 85, 1.4, 2.4); break;
+      case 2: {
+        const n = Math.floor(baseN*0.9);
+        const radiusSp = 3.6 + rng()*0.8;
+        for(let i=0;i<n;i++){
+          const a = (i/n)*Math.PI*2;
+          spawnParticle(x, y, Math.cos(a)*radiusSp, Math.sin(a)*radiusSp, color(), 60 + rng()*35, 1.4 + rng()*1.1, 1);
+        }
+        break;
+      }
+      case 3: {
+        const n = Math.floor(baseN*0.75);
+        for(let i=0;i<n;i++){
+          const a = rng()*Math.PI*2;
+          const sp = lerp(1.1, 3.3, rng());
+          spawnParticle(x, y, Math.cos(a)*sp, Math.sin(a)*sp + 0.2, color(), 105 + rng()*75, 1.6 + rng()*1.2, 0.85);
+        }
+        break;
+      }
+      case 4: {
+        burstSphere(Math.floor(baseN*0.75), 1.4, 4.3, 45, 75, 1.4, 2.0);
+        for(let i=0;i<20*sizeMul;i++){
+          const a = rng()*Math.PI*2;
+          const sp = lerp(0.2, 1.2, rng());
+          spawnParticle(x, y, Math.cos(a)*sp, Math.sin(a)*sp, '#fff6c2', 25 + rng()*20, 1.2 + rng()*0.8, 1);
+        }
+        break;
+      }
+      case 5: {
+        const arms = 10;
+        for(let k=0;k<arms;k++){
+          const a = (k/arms)*Math.PI*2 + (rng()-0.5)*0.15;
+          const sp = 3.5 + rng()*1.1;
+          for(let s=0;s<10;s++){
+            const t = s/10;
+            spawnParticle(x, y, Math.cos(a)*sp*(0.6+t), Math.sin(a)*sp*(0.6+t), color(), 85 + rng()*55, 1.6 + rng()*1.2, 0.95);
+          }
+        }
+        break;
+      }
+      case 6: {
+        burstSphere(Math.floor(baseN*0.45), 2.8, 6.2, 45, 70, 1.0, 1.6);
+        spawnParticle(x, y, 0, 0, '#ffffff', 20, 3.2, 1);
+        break;
+      }
+      case 7: {
+        const n = Math.floor(baseN*0.6);
+        for(let i=0;i<n;i++){
+          const a = rng()*Math.PI*2;
+          const sp = lerp(1.6, 4.0, rng());
+          const c = color();
+          spawnParticle(x, y, Math.cos(a)*sp, Math.sin(a)*sp, c, 55 + rng()*40, 1.6 + rng()*1.0, 1);
+          for(let j=0;j<4;j++){
+            const aa = a + (j/4)*Math.PI*2;
+            spawnParticle(x, y, Math.cos(aa)*sp*0.55, Math.sin(aa)*sp*0.55, c, 45 + rng()*25, 1.1 + rng()*0.7, 1);
+          }
+        }
+        break;
+      }
+      case 8: {
+        const n = Math.floor(baseN*0.75);
+        for(let i=0;i<n;i++){
+          const t = (i/n)*Math.PI*2;
+          const hx = 16*Math.pow(Math.sin(t),3);
+          const hy = 13*Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t);
+          const scale = 0.14 + 0.05*rng();
+          const vx = hx*scale;
+          const vy = -hy*scale;
+          spawnParticle(x, y, vx, vy, color(), 70 + rng()*50, 1.4 + rng()*1.0, 1);
+        }
+        break;
+      }
+      case 9: {
+        burstSphere(Math.floor(baseN*1.35), 1.9, 5.3, 65, 120, 1.8, 3.0);
+        spawnConfettiBurst(x,y, Math.floor(90*sizeMul));
+        break;
+      }
+      default: burstSphere(Math.floor(baseN), 1.6, 4.0, 55, 95, 1.6, 2.6);
+    }
+  }
+
+  function updateEngine(){
+    for(let i=rockets.length-1;i>=0;i--){
+      const r = rockets[i];
+      r.vy += GRAVITY*0.45;
+      r.vx *= 0.995;
+      r.x += r.vx; r.y += r.vy;
+      r.trail.push({x:r.x, y:r.y}); if(r.trail.length>18) r.trail.shift();
+      if(r.y <= r.targetY || r.vy >= -0.5){ rockets.splice(i,1); explode(r); }
+    }
+    for(let i=particles.length-1;i>=0;i--){
+      const p = particles[i];
+      p.vy += GRAVITY;
+      p.vx *= DRAG; p.vy *= DRAG;
+      p.x += p.vx; p.y += p.vy;
+      p.life -= 1;
+      if(p.life <= 0) particles.splice(i,1);
+    }
+    for(let i=confetti.length-1;i>=0;i--){
+      const c = confetti[i];
+      c.vy += GRAVITY*0.55;
+      c.vx *= 0.995; c.vy *= 0.995;
+      c.x += c.vx; c.y += c.vy;
+      c.r += c.vr;
+      c.life -= 1;
+      if(c.life <= 0 || c.y > H+40) confetti.splice(i,1);
+    }
+  }
+
+  function drawEngine(){
+    ctx.save(); ctx.globalCompositeOperation = 'lighter';
+    for(const r of rockets){
+      for(let i=0;i<r.trail.length;i++){
+        const t = r.trail[i];
+        const a = i/r.trail.length;
+        ctx.globalAlpha = 0.08 + 0.20*a;
+        ctx.fillStyle = 'rgba(255,255,255,.9)';
+        ctx.beginPath(); ctx.arc(t.x, t.y, 1.3 + 1.4*a, 0, Math.PI*2); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath(); ctx.arc(r.x, r.y, 2.2, 0, Math.PI*2); ctx.fill();
+    }
+    ctx.restore();
+
+    ctx.save(); ctx.globalCompositeOperation = 'lighter';
+    for(const p of particles){
+      const alpha = (p.life/p.maxLife);
+      ctx.globalAlpha = alpha * (p.fade || 1);
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
+    }
+    ctx.restore();
+
+    if(confettiOn){
+      ctx.save();
+      for(const c of confetti){
+        const a = c.life/c.maxLife;
+        ctx.globalAlpha = a;
+        ctx.fillStyle = c.color;
+        ctx.save();
+        ctx.translate(c.x,c.y); ctx.rotate(c.r);
+        ctx.fillRect(-c.w/2,-c.h/2,c.w,c.h);
+        ctx.restore();
+      }
+      ctx.restore();
+    }
+  }
+
+  // ============================================================
+  // Show control
+  // ============================================================
+  const show = { title:"Untitled Performance", version:1, bpm:120, resolution_ms:50, default_background:"Brooklyn Bridge", sequences:{}, timeline:[] };
+  let currentBackgroundName = show.default_background;
+  let currentLauncherId = "Center";
+  let aim = { xNorm: 0.5, heightNorm: 0.45 };
+  let mode = 'manual';
+
+  let transport = { state:'stopped', startAtMs:0, pausedAtT:0, t:0 };
+  let recording = false;
+  let recordTarget = { kind:'timeline', name:null };
+  let activeSequenceName = null;
+
+  const runtimeQueue = [];
+
+  function setTransportState(next){
+    transport.state = next;
+    document.getElementById('playDot').classList.toggle('off', next !== 'playing');
+    document.getElementById('statusText').textContent =
+      (mode === 'manual') ? 'Manual' :
+      (next === 'playing' ? 'Playing' : (next === 'paused' ? 'Paused' : 'Stopped'));
+  }
+
+  function transportPlay(){
+    if(mode === 'manual'){ mode = 'show'; modeSelect.value = 'show'; }
+    if(transport.state === 'playing') return;
+    const base = nowMs();
+    if(transport.state === 'paused'){ transport.startAtMs = base - transport.pausedAtT; }
+    else { transport.startAtMs = base; transport.t = 0; transport.pausedAtT = 0; }
+    setTransportState('playing');
+  }
+  function transportPause(){
+    if(transport.state !== 'playing') return;
+    transport.pausedAtT = transport.t;
+    setTransportState('paused');
+  }
+  function transportStop(){
+    transport.t = 0; transport.pausedAtT = 0;
+    setTransportState('stopped');
+    scrubInput.value = 0;
+    updateCueList();
+  }
+  function setTime(t){
+    transport.t = Math.max(0, Math.floor(t));
+    scrubInput.value = transport.t;
+    updateCueList();
+  }
+
+  function scheduleFromTimeline(tPrev, tNow){
+    for(const cue of show.timeline){
+      if(cue.t > tPrev && cue.t <= tNow) triggerCue(cue, cue.t);
+    }
+  }
+  function flushRuntimeQueue(tPrev, tNow){
+    for(let i=runtimeQueue.length-1;i>=0;i--){
+      const cue = runtimeQueue[i];
+      if(cue.t > tPrev && cue.t <= tNow){
+        triggerCue(cue, cue.t);
+        runtimeQueue.splice(i,1);
+      }
+    }
+  }
+
+  function resolveTypeIndex(type){
+    if(typeof type === 'number') return clamp(type, 0, 9);
+    const s = String(type || '').toLowerCase();
+    const t = FireworkTypes.find(x => x.id === s || x.label.toLowerCase() === s);
+    return t ? t.typeIndex : null;
+  }
+
+  function fireFromCue(f){
+    const typeIndex = resolveTypeIndex(f.type);
+    if(typeIndex === null) return;
+    const launcherId = f.launcher || currentLauncherId;
+    const xNorm = (f.x !== undefined && f.x !== null) ? Number(f.x) : resolveLauncherX(launcherId);
+    const height = (f.height !== undefined && f.height !== null) ? Number(f.height) : aim.heightNorm;
+    const sizeMul = (f.size !== undefined && f.size !== null) ? Number(f.size) : Number(sizeRange.value);
+    const paletteName = f.palette || paletteSelect.value;
+    const seed = (f.seed !== undefined) ? f.seed : (seedInput.value !== '' ? Number(seedInput.value) : null);
+    launch({ xNorm, targetHeightNorm: clamp(height, 0.12, 0.88), typeIndex, paletteName, sizeMul, seed });
+  }
+
+  function triggerCue(cue, cueTime){
+    if(cue.background){ setBackground(cue.background); return; }
+    if(cue.sequence){
+      const seqName = cue.sequence.name;
+      const seq = show.sequences[seqName];
+      if(!seq || !seq.steps) return;
+      const baseT = cueTime;
+      for(const step of seq.steps){
+        if(step.fire) runtimeQueue.push({ t: baseT + (step.t||0), fire: step.fire });
+      }
+      return;
+    }
+    if(cue.fire){ fireFromCue(cue.fire); return; }
+  }
+
+  // ============================================================
+  // Launchers
+  // ============================================================
+  const LauncherMaps = {
+    "_default": { "Left":0.25, "Center":0.50, "Right":0.75, "L":0.25, "C":0.50, "R":0.75 },
+    "Brooklyn Bridge": { "Left Bank":0.22, "Center":0.50, "Right Bank":0.78, "Bridge Span":0.50 },
+    "Baltimore Harbor": { "Pier 6":0.30, "Inner Harbor":0.50, "Federal Hill":0.72, "Barge A":0.38, "Barge B":0.62 },
+    "Sydney": { "The Rocks":0.28, "Harbor":0.50, "Milsons Point":0.74, "Bridge":0.50 }
+  };
+  let launcherList = [];
+  function resolveLauncherX(id){
+    const map = LauncherMaps[currentBackgroundName] || LauncherMaps["_default"];
+    if(map[id] !== undefined) return map[id];
+    if(id === 'L') return 0.25; if(id === 'C') return 0.50; if(id === 'R') return 0.75;
+    return 0.50;
+  }
+  function updateLaunchersForBackground(){
+    const map = LauncherMaps[currentBackgroundName] || LauncherMaps["_default"];
+    launcherList = Object.keys(map);
+    launcherSelect.innerHTML = '';
+    for(const name of launcherList){
+      const opt = document.createElement('option');
+      opt.value = name; opt.textContent = name;
+      launcherSelect.appendChild(opt);
+    }
+    currentLauncherId = launcherList.includes(currentLauncherId) ? currentLauncherId : (launcherList[0] || 'Center');
+    launcherSelect.value = currentLauncherId;
+  }
+  function setBackground(name){
+    if(!Backgrounds[name]) return;
+    currentBackgroundName = name;
+    bgSelect.value = name;
+    updateLaunchersForBackground();
+  }
+
+  // ============================================================
+  // Markdown I/O (YAML frontmatter + fenced JSON)
+  // ============================================================
+  function defaultMarkdown(){
+    return `---
+project: Pyrotechnica
+version: 1
+title: Demo Performance
+bpm: 120
+resolution_ms: 50
+default_background: "Brooklyn Bridge"
+---
+
+## Sequences
+
+\`\`\`json sequences
+{
+  "fan_three": {
+    "steps": [
+      { "t": 0,   "fire": { "type": "chrysanthemum", "launcher": "Left Bank", "height": 0.40 } },
+      { "t": 180, "fire": { "type": "chrysanthemum", "launcher": "Center",    "height": 0.45 } },
+      { "t": 360, "fire": { "type": "chrysanthemum", "launcher": "Right Bank","height": 0.40 } }
+    ]
+  },
+  "sparkle_ladder": {
+    "steps": [
+      { "t": 0,   "fire": { "type": "crackle", "launcher": "Left Bank", "height": 0.35, "palette": "Gold" } },
+      { "t": 250, "fire": { "type": "crackle", "launcher": "Center",    "height": 0.40, "palette": "Gold" } },
+      { "t": 500, "fire": { "type": "crackle", "launcher": "Right Bank","height": 0.45, "palette": "Gold" } },
+      { "t": 750, "fire": { "type": "ring",    "launcher": "Center",    "height": 0.50, "palette": "Neon" } }
+    ]
+  }
+}
+\`\`\`
+
+## Performance
+
+\`\`\`json timeline
+[
+  { "t": 0,    "background": "Brooklyn Bridge" },
+  { "t": 0,    "sequence": { "name": "fan_three" } },
+  { "t": 1400, "sequence": { "name": "sparkle_ladder" } },
+  { "t": 3200, "fire": { "type": "heart", "launcher": "Center", "height": 0.35, "palette": "Red/Pink", "size": 1.2 } },
+  { "t": 5200, "fire": { "type": "mega",  "launcher": "Bridge Span", "height": 0.45, "palette": "Neon", "size": 1.6 } },
+  { "t": 7000, "fire": { "type": "willow","launcher": "Left Bank", "height": 0.52, "palette": "Cool", "size": 1.2 } },
+  { "t": 7300, "fire": { "type": "willow","launcher": "Right Bank","height": 0.52, "palette": "Cool", "size": 1.2 } },
+  { "t": 9000, "fire": { "type": "mega",  "launcher": "Center", "height": 0.48, "palette": "Gold", "size": 2.0 } }
+]
+\`\`\`
+`;
+  }
+
+  function parseFrontmatter(md){
+    const fm = {};
+    const m = md.match(/^---\s*\n([\s\S]*?)\n---\s*\n/m);
+    if(!m) return { frontmatter: fm, rest: md };
+    const body = m[1];
+    const rest = md.slice(m[0].length);
+    for(const line of body.split(/\n/)){
+      const trimmed = line.trim();
+      if(!trimmed || trimmed.startsWith('#')) continue;
+      const idx = trimmed.indexOf(':');
+      if(idx === -1) continue;
+      const key = trimmed.slice(0,idx).trim();
+      let val = trimmed.slice(idx+1).trim();
+      if((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) val = val.slice(1,-1);
+      if(/^-?\d+(\.\d+)?$/.test(val)) val = Number(val);
+      fm[key] = val;
+    }
+    return { frontmatter: fm, rest };
+  }
+
+  function extractFencedJson(md){
+    const blocks = [];
+    const re = /```json\s+([^\n]+)\n([\s\S]*?)\n```/g;
+    let m;
+    while((m = re.exec(md))){
+      blocks.push({ tag: m[1].trim(), content: m[2].trim() });
+    }
+    return blocks;
+  }
+
+  function loadFromMarkdown(md){
+    const { frontmatter, rest } = parseFrontmatter(md);
+    const blocks = extractFencedJson(rest);
+    const next = {
+      title: String(frontmatter.title || 'Untitled Performance'),
+      version: Number(frontmatter.version || 1),
+      bpm: Number(frontmatter.bpm || 120),
+      resolution_ms: Number(frontmatter.resolution_ms || 50),
+      default_background: String(frontmatter.default_background || 'Brooklyn Bridge'),
+      sequences: {},
+      timeline: []
+    };
+    for(const b of blocks){
+      const parsed = JSON.parse(b.content);
+      if(b.tag.toLowerCase().startsWith('seq')) next.sequences = parsed || {};
+      if(b.tag.toLowerCase().startsWith('time')) next.timeline = Array.isArray(parsed) ? parsed : [];
+    }
+    next.timeline = (next.timeline || []).map(c => ({...c, t: Math.max(0, Math.floor(Number(c.t || 0))) })).sort((a,b)=>a.t-b.t);
+    return next;
+  }
+
+  function toMarkdown(obj){
+    return [
+      '---',
+      'project: Pyrotechnica',
+      `version: ${obj.version || 1}`,
+      `title: "${String(obj.title || 'Untitled Performance').replace(/"/g,'\\\"')}"`,
+      `bpm: ${Number(obj.bpm || 120)}`,
+      `resolution_ms: ${Number(obj.resolution_ms || 50)}`,
+      `default_background: "${String(obj.default_background || 'Brooklyn Bridge').replace(/"/g,'\\\"')}"`,
+      '---',
+      '',
+      '## Sequences',
+      '',
+      '```json sequences',
+      JSON.stringify(obj.sequences || {}, null, 2),
+      '```',
+      '',
+      '## Performance',
+      '',
+      '```json timeline',
+      JSON.stringify(obj.timeline || [], null, 2),
+      '```',
+      ''
+    ].join('\n');
+  }
+
+  // ============================================================
+  // UI wiring
+  // ============================================================
+  const bgSelect = document.getElementById('bgSelect');
+  const launcherSelect = document.getElementById('launcherSelect');
+  const modeSelect = document.getElementById('modeSelect');
+  const heightRange = document.getElementById('heightRange');
+  const sizeRange = document.getElementById('sizeRange');
+  const paletteSelect = document.getElementById('paletteSelect');
+  const seedInput = document.getElementById('seedInput');
+  const playBtn = document.getElementById('playBtn');
+  const pauseBtn = document.getElementById('pauseBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const demoBtn = document.getElementById('demoBtn');
+  const scrubInput = document.getElementById('scrubInput');
+  const recordBtn = document.getElementById('recordBtn');
+  const newSeqBtn = document.getElementById('newSeqBtn');
+  const newPerfBtn = document.getElementById('newPerfBtn');
+  const toggleSound = document.getElementById('toggleSound');
+  const toggleConfetti = document.getElementById('toggleConfetti');
+  const toggleStars = document.getElementById('toggleStars');
+  const clearBtn = document.getElementById('clearBtn');
+  const tiles = document.getElementById('tiles');
+  const cueList = document.getElementById('cueList');
+  const perfTitle = document.getElementById('perfTitle');
+  const timePill = document.getElementById('timePill');
+  const mdEditor = document.getElementById('mdEditor');
+  const applyMdBtn = document.getElementById('applyMdBtn');
+  const saveMdBtn = document.getElementById('saveMdBtn');
+  const loadMdInput = document.getElementById('loadMdInput');
+  const mdStatus = document.getElementById('mdStatus');
+
+  for(const name of Object.keys(Backgrounds)){
+    const opt = document.createElement('option'); opt.value = name; opt.textContent = name;
+    bgSelect.appendChild(opt);
+  }
+  for(const name of Object.keys(Palettes)){
+    const opt = document.createElement('option'); opt.value = name; opt.textContent = name;
+    paletteSelect.appendChild(opt);
+  }
+  paletteSelect.value = "Auto (Random)";
+
+  let selectedTypeIndex = 0;
+
+  function buildTiles(){
+    tiles.innerHTML = '';
+    for(const fw of FireworkTypes){
+      const b = document.createElement('button');
+      b.className = 'tile' + (fw.typeIndex === selectedTypeIndex ? ' primary' : '');
+      b.innerHTML = `<div class="name">${fw.label}</div><div class="meta">${fw.id}</div><div class="hotkey">Key ${fw.hotkey}</div>`;
+      b.addEventListener('click', (ev) => {
+        selectedTypeIndex = fw.typeIndex; buildTiles();
+        fireManual({ armedForRecord: ev.shiftKey });
+      });
+      tiles.appendChild(b);
+    }
+  }
+
+  function updatePerfBadge(){
+    perfTitle.textContent = `${show.title} · ${show.timeline.length} cues · ${Object.keys(show.sequences).length} sequences`;
+  }
+
+  function msToClock(ms){
+    ms = Math.max(0, Math.floor(ms));
+    const m = Math.floor(ms/60000);
+    const s = Math.floor((ms%60000)/1000);
+    const r = ms%1000;
+    return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(r).padStart(3,'0')}`;
+  }
+
+  function cueToString(c){
+    if(c.background) return `background: "${c.background}"`;
+    if(c.fire) return `fire: ${c.fire.type} @${c.fire.launcher || 'Center'} h=${c.fire.height ?? ''}`;
+    if(c.sequence) return `sequence: ${c.sequence.name}`;
+    return 'unknown';
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+  }
+
+  function updateCueList(){
+    cueList.innerHTML = '';
+    const t = transport.t || 0;
+    const start = Math.max(0, t - 2000);
+    const end = t + 6000;
+    const cues = show.timeline.filter(c => c.t >= start && c.t <= end).slice(0, 200);
+    if(cues.length === 0){
+      cueList.textContent = '(no cues in view — load a performance or record shots)';
+    } else {
+      for(const c of cues){
+        const row = document.createElement('div');
+        row.className = 'cueRow';
+        row.innerHTML = `<span class="t">${String(c.t).padStart(5,' ')}</span><span class="a">${escapeHtml(cueToString(c))}</span><span class="x">${c.t <= t ? '✓' : ''}</span>`;
+        cueList.appendChild(row);
+      }
+    }
+  }
+
+  // init background + launchers
+  setBackground(show.default_background);
+  updateLaunchersForBackground();
+  buildTiles();
+  updateCueList();
+  updatePerfBadge();
+  setTransportState('stopped');
+
+  bgSelect.addEventListener('change', () => setBackground(bgSelect.value));
+  launcherSelect.addEventListener('change', () => currentLauncherId = launcherSelect.value);
+
+  modeSelect.addEventListener('change', () => {
+    mode = modeSelect.value;
+    if(mode === 'manual') setTransportState('stopped');
+    if(mode === 'demo'){ loadDemo(); transportPlay(); }
+    document.getElementById('statusText').textContent = (mode==='manual'?'Manual':'Stopped');
+  });
+
+  toggleSound.addEventListener('click', () => {
+    soundOn = !soundOn;
+    toggleSound.classList.toggle('on', soundOn);
+    toggleSound.textContent = soundOn ? 'Sound: On' : 'Sound: Off';
+    if(soundOn) ensureAudio();
+  });
+  toggleConfetti.addEventListener('click', () => {
+    confettiOn = !confettiOn;
+    toggleConfetti.classList.toggle('on', confettiOn);
+    toggleConfetti.textContent = confettiOn ? 'Confetti: On' : 'Confetti: Off';
+  });
+  toggleStars.addEventListener('click', () => {
+    starsOn = !starsOn;
+    toggleStars.classList.toggle('on', starsOn);
+    toggleStars.textContent = starsOn ? 'Stars: On' : 'Stars: Off';
+  });
+  clearBtn.addEventListener('click', () => { rockets.length=0; particles.length=0; confetti.length=0; });
+
+  playBtn.addEventListener('click', transportPlay);
+  pauseBtn.addEventListener('click', transportPause);
+  stopBtn.addEventListener('click', transportStop);
+  demoBtn.addEventListener('click', () => { loadDemo(); mode='demo'; modeSelect.value='demo'; transportStop(); transportPlay(); });
+
+  scrubInput.addEventListener('change', () => setTime(Number(scrubInput.value||0)));
+
+  recordBtn.addEventListener('click', toggleRecording);
+  newSeqBtn.addEventListener('click', createNewSequence);
+  newPerfBtn.addEventListener('click', createNewPerformance);
+
+  function toggleRecording(){
+    recording = !recording;
+    recordBtn.classList.toggle('on', recording);
+    recordBtn.textContent = recording ? 'Record: On' : 'Record: Off';
+    if(recording){
+      recordTarget = activeSequenceName ? { kind:'sequence', name: activeSequenceName } : { kind:'timeline', name:null };
+    }
+  }
+
+  function createNewSequence(){
+    const name = prompt('Sequence name?', `seq_${Object.keys(show.sequences).length+1}`);
+    if(!name) return;
+    show.sequences[name] = { steps: [] };
+    show.sequences[name]._baseT = nowMs();
+    activeSequenceName = name;
+    recordTarget = { kind:'sequence', name };
+    mdEditor.value = toMarkdown(show);
+    mdStatus.textContent = `Created sequence "${name}". Toggle Record to capture shots into it.`;
+    updateCueList(); updatePerfBadge();
+  }
+
+  function createNewPerformance(){
+    const title = prompt('Performance title?', show.title || 'Untitled Performance');
+    if(title) show.title = title;
+    show.timeline = [];
+    runtimeQueue.length = 0;
+    transportStop();
+    mode = 'show';
+    modeSelect.value = 'show';
+    mdEditor.value = toMarkdown(show);
+    mdStatus.textContent = `New performance started (“${show.title}”).`;
+    updateCueList(); updatePerfBadge();
+  }
+
+  applyMdBtn.addEventListener('click', () => {
+    try{
+      const next = loadFromMarkdown(mdEditor.value);
+      Object.assign(show, next);
+      runtimeQueue.length = 0;
+      setBackground(show.default_background || 'Brooklyn Bridge');
+      transportStop();
+      mode = 'show';
+      modeSelect.value = 'show';
+      mdStatus.textContent = `Loaded: ${show.title} (${show.timeline.length} cues, ${Object.keys(show.sequences).length} sequences).`;
+      updateCueList(); updatePerfBadge();
+    } catch(err){
+      mdStatus.textContent = 'Error: ' + err.message;
+    }
+  });
+
+  saveMdBtn.addEventListener('click', () => {
+    const md = toMarkdown(show);
+    mdEditor.value = md;
+    const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+    const a = document.createElement('a');
+    const safe = (show.title || 'pyrotechnica').replace(/[^a-z0-9\-_]+/gi,'_').toLowerCase();
+    a.href = URL.createObjectURL(blob);
+    a.download = safe + '.md';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    mdStatus.textContent = 'Saved Markdown file.';
+  });
+
+  loadMdInput.addEventListener('change', async () => {
+    const f = loadMdInput.files && loadMdInput.files[0];
+    if(!f) return;
+    const text = await f.text();
+    mdEditor.value = text;
+    mdStatus.textContent = 'Loaded file into editor. Click “Apply Markdown” to activate it.';
+    loadMdInput.value = '';
+  });
+
+  mdEditor.value = defaultMarkdown();
+  mdStatus.textContent = 'Demo Markdown loaded into editor. Click “Apply Markdown” to run it, or “Load Demo”.';
+
+  function loadDemo(){
+    mdEditor.value = defaultMarkdown();
+    const next = loadFromMarkdown(mdEditor.value);
+    Object.assign(show, next);
+    setBackground(show.default_background || 'Brooklyn Bridge');
+    runtimeQueue.length = 0;
+    updateCueList(); updatePerfBadge();
+    mdStatus.textContent = 'Demo loaded. Press Play.';
+  }
+
+  function fireManual({ armedForRecord=false } = {}){
+    const typeObj = FireworkTypes.find(t => t.typeIndex === selectedTypeIndex);
+    const typeId = typeObj ? typeObj.id : 'chrysanthemum';
+
+    const cueFire = {
+      type: typeId,
+      launcher: currentLauncherId,
+      height: Number(heightRange.value),
+      palette: paletteSelect.value === "Auto (Random)" ? undefined : paletteSelect.value,
+      size: Number(sizeRange.value),
+      seed: (seedInput.value !== '' ? Number(seedInput.value) : undefined),
+      x: clamp(aim.xNorm ?? resolveLauncherX(currentLauncherId), 0.03, 0.97),
+    };
+
+    fireFromCue(cueFire);
+
+    if(recording || armedForRecord){
+      recordCue({ fire: cueFire });
+    }
+  }
+
+  function recordCue(action){
+    if(recordTarget.kind === 'sequence' && recordTarget.name){
+      const seq = show.sequences[recordTarget.name] || (show.sequences[recordTarget.name] = { steps: [] });
+      const base = seq._baseT ?? (seq._baseT = nowMs());
+      const rel = Math.max(0, Math.floor(nowMs() - base));
+      seq.steps.push({ t: rel, ...action });
+      seq.steps.sort((a,b)=>a.t-b.t);
+      mdStatus.textContent = `Recorded into sequence "${recordTarget.name}" (+${rel}ms).`;
+    } else {
+      const t = (transport.state === 'playing') ? transport.t : 0;
+      const cue = { t: Math.max(0, Math.floor(t)), ...action };
+      show.timeline.push(cue);
+      show.timeline.sort((a,b)=>a.t-b.t);
+      mdStatus.textContent = `Recorded cue at t=${cue.t}ms.`;
+    }
+    mdEditor.value = toMarkdown(show);
+    updateCueList(); updatePerfBadge();
+  }
+
+  canvas.addEventListener('pointerdown', (ev) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = (ev.clientX - rect.left);
+    const y = (ev.clientY - rect.top);
+    aim.xNorm = clamp(x / W, 0.03, 0.97);
+    const clickHeight = clamp(y / H, 0.10, 0.90);
+    aim.heightNorm = clamp(clickHeight, 0.12, 0.88);
+    heightRange.value = aim.heightNorm.toFixed(2);
+    fireManual({ armedForRecord: ev.shiftKey });
+  });
+
+  window.addEventListener('keydown', (ev) => {
+    if(ev.target && ['TEXTAREA','INPUT','SELECT'].includes(ev.target.tagName)){
+      if(ev.key === 'Escape') ev.target.blur();
+      return;
+    }
+    if(ev.code === 'Space'){
+      ev.preventDefault();
+      if(transport.state === 'playing') transportPause(); else transportPlay();
+      return;
+    }
+    if(ev.key.toLowerCase() === 'r'){ toggleRecording(); return; }
+    if(ev.key.toLowerCase() === 's'){ toggleSound.click(); return; }
+    const map = {'1':0,'2':1,'3':2,'4':3,'5':4,'6':5,'7':6,'8':7,'9':8,'0':9};
+    if(map[ev.key] !== undefined){ selectedTypeIndex = map[ev.key]; buildTiles(); fireManual(); }
+  });
+
+  // main loop
+  function loop(){
+    const bg = Backgrounds[currentBackgroundName] || Backgrounds["Brooklyn Bridge"];
+    bg.draw();
+
+    if(mode !== 'manual' && transport.state === 'playing'){
+      const tPrev = transport.t;
+      transport.t = Math.max(0, Math.floor(nowMs() - transport.startAtMs));
+      scheduleFromTimeline(tPrev, transport.t);
+      flushRuntimeQueue(tPrev, transport.t);
+
+      const lastT = (show.timeline.length ? show.timeline[show.timeline.length-1].t : 0);
+      if(transport.t > lastT + 2000 && runtimeQueue.length === 0) transportPause();
+    }
+
+    timePill.textContent = msToClock(transport.t);
+    updateEngine();
+    drawEngine();
+
+    requestAnimationFrame(loop);
+  }
+  loop();
+
+})();
+</script>
+</body>
+</html>

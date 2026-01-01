@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Pyrotechnica - Fireworks Simulator</title>
+  <style>
+    :root {
+      --dock-bg: rgba(15, 15, 20, 0.95);
+      --accent: #00e5ff;
+      --text: #ffffff;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      background: #000; 
+      color: var(--text); 
+      font-family: 'Segoe UI', system-ui, sans-serif; 
+      overflow: hidden; 
+      height: 100vh;
+    }
+
+    /* 🌆 BACKGROUND SYSTEM */
+    #background-layer {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-size: cover; background-position: center bottom;
+      transition: background-image 1.2s ease-in-out;
+      z-index: 1;
+      filter: brightness(0.4) contrast(1.2);
+    }
+
+    canvas { display: block; position: fixed; top: 0; left: 0; z-index: 2; pointer-events: none; }
+    
+    /* 🛠️ UI DOCK */
+    .dock {
+      position: fixed; bottom: 0; left: 0; width: 100%; height: 140px;
+      background: var(--dock-bg); border-top: 1px solid #333;
+      display: flex; padding: 15px; z-index: 100; backdrop-filter: blur(12px);
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+    }
+
+    .dock-section {
+      display: flex; flex-direction: column; gap: 8px;
+      padding: 0 20px; border-right: 1px solid #333;
+    }
+    .dock-section:last-child { border-right: none; }
+    .section-title { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 4px; }
+
+    .launcher-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+    
+    button, select {
+      background: #222; border: 1px solid #444; color: #fff;
+      padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;
+      transition: all 0.2s;
+    }
+    button:hover { background: #333; border-color: var(--accent); }
+    button.active { background: var(--accent); color: #000; font-weight: bold; }
+
+    /* 📝 MARKDOWN EDITOR */
+    #editor-panel {
+      position: fixed; top: 20px; right: 20px; width: 320px; bottom: 160px;
+      background: rgba(0,0,0,0.85); border: 1px solid #444; border-radius: 8px;
+      display: none; flex-direction: column; z-index: 1000; overflow: hidden;
+    }
+    #md-content {
+      flex: 1; background: transparent; border: none; color: #0f0;
+      padding: 15px; font-family: 'Courier New', monospace; font-size: 13px; resize: none; outline: none;
+    }
+    .editor-header { background: #222; padding: 10px; display: flex; justify-content: space-between; align-items: center; }
+
+    /* ⚡ FLASH OVERLAY */
+    #flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 50; pointer-events: none; opacity: 0; background: #fff; }
+  </style>
+</head>
+<body>
+
+  <div id="background-layer"></div>
+  <canvas id="canvas"></canvas>
+  <div id="flash"></div>
+
+  <div id="editor-panel">
+    <div class="editor-header">
+      <span>Performance Script (.md)</span>
+      <button onclick="toggleEditor()">✕</button>
+    </div>
+    <textarea id="md-content"># My Performance
+[00:00:10] Launch: Heart | Palette: Red
+[00:00:50] Launch: Star | Palette: Gold
+[00:01:20] Launch: Willow | Palette: Cyan
+[00:02:00] Launch: Crackle | Palette: Green</textarea>
+    <div style="padding:10px; display:flex; gap:5px; background:#111;">
+      <button onclick="app.saveScript()">💾 Save</button>
+      <button onclick="app.loadScript()">📂 Load</button>
+      <button onclick="app.runPerformance()" style="flex:1; background: #28a745;">▶ Play</button>
+    </div>
+  </div>
+
+  <div class="dock">
+    <div class="dock-section">
+      <div class="section-title">Launchers</div>
+      <div class="launcher-grid">
+        <button onclick="app.launch(0)">Spherical</button>
+        <button onclick="app.launch(3)">Willow</button>
+        <button onclick="app.launch(6)">❤️ Heart</button>
+        <button onclick="app.launch(7)">⭐ Star</button>
+        <button onclick="app.launch(9)">Crackle</button>
+      </div>
+    </div>
+
+    <div class="dock-section">
+      <div class="section-title">Environment</div>
+      <select id="bg-select" onchange="app.updateBackground(this.value)">
+        <option value="sydney">Sydney Opera House</option>
+        <option value="tokyo">Tokyo Tower</option>
+        <option value="london">London Eye</option>
+        <option value="paris">Eiffel Tower</option>
+        <option value="baltimore">Baltimore Harbor</option>
+        <option value="brooklyn">Brooklyn Bridge</option>
+        <option value="rushmore">Mount Rushmore</option>
+      </select>
+      <button id="sound-btn" onclick="app.toggleSound()">🔊 Sound: OFF</button>
+    </div>
+
+    <div class="dock-section">
+      <div class="section-title">Sequence Control</div>
+      <button onclick="toggleEditor()">📝 Edit Script</button>
+      <button onclick="app.triggerFinale()" style="border-color: #ff4081; color: #ff4081;">🎆 Grand Finale</button>
+    </div>
+  </div>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════
+    // PYROTECHNICA ENGINE
+    // ═══════════════════════════════════════════════════════════
+    class Pyrotechnica {
+      constructor() {
+        this.canvas = document.getElementById('canvas');
+        this.ctx = this.canvas.getContext('2d', { alpha: false });
+        this.backgroundLayer = document.getElementById('background-layer');
+        this.mdArea = document.getElementById('md-content');
+        
+        this.rockets = [];
+        this.particles = [];
+        this.confetti = [];
+        this.timeline = [];
+        this.isPlaying = false;
+        this.startTime = 0;
+        this.soundEnabled = false;
+        this.audioCtx = null;
+
+        // Configuration from original engine
+        this.palettes = [
+          ['#FFD700', '#FFA500', '#FF8C00', '#FFEA00'], // Gold
+          ['#FF1744', '#FF5252', '#FF4081', '#F50057'], // Red
+          ['#00E5FF', '#18FFFF', '#00B8D4', '#84FFFF'], // Cyan
+          ['#00E676', '#69F0AE', '#00C853', '#B9F6CA'], // Green
+          ['#AA00FF', '#E040FB', '#D500F9', '#EA80FC'], // Purple
+        ];
+
+        this.backgrounds = {
+          sydney: 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?q=80&w=2070',
+          tokyo: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=2094',
+          london: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070',
+          paris: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073',
+          baltimore: 'https://images.unsplash.com/photo-1572942449481-9f93976f634b?q=80&w=2070',
+          brooklyn: 'https://images.unsplash.com/photo-1522083165195-3424ed129620?q=80&w=2194',
+          rushmore: 'https://images.unsplash.com/photo-1628155930542-3c7a64e2c833?q=80&w=1974'
+        };
+
+        this.init();
+      }
+
+      init() {
+        window.addEventListener('resize', () => this.resize());
+        this.resize();
+        this.updateBackground('sydney');
+        requestAnimationFrame((t) => this.render(t));
+      }
+
+      resize() {
+        this.W = this.canvas.width = window.innerWidth;
+        this.H = this.canvas.height = window.innerHeight;
+      }
+
+      updateBackground(city) {
+        this.backgroundLayer.style.backgroundImage = `url('${this.backgrounds[city]}')`;
+      }
+
+      toggleSound() {
+        if (!this.audioCtx) this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        this.soundEnabled = !this.soundEnabled;
+        document.getElementById('sound-btn').innerText = `🔊 Sound: ${this.soundEnabled ? 'ON' : 'OFF'}`;
+      }
+
+      // 🚀 Launcher Logic
+      launch(type, paletteIdx = null) {
+        const x = this.W * 0.15 + Math.random() * this.W * 0.7;
+        const palette = this.palettes[paletteIdx ?? Math.floor(Math.random() * this.palettes.length)];
+        
+        this.rockets.push({
+          x: x, y: this.H + 20,
+          vx: (Math.random() - 0.5) * 2,
+          vy: -(10 + Math.random() * 5),
+          targetY: this.H * 0.15 + Math.random() * this.H * 0.35,
+          palette: palette,
+          type: type,
+          trailIdx: 0,
+          trailX: new Float32Array(12),
+          trailY: new Float32Array(12),
+          trailLife: new Float32Array(12)
+        });
+        if (this.soundEnabled) this.playLaunchSound();
+      }
+
+      // 📝 Performance Sequencer
+      parseMarkdown() {
+        const text = this.mdArea.value;
+        const lines = text.split('\n');
+        this.timeline = [];
+
+        lines.forEach(line => {
+          const match = line.match(/\[(\d+):(\d+):(\d+)\]/);
+          if (match) {
+            const timeMs = (parseInt(match[1]) * 60000) + (parseInt(match[2]) * 1000) + (parseInt(match[3]) * 10);
+            let type = 0;
+            if (line.includes('Heart')) type = 6;
+            else if (line.includes('Star')) type = 7;
+            else if (line.includes('Willow')) type = 3;
+            else if (line.includes('Crackle')) type = 9;
+
+            this.timeline.push({ time: timeMs, type: type, fired: false });
+          }
+        });
+      }
+
+      runPerformance() {
+        this.parseMarkdown();
+        this.startTime = performance.now();
+        this.isPlaying = true;
+      }
+
+      // 💾 Markdown File I/O
+      saveScript() {
+        const blob = new Blob([this.mdArea.value], { type: 'text/markdown' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'performance.md';
+        a.click();
+      }
+
+      loadScript() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.onchange = e => {
+          const file = e.target.files[0];
+          const reader = new FileReader();
+          reader.onload = event => this.mdArea.value = event.target.result;
+          reader.readAsText(file);
+        };
+        input.click();
+      }
+
+      triggerFinale() {
+        for(let i=0; i<15; i++) {
+          setTimeout(() => this.launch(Math.floor(Math.random() * 10)), i * 200);
+        }
+      }
+
+      // 🔊 Synthesized Audio
+      playLaunchSound() {
+        if (!this.audioCtx) return;
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+        osc.connect(gain); gain.connect(this.audioCtx.destination);
+        osc.frequency.setValueAtTime(400, this.audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1200, this.audioCtx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.1, this.audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.3);
+        osc.start(); osc.stop(this.audioCtx.currentTime + 0.3);
+      }
+
+      // 🎨 Physics Render Loop
+      render(time) {
+        this.ctx.fillStyle = '#0a0a18';
+        this.ctx.fillRect(0, 0, this.W, this.H);
+
+        // Timeline check
+        if (this.isPlaying) {
+          const elapsed = time - this.startTime;
+          this.timeline.forEach(event => {
+            if (!event.fired && elapsed >= event.time) {
+              this.launch(event.type);
+              event.fired = true;
+            }
+          });
+          if (this.timeline.every(e => e.fired)) this.isPlaying = false;
+        }
+
+        // Rocket Physics
+        for (let i = this.rockets.length - 1; i >= 0; i--) {
+          const r = this.rockets[i];
+          r.vy += 0.12; r.x += r.vx; r.y += r.vy;
+          
+          // Draw trail
+          this.ctx.fillStyle = '#ffcc66';
+          this.ctx.beginPath(); this.ctx.arc(r.x, r.y, 3, 0, Math.PI * 2); this.ctx.fill();
+
+          if (r.y <= r.targetY || r.vy >= -1) {
+            this.explode(r);
+            this.rockets.splice(i, 1);
+          }
+        }
+
+        // Particle Physics
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+          const p = this.particles[i];
+          p.vy += p.gravity; p.vx *= p.drag; p.vy *= p.drag;
+          p.x += p.vx; p.y += p.vy; p.life--;
+          
+          if (p.life <= 0) { this.particles.splice(i, 1); continue; }
+          
+          this.ctx.globalAlpha = p.life / p.maxLife;
+          this.ctx.fillStyle = p.color;
+          this.ctx.beginPath(); this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); this.ctx.fill();
+        }
+        this.ctx.globalAlpha = 1;
+
+        requestAnimationFrame((t) => this.render(t));
+      }
+
+      explode(r) {
+        const count = 100;
+        for (let i = 0; i < count; i++) {
+          const angle = (i / count) * Math.PI * 2;
+          const speed = 2 + Math.random() * 4;
+          this.particles.push({
+            x: r.x, y: r.y,
+            vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+            color: r.palette[i % r.palette.length],
+            size: 2, gravity: 0.08, drag: 0.98,
+            life: 60, maxLife: 60
+          });
+        }
+        // Visual flash
+        document.getElementById('flash').style.opacity = 0.2;
+        setTimeout(() => document.getElementById('flash').style.opacity = 0, 50);
+      }
+    }
+
+    const app = new Pyrotechnica();
+
+    function toggleEditor() {
+      const panel = document.getElementById('editor-panel');
+      panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';
+    }
+  </script>
+</body>
+</html>
