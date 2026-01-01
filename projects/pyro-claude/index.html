@@ -31,12 +31,34 @@
     
     canvas#mainCanvas {
       display: block;
-      position: fixed;
+      position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
+    }
+    
+    /* Viewport container for effects */
+    .viewport {
+      position: fixed;
+      top: 50px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
       z-index: 1;
+    }
+    
+    .viewport.shake {
+      animation: shake 0.3s ease-out;
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translate(0, 0); }
+      20% { transform: translate(-3px, 2px); }
+      40% { transform: translate(3px, -2px); }
+      60% { transform: translate(-2px, 3px); }
+      80% { transform: translate(2px, -3px); }
     }
     
     /* Background image layer */
@@ -818,14 +840,17 @@
   </style>
 </head>
 <body>
-  <!-- Background Layer -->
-  <div class="background-layer" id="bgLayer"></div>
-  
-  <!-- Main Canvas -->
-  <canvas id="mainCanvas"></canvas>
-  
-  <!-- Flash Overlay -->
-  <div class="flash-overlay" id="flashOverlay"></div>
+  <!-- Viewport Container (for effects) -->
+  <div class="viewport" id="viewport">
+    <!-- Background Layer -->
+    <div class="background-layer" id="bgLayer"></div>
+    
+    <!-- Main Canvas -->
+    <canvas id="mainCanvas"></canvas>
+    
+    <!-- Flash Overlay -->
+    <div class="flash-overlay" id="flashOverlay"></div>
+  </div>
   
   <!-- Header -->
   <header class="header">
@@ -833,6 +858,7 @@
     <div class="header-controls">
       <div class="timeline-display" id="timeDisplay">00:00.0</div>
       <button class="header-btn" id="soundBtn" title="Toggle Sound (S)">🔇 SOUND</button>
+      <button class="header-btn" id="confettiBtn" title="Toggle Confetti (C)">🎊 CONFETTI</button>
       <button class="header-btn" id="demoBtn" title="Play Demo Performance">🎬 DEMO</button>
       <button class="header-btn" id="finaleBtn" title="Grand Finale (F)">💥 FINALE</button>
     </div>
@@ -1058,13 +1084,377 @@
     
     const BACKGROUNDS = [
       { id: 'none', name: 'Night Sky', location: 'Default', gradient: true },
-      { id: 'baltimore', name: 'Inner Harbor', location: 'Baltimore, USA', url: 'https://images.unsplash.com/photo-1570543199843-94c0c8e03346?w=1920&q=80' },
-      { id: 'brooklyn', name: 'Brooklyn Bridge', location: 'New York, USA', url: 'https://images.unsplash.com/photo-1496588152823-86ff7695e68f?w=1920&q=80' },
-      { id: 'rushmore', name: 'Mount Rushmore', location: 'South Dakota, USA', url: 'https://images.unsplash.com/photo-1558017487-06bf9f82613a?w=1920&q=80' },
-      { id: 'paris', name: 'Eiffel Tower', location: 'Paris, France', url: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1920&q=80' },
-      { id: 'london', name: 'Tower Bridge', location: 'London, UK', url: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=1920&q=80' },
-      { id: 'sydney', name: 'Opera House', location: 'Sydney, Australia', url: 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=1920&q=80' },
-      { id: 'tokyo', name: 'Tokyo Tower', location: 'Tokyo, Japan', url: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1920&q=80' }
+      { id: 'baltimore', name: 'Inner Harbor', location: 'Baltimore, USA', svg: `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+          <defs>
+            <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#0a0a1a"/>
+              <stop offset="60%" style="stop-color:#1a1a3a"/>
+              <stop offset="100%" style="stop-color:#2a2a4a"/>
+            </linearGradient>
+            <linearGradient id="water" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#1a1a3a;stop-opacity:0.8"/>
+              <stop offset="100%" style="stop-color:#0a0a1a"/>
+            </linearGradient>
+          </defs>
+          <rect fill="url(#sky)" width="1920" height="1080"/>
+          <rect fill="url(#water)" y="750" width="1920" height="330"/>
+          <!-- Baltimore skyline -->
+          <g fill="#0a0a12">
+            <rect x="100" y="580" width="80" height="170"/>
+            <rect x="120" y="520" width="40" height="60"/>
+            <rect x="200" y="620" width="60" height="130"/>
+            <rect x="280" y="550" width="100" height="200"/>
+            <rect x="310" y="480" width="40" height="70"/>
+            <rect x="400" y="600" width="70" height="150"/>
+            <rect x="490" y="450" width="60" height="300"/>
+            <rect x="505" y="420" width="30" height="30"/>
+            <rect x="570" y="520" width="80" height="230"/>
+            <rect x="670" y="580" width="50" height="170"/>
+            <rect x="740" y="400" width="70" height="350"/>
+            <rect x="755" y="360" width="40" height="40"/>
+            <rect x="830" y="500" width="90" height="250"/>
+            <rect x="940" y="550" width="60" height="200"/>
+            <rect x="1020" y="480" width="80" height="270"/>
+            <rect x="1040" y="430" width="40" height="50"/>
+            <rect x="1120" y="600" width="70" height="150"/>
+            <rect x="1210" y="520" width="100" height="230"/>
+            <rect x="1330" y="580" width="60" height="170"/>
+            <rect x="1410" y="450" width="80" height="300"/>
+            <rect x="1435" y="400" width="30" height="50"/>
+            <rect x="1510" y="550" width="70" height="200"/>
+            <rect x="1600" y="600" width="90" height="150"/>
+            <rect x="1710" y="560" width="60" height="190"/>
+            <rect x="1790" y="620" width="80" height="130"/>
+          </g>
+          <!-- Water reflection -->
+          <g fill="#0a0a12" opacity="0.3" transform="translate(0,1500) scale(1,-1)">
+            <rect x="100" y="580" width="80" height="170"/>
+            <rect x="280" y="550" width="100" height="200"/>
+            <rect x="490" y="450" width="60" height="300"/>
+            <rect x="740" y="400" width="70" height="350"/>
+            <rect x="1020" y="480" width="80" height="270"/>
+            <rect x="1410" y="450" width="80" height="300"/>
+          </g>
+        </svg>
+      ` },
+      { id: 'brooklyn', name: 'Brooklyn Bridge', location: 'New York, USA', svg: `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+          <defs>
+            <linearGradient id="skyNY" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#0a0a1a"/>
+              <stop offset="70%" style="stop-color:#1a1a3a"/>
+              <stop offset="100%" style="stop-color:#252545"/>
+            </linearGradient>
+          </defs>
+          <rect fill="url(#skyNY)" width="1920" height="1080"/>
+          <rect fill="#0a0a15" y="800" width="1920" height="280"/>
+          <!-- Bridge towers -->
+          <g fill="#0a0a12">
+            <!-- Left tower -->
+            <rect x="500" y="350" width="120" height="450"/>
+            <polygon points="500,350 560,280 620,350"/>
+            <rect x="520" y="400" width="30" height="80" fill="#1a1a2a"/>
+            <rect x="570" y="400" width="30" height="80" fill="#1a1a2a"/>
+            <rect x="520" y="520" width="30" height="60" fill="#1a1a2a"/>
+            <rect x="570" y="520" width="30" height="60" fill="#1a1a2a"/>
+            <!-- Right tower -->
+            <rect x="1300" y="350" width="120" height="450"/>
+            <polygon points="1300,350 1360,280 1420,350"/>
+            <rect x="1320" y="400" width="30" height="80" fill="#1a1a2a"/>
+            <rect x="1370" y="400" width="30" height="80" fill="#1a1a2a"/>
+            <rect x="1320" y="520" width="30" height="60" fill="#1a1a2a"/>
+            <rect x="1370" y="520" width="30" height="60" fill="#1a1a2a"/>
+          </g>
+          <!-- Bridge deck -->
+          <rect fill="#0a0a12" x="0" y="720" width="1920" height="40"/>
+          <rect fill="#0a0a12" x="0" y="770" width="1920" height="30"/>
+          <!-- Cables -->
+          <g stroke="#0a0a12" stroke-width="4" fill="none">
+            <path d="M560,290 Q350,600 0,720"/>
+            <path d="M560,290 Q960,500 1360,290"/>
+            <path d="M1360,290 Q1570,600 1920,720"/>
+            <!-- Vertical cables -->
+            <line x1="200" y1="660" x2="200" y2="720"/>
+            <line x1="300" y1="580" x2="300" y2="720"/>
+            <line x1="400" y1="500" x2="400" y2="720"/>
+            <line x1="700" y1="400" x2="700" y2="720"/>
+            <line x1="850" y1="440" x2="850" y2="720"/>
+            <line x1="960" y1="460" x2="960" y2="720"/>
+            <line x1="1070" y1="440" x2="1070" y2="720"/>
+            <line x1="1220" y1="400" x2="1220" y2="720"/>
+            <line x1="1520" y1="500" x2="1520" y2="720"/>
+            <line x1="1620" y1="580" x2="1620" y2="720"/>
+            <line x1="1720" y1="660" x2="1720" y2="720"/>
+          </g>
+          <!-- Manhattan skyline left -->
+          <g fill="#0a0a12">
+            <rect x="0" y="650" width="60" height="150"/>
+            <rect x="70" y="600" width="40" height="200"/>
+            <rect x="120" y="550" width="50" height="250"/>
+            <rect x="180" y="620" width="35" height="180"/>
+          </g>
+          <!-- Brooklyn skyline right -->
+          <g fill="#0a0a12">
+            <rect x="1750" y="650" width="50" height="150"/>
+            <rect x="1810" y="600" width="40" height="200"/>
+            <rect x="1860" y="680" width="60" height="120"/>
+          </g>
+        </svg>
+      ` },
+      { id: 'rushmore', name: 'Mount Rushmore', location: 'South Dakota, USA', svg: `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+          <defs>
+            <linearGradient id="skySD" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#0a0a1a"/>
+              <stop offset="100%" style="stop-color:#1a1a35"/>
+            </linearGradient>
+          </defs>
+          <rect fill="url(#skySD)" width="1920" height="1080"/>
+          <!-- Mountain range background -->
+          <polygon fill="#12121f" points="0,900 200,700 400,750 600,650 800,700 1000,600 1200,680 1400,620 1600,700 1800,650 1920,750 1920,1080 0,1080"/>
+          <!-- Main mountain with faces -->
+          <polygon fill="#0a0a15" points="400,850 500,650 650,600 750,550 900,500 1050,480 1200,500 1350,550 1450,620 1520,850"/>
+          <!-- Simplified presidential silhouettes -->
+          <g fill="#0f0f18">
+            <!-- Washington -->
+            <ellipse cx="620" cy="560" rx="45" ry="55"/>
+            <path d="M590,520 Q620,480 650,520"/>
+            <!-- Jefferson -->
+            <ellipse cx="780" cy="540" rx="42" ry="52"/>
+            <path d="M750,500 Q780,465 810,500"/>
+            <!-- Roosevelt -->
+            <ellipse cx="940" cy="530" rx="40" ry="50"/>
+            <path d="M912,492 Q940,460 968,492"/>
+            <!-- Lincoln -->
+            <ellipse cx="1100" cy="545" rx="43" ry="54"/>
+            <path d="M1070,505 Q1100,470 1130,505"/>
+          </g>
+          <!-- Trees/forest at base -->
+          <g fill="#08080f">
+            <ellipse cx="300" cy="880" rx="80" ry="40"/>
+            <ellipse cx="450" cy="870" rx="60" ry="35"/>
+            <ellipse cx="1450" cy="875" rx="70" ry="38"/>
+            <ellipse cx="1600" cy="885" rx="90" ry="42"/>
+            <rect x="0" y="890" width="1920" height="190"/>
+          </g>
+        </svg>
+      ` },
+      { id: 'paris', name: 'Eiffel Tower', location: 'Paris, France', svg: `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+          <defs>
+            <linearGradient id="skyParis" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#0a0a1a"/>
+              <stop offset="100%" style="stop-color:#1a1a3a"/>
+            </linearGradient>
+          </defs>
+          <rect fill="url(#skyParis)" width="1920" height="1080"/>
+          <!-- Ground -->
+          <rect fill="#0a0a12" y="850" width="1920" height="230"/>
+          <!-- Eiffel Tower -->
+          <g fill="#0a0a12">
+            <!-- Top antenna -->
+            <rect x="955" y="150" width="10" height="80"/>
+            <!-- Top section -->
+            <polygon points="920,230 1000,230 990,320 930,320"/>
+            <!-- Upper observation deck -->
+            <rect x="910" y="320" width="100" height="15"/>
+            <!-- Middle section -->
+            <polygon points="910,335 1010,335 1040,500 880,500"/>
+            <!-- Middle observation deck -->
+            <rect x="860" y="500" width="200" height="20"/>
+            <!-- Lower section -->
+            <polygon points="860,520 1060,520 1150,850 770,850"/>
+            <!-- Arch opening -->
+            <ellipse cx="960" cy="850" rx="100" ry="60" fill="#1a1a3a"/>
+            <!-- Cross beams -->
+            <rect x="870" y="420" width="180" height="8"/>
+            <rect x="840" y="580" width="240" height="10"/>
+            <rect x="810" y="700" width="300" height="12"/>
+          </g>
+          <!-- Paris rooftops silhouette -->
+          <g fill="#08080f">
+            <polygon points="0,850 50,800 100,850 150,780 200,850 250,820 300,850"/>
+            <polygon points="300,850 350,790 400,850 500,800 550,850"/>
+            <polygon points="1400,850 1450,810 1500,850 1550,780 1600,850 1700,820 1750,850 1800,790 1850,850 1920,800 1920,850"/>
+            <rect x="100" y="850" width="40" height="100"/>
+            <rect x="200" y="860" width="50" height="90"/>
+            <rect x="1500" y="855" width="45" height="95"/>
+            <rect x="1650" y="850" width="55" height="100"/>
+          </g>
+        </svg>
+      ` },
+      { id: 'london', name: 'Tower Bridge', location: 'London, UK', svg: `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+          <defs>
+            <linearGradient id="skyLondon" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#0a0a1a"/>
+              <stop offset="70%" style="stop-color:#151530"/>
+              <stop offset="100%" style="stop-color:#1a1a3a"/>
+            </linearGradient>
+            <linearGradient id="thames" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#12122a"/>
+              <stop offset="100%" style="stop-color:#0a0a18"/>
+            </linearGradient>
+          </defs>
+          <rect fill="url(#skyLondon)" width="1920" height="1080"/>
+          <rect fill="url(#thames)" y="780" width="1920" height="300"/>
+          <!-- Tower Bridge -->
+          <g fill="#0a0a12">
+            <!-- Left tower -->
+            <rect x="550" y="400" width="100" height="380"/>
+            <polygon points="550,400 600,320 650,400"/>
+            <polygon points="560,400 600,340 640,400"/>
+            <rect x="570" y="450" width="25" height="40" fill="#1a1a2a"/>
+            <rect x="620" y="450" width="25" height="40" fill="#1a1a2a"/>
+            <rect x="570" y="550" width="25" height="40" fill="#1a1a2a"/>
+            <rect x="620" y="550" width="25" height="40" fill="#1a1a2a"/>
+            <!-- Right tower -->
+            <rect x="1270" y="400" width="100" height="380"/>
+            <polygon points="1270,400 1320,320 1370,400"/>
+            <polygon points="1280,400 1320,340 1360,400"/>
+            <rect x="1290" y="450" width="25" height="40" fill="#1a1a2a"/>
+            <rect x="1340" y="450" width="25" height="40" fill="#1a1a2a"/>
+            <rect x="1290" y="550" width="25" height="40" fill="#1a1a2a"/>
+            <rect x="1340" y="550" width="25" height="40" fill="#1a1a2a"/>
+            <!-- Upper walkways -->
+            <rect x="650" y="420" width="620" height="25"/>
+            <rect x="650" y="480" width="620" height="25"/>
+            <!-- Walkway details -->
+            <g fill="#1a1a2a">
+              <rect x="700" y="430" width="15" height="40"/>
+              <rect x="800" y="430" width="15" height="40"/>
+              <rect x="900" y="430" width="15" height="40"/>
+              <rect x="1000" y="430" width="15" height="40"/>
+              <rect x="1100" y="430" width="15" height="40"/>
+              <rect x="1200" y="430" width="15" height="40"/>
+            </g>
+            <!-- Lower deck -->
+            <rect x="0" y="700" width="1920" height="35"/>
+            <!-- Deck supports -->
+            <rect x="650" y="700" width="20" height="80"/>
+            <rect x="1250" y="700" width="20" height="80"/>
+          </g>
+          <!-- London skyline hints -->
+          <g fill="#08080f">
+            <rect x="50" y="680" width="60" height="100"/>
+            <rect x="130" y="650" width="45" height="130"/>
+            <rect x="200" y="700" width="50" height="80"/>
+            <rect x="1700" y="670" width="55" height="110"/>
+            <rect x="1780" y="690" width="70" height="90"/>
+            <rect x="1870" y="710" width="50" height="70"/>
+          </g>
+        </svg>
+      ` },
+      { id: 'sydney', name: 'Opera House', location: 'Sydney, Australia', svg: `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+          <defs>
+            <linearGradient id="skySydney" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#0a0a1a"/>
+              <stop offset="100%" style="stop-color:#1a1a3a"/>
+            </linearGradient>
+            <linearGradient id="harbour" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#151530"/>
+              <stop offset="100%" style="stop-color:#0a0a18"/>
+            </linearGradient>
+          </defs>
+          <rect fill="url(#skySydney)" width="1920" height="1080"/>
+          <rect fill="url(#harbour)" y="750" width="1920" height="330"/>
+          <!-- Opera House sails -->
+          <g fill="#0a0a12">
+            <!-- Main sails group -->
+            <path d="M700,750 Q720,500 850,450 Q900,500 900,750 Z"/>
+            <path d="M850,750 Q880,480 1000,420 Q1060,480 1060,750 Z"/>
+            <path d="M1000,750 Q1040,450 1180,380 Q1250,450 1250,750 Z"/>
+            <!-- Smaller back sails -->
+            <path d="M1150,750 Q1180,520 1280,480 Q1320,530 1320,750 Z"/>
+            <path d="M1260,750 Q1280,560 1350,530 Q1380,570 1380,750 Z"/>
+            <!-- Platform base -->
+            <rect x="650" y="750" width="800" height="50"/>
+          </g>
+          <!-- Harbour Bridge hint in background -->
+          <g fill="#06060d" opacity="0.7">
+            <path d="M0,650 Q400,500 800,650 L800,700 L0,700 Z"/>
+            <rect x="150" y="550" width="30" height="150"/>
+            <rect x="600" y="550" width="30" height="150"/>
+          </g>
+          <!-- City skyline -->
+          <g fill="#08080f">
+            <rect x="1500" y="600" width="60" height="150"/>
+            <rect x="1580" y="550" width="50" height="200"/>
+            <rect x="1650" y="580" width="70" height="170"/>
+            <rect x="1740" y="620" width="55" height="130"/>
+            <rect x="1820" y="650" width="100" height="100"/>
+          </g>
+          <!-- Water reflection -->
+          <g fill="#0a0a12" opacity="0.25" transform="translate(0, 1500) scale(1,-1)">
+            <path d="M700,750 Q720,500 850,450 Q900,500 900,750 Z"/>
+            <path d="M850,750 Q880,480 1000,420 Q1060,480 1060,750 Z"/>
+            <path d="M1000,750 Q1040,450 1180,380 Q1250,450 1250,750 Z"/>
+          </g>
+        </svg>
+      ` },
+      { id: 'tokyo', name: 'Tokyo Tower', location: 'Tokyo, Japan', svg: `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+          <defs>
+            <linearGradient id="skyTokyo" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#0a0a1a"/>
+              <stop offset="100%" style="stop-color:#1a1a3a"/>
+            </linearGradient>
+          </defs>
+          <rect fill="url(#skyTokyo)" width="1920" height="1080"/>
+          <!-- Ground -->
+          <rect fill="#0a0a12" y="880" width="1920" height="200"/>
+          <!-- Tokyo Tower -->
+          <g fill="#0a0a12">
+            <!-- Antenna -->
+            <rect x="955" y="100" width="10" height="100"/>
+            <!-- Top section -->
+            <polygon points="930,200 990,200 1010,350 910,350"/>
+            <!-- Upper observation deck -->
+            <rect x="900" y="350" width="120" height="30"/>
+            <rect x="890" y="380" width="140" height="10"/>
+            <!-- Middle section -->
+            <polygon points="890,390 1030,390 1080,600 840,600"/>
+            <!-- Lower observation deck -->
+            <rect x="820" y="600" width="280" height="35"/>
+            <rect x="800" y="635" width="320" height="15"/>
+            <!-- Main tower legs -->
+            <polygon points="800,650 860,650 960,880 720,880"/>
+            <polygon points="1060,650 1120,650 1200,880 960,880"/>
+            <!-- Cross braces -->
+            <g stroke="#0a0a12" stroke-width="8" fill="none">
+              <line x1="780" y1="720" x2="880" y2="720"/>
+              <line x1="1040" y1="720" x2="1140" y2="720"/>
+              <line x1="750" y1="800" x2="900" y2="800"/>
+              <line x1="1020" y1="800" x2="1170" y2="800"/>
+            </g>
+            <!-- Diagonal braces -->
+            <line x1="800" y1="650" x2="860" y2="750" stroke="#0a0a12" stroke-width="6"/>
+            <line x1="860" y1="650" x2="800" y2="750" stroke="#0a0a12" stroke-width="6"/>
+            <line x1="1060" y1="650" x2="1120" y2="750" stroke="#0a0a12" stroke-width="6"/>
+            <line x1="1120" y1="650" x2="1060" y2="750" stroke="#0a0a12" stroke-width="6"/>
+          </g>
+          <!-- Tokyo cityscape -->
+          <g fill="#08080f">
+            <!-- Left side buildings -->
+            <rect x="50" y="750" width="70" height="130"/>
+            <rect x="140" y="700" width="55" height="180"/>
+            <rect x="210" y="780" width="80" height="100"/>
+            <rect x="310" y="720" width="60" height="160"/>
+            <rect x="390" y="760" width="90" height="120"/>
+            <rect x="500" y="800" width="50" height="80"/>
+            <!-- Right side buildings -->
+            <rect x="1350" y="780" width="65" height="100"/>
+            <rect x="1430" y="720" width="80" height="160"/>
+            <rect x="1530" y="760" width="55" height="120"/>
+            <rect x="1600" y="700" width="70" height="180"/>
+            <rect x="1690" y="750" width="60" height="130"/>
+            <rect x="1770" y="800" width="80" height="80"/>
+            <rect x="1870" y="770" width="50" height="110"/>
+          </g>
+        </svg>
+      ` }
     ];
     
     // Performance limits
@@ -1088,7 +1478,7 @@
     
     function resize() {
       W = canvas.width = window.innerWidth;
-      H = canvas.height = window.innerHeight;
+      H = canvas.height = window.innerHeight - 50; // Account for header
       skyGradientCache = null;
     }
     
@@ -1100,6 +1490,7 @@
     // ═══════════════════════════════════════════════════════════════
     
     let soundEnabled = false;
+    let confettiEnabled = false;
     let finaleMode = false;
     let finaleEndTime = 0;
     let performanceTime = 0;
@@ -1282,23 +1673,14 @@
     }
     
     function screenShake() {
-      document.body.style.animation = 'none';
-      document.body.offsetHeight; // Trigger reflow
-      document.body.style.animation = 'shake 0.3s ease-out';
+      const viewport = document.getElementById('viewport');
+      viewport.classList.remove('shake');
+      viewport.offsetHeight; // Trigger reflow
+      viewport.classList.add('shake');
+      setTimeout(() => viewport.classList.remove('shake'), 300);
     }
     
-    // Add shake keyframes dynamically
-    const shakeStyle = document.createElement('style');
-    shakeStyle.textContent = `
-      @keyframes shake {
-        0%, 100% { transform: translate(0, 0); }
-        20% { transform: translate(-3px, 2px); }
-        40% { transform: translate(3px, -2px); }
-        60% { transform: translate(-2px, 3px); }
-        80% { transform: translate(2px, -3px); }
-      }
-    `;
-    document.head.appendChild(shakeStyle);
+    // Shake keyframes added via CSS
     
     // ═══════════════════════════════════════════════════════════════
     // STARS
@@ -1718,6 +2100,7 @@
     const confettiColors = ['#ff0080', '#ffef00', '#00ff88', '#00cfff', '#ff8c00', '#a855f7'];
     
     function spawnConfetti() {
+      if (!confettiEnabled) return;
       if (confetti.length < MAX_CONFETTI && Math.random() < 0.2) {
         confetti.push({
           x: Math.random() * W,
@@ -2037,15 +2420,7 @@
         }
       } else {
         if (finaleMode) finaleMode = false;
-        
-        // Auto-launch ambient fireworks (less frequent)
-        if (!performancePlaying && time - lastAutoLaunch > autoLaunchInterval) {
-          if (Math.random() < 0.3) { // 30% chance
-            launchRocket();
-          }
-          lastAutoLaunch = time;
-          autoLaunchInterval = 1500 + Math.random() * 2000;
-        }
+        // Auto-launch disabled - user controls fireworks manually
       }
       
       // Update performance
@@ -2108,8 +2483,10 @@
       currentBackground = bgId;
       const bg = BACKGROUNDS.find(b => b.id === bgId);
       
-      if (bg && bg.url) {
-        bgLayer.style.backgroundImage = `url(${bg.url})`;
+      if (bg && bg.svg) {
+        // Encode SVG as data URL
+        const svgData = encodeURIComponent(bg.svg.trim());
+        bgLayer.style.backgroundImage = `url("data:image/svg+xml,${svgData}")`;
         bgLayer.classList.add('active');
       } else {
         bgLayer.classList.remove('active');
@@ -2544,7 +2921,10 @@
     
     // Panel toggle
     document.getElementById('panelToggle').addEventListener('click', () => {
-      document.getElementById('controlPanel').classList.toggle('collapsed');
+      const panel = document.getElementById('controlPanel');
+      const toggle = document.getElementById('panelToggle');
+      panel.classList.toggle('collapsed');
+      toggle.textContent = panel.classList.contains('collapsed') ? '▲ Controls ▲' : '▼ Controls ▼';
     });
     
     // Header buttons
@@ -2554,6 +2934,15 @@
       const btn = document.getElementById('soundBtn');
       btn.textContent = soundEnabled ? '🔊 SOUND' : '🔇 SOUND';
       btn.classList.toggle('active', soundEnabled);
+    });
+    
+    document.getElementById('confettiBtn').addEventListener('click', () => {
+      confettiEnabled = !confettiEnabled;
+      const btn = document.getElementById('confettiBtn');
+      btn.textContent = confettiEnabled ? '🎊 CONFETTI' : '🎊 CONFETTI';
+      btn.classList.toggle('active', confettiEnabled);
+      // Clear existing confetti when disabled
+      if (!confettiEnabled) confetti.length = 0;
     });
     
     document.getElementById('finaleBtn').addEventListener('click', () => {
@@ -2656,6 +3045,13 @@
         btn.classList.toggle('active', soundEnabled);
       }
       
+      if (e.key === 'c' || e.key === 'C') {
+        confettiEnabled = !confettiEnabled;
+        const btn = document.getElementById('confettiBtn');
+        btn.classList.toggle('active', confettiEnabled);
+        if (!confettiEnabled) confetti.length = 0;
+      }
+      
       // Number keys for firework types
       const key = e.key;
       const typeMap = { '1': 0, '2': 1, '3': 2, '4': 3, '5': 4, '6': 5, '7': 6, '8': 7, '9': 8, '0': 9 };
@@ -2686,11 +3082,7 @@
     renderFireworkSelector();
     renderPaletteSelect();
     
-    // Initial fireworks
-    for (let i = 0; i < 5; i++) {
-      setTimeout(launchRocket, i * 200);
-    }
-    
+    // Ready - no auto-launch, user controls everything
     requestAnimationFrame(animate);
     
     console.log('%c🎆 PYROTECHNICA 🎆', 'font-size:24px; color:#00d4ff; text-shadow:0 0 10px #ff00aa;');

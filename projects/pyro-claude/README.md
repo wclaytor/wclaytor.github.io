@@ -21,8 +21,10 @@ Create stunning fireworks displays, design custom sequences, choreograph perform
 
 ### 🌃 Scenic Backgrounds
 
+Custom SVG silhouettes with elegant backlighting:
+
 - Night Sky (default animated starfield)
-- Baltimore Inner Harbor
+- Baltimore Inner Harbor skyline
 - Brooklyn Bridge, New York
 - Mount Rushmore, South Dakota
 - Eiffel Tower, Paris
@@ -66,6 +68,7 @@ Create stunning fireworks displays, design custom sequences, choreograph perform
 | `1-9, 0` | Launch specific firework type |
 | `F`      | Trigger Grand Finale          |
 | `S`      | Toggle sound on/off           |
+| `C`      | Toggle confetti on/off        |
 
 ### Mouse Controls
 

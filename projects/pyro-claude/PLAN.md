@@ -84,24 +84,37 @@ Transformed the celebration into a full simulator:
 - ✅ Futuristic cyberpunk UI design
 - ✅ Comprehensive documentation
 
+### Stage 2.1: Bug Fixes & Improvements
+
+- ✅ Fixed screen shake to only affect viewport (not entire page)
+- ✅ Fixed flash effect to only affect viewport
+- ✅ Fixed panel toggle arrows (now flip direction correctly)
+- ✅ Added confetti toggle button (C key or header button)
+- ✅ Disabled random auto-launching fireworks (user controls all)
+- ✅ Replaced photo backgrounds with custom SVG silhouettes
+- ✅ Created elegant backlit silhouettes for all 7 landmarks
+- ✅ Viewport now properly accounts for header height
+
 ---
 
 ## 📊 Current State
 
 ### What Works Well
 
-| Feature                | Status       | Notes                           |
-| ---------------------- | ------------ | ------------------------------- |
-| Firework rendering     | ✅ Excellent | Smooth 60fps, beautiful effects |
-| All 10 explosion types | ✅ Complete  | Heart, star, spiral, etc.       |
-| Sound effects          | ✅ Complete  | Launch, boom, crackle           |
-| Background switching   | ✅ Complete  | 8 locations available           |
-| Sequence creation      | ✅ Complete  | Full CRUD operations            |
-| Performance playback   | ✅ Complete  | Timeline with marker            |
-| Markdown export        | ✅ Complete  | Human-readable format           |
-| Data persistence       | ✅ Complete  | localStorage                    |
-| Keyboard shortcuts     | ✅ Complete  | 1-0, F, S keys                  |
-| Mobile responsive      | ⚠️ Basic     | Works but not optimized         |
+| Feature                | Status       | Notes                             |
+| ---------------------- | ------------ | --------------------------------- |
+| Firework rendering     | ✅ Excellent | Smooth 60fps, beautiful effects   |
+| All 10 explosion types | ✅ Complete  | Heart, star, spiral, etc.         |
+| Sound effects          | ✅ Complete  | Launch, boom, crackle             |
+| Background switching   | ✅ Complete  | 8 custom SVG silhouettes          |
+| Sequence creation      | ✅ Complete  | Full CRUD operations              |
+| Performance playback   | ✅ Complete  | Timeline with marker              |
+| Markdown export        | ✅ Complete  | Human-readable format             |
+| Data persistence       | ✅ Complete  | localStorage                      |
+| Keyboard shortcuts     | ✅ Complete  | 1-0, F, S, C keys                 |
+| Screen effects         | ✅ Fixed     | Shake/flash contained to viewport |
+| Confetti toggle        | ✅ Complete  | On/off control                    |
+| Mobile responsive      | ⚠️ Basic     | Works but not optimized           |
 
 ### Known Limitations
 
@@ -111,7 +124,7 @@ Transformed the celebration into a full simulator:
 4. **Single User** - No sharing or collaboration features
 5. **No Custom Colors** - Limited to 10 preset palettes
 6. **No Video Export** - Can't save as video file
-7. **Background Images** - External URLs only, no upload
+7. **No Custom Background Upload** - Limited to built-in SVG silhouettes
 
 ### File Structure
 
