@@ -1,904 +1,839 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>🎆 New Year 2025 - Fireworks Spectacular</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pyrotechnica - Fireworks Simulator</title>
+    <meta name="description" content="An interactive fireworks simulator with custom sequences, performances, and stunning visual effects.">
     
-    canvas {
-      display: block;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
+    <!-- Open Graph -->
+    <meta property="og:title" content="Pyrotechnica - Fireworks Simulator">
+    <meta property="og:description" content="Create, launch, and choreograph spectacular fireworks displays.">
+    <meta property="og:type" content="website">
     
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 100;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-family: Georgia, serif;
-    }
+    <!-- Alpine.js for reactive UI -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
-    .title {
-      font-size: clamp(60px, 18vw, 200px);
-      font-weight: bold;
-      background: linear-gradient(180deg, #fff 0%, #ffd700 50%, #ff6b00 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      filter: drop-shadow(0 0 30px rgba(255, 150, 0, 0.6)) drop-shadow(0 0 60px rgba(255, 100, 0, 0.4));
-      animation: glow 2s ease-in-out infinite alternate, float 4s ease-in-out infinite;
-      letter-spacing: 0.05em;
-    }
-    
-    .subtitle {
-      font-size: clamp(16px, 4vw, 36px);
-      color: #fff;
-      text-transform: uppercase;
-      letter-spacing: 0.5em;
-      margin-top: 10px;
-      text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(100, 200, 255, 0.6);
-      animation: fadeIn 2s ease-out 0.5s both;
-    }
-    
-    .message {
-      position: absolute;
-      bottom: 12%;
-      font-size: clamp(20px, 5vw, 50px);
-      font-weight: bold;
-      background: linear-gradient(90deg, #ff0080, #ff8c00, #ffef00, #00ff88, #00cfff, #a855f7, #ff0080);
-      background-size: 300% 100%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: rainbow 3s linear infinite;
-      filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.4));
-    }
-    
-    /* Screen flash effect */
-    .flash-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 50;
-      background: white;
-      opacity: 0;
-    }
-    
-    /* Controls hint */
-    .controls-hint {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      font-family: system-ui, sans-serif;
-      font-size: 12px;
-      color: rgba(255,255,255,0.5);
-      text-align: right;
-      pointer-events: none;
-      z-index: 200;
-      animation: fadeIn 3s ease-out 2s both;
-    }
-    
-    .controls-hint kbd {
-      background: rgba(255,255,255,0.15);
-      padding: 2px 6px;
-      border-radius: 3px;
-      margin: 0 2px;
-    }
-    
-    /* Finale announcement */
-    .finale-text {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: clamp(40px, 12vw, 120px);
-      font-weight: bold;
-      color: #fff;
-      text-shadow: 0 0 40px #ff0080, 0 0 80px #ff8c00, 0 0 120px #ffef00;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 300;
-      font-family: Georgia, serif;
-    }
-    
-    .finale-text.show {
-      animation: finaleText 3s ease-out forwards;
-    }
-    
-    @keyframes finaleText {
-      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
-      20% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
-      40% { transform: translate(-50%, -50%) scale(1); }
-      80% { opacity: 1; }
-      100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
-    }
-    
-    @keyframes glow {
-      from { filter: drop-shadow(0 0 30px rgba(255, 150, 0, 0.6)) drop-shadow(0 0 60px rgba(255, 100, 0, 0.4)); }
-      to { filter: drop-shadow(0 0 50px rgba(255, 200, 0, 0.9)) drop-shadow(0 0 100px rgba(255, 150, 0, 0.6)); }
-    }
-    
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-    
-    @keyframes rainbow {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 300% 50%; }
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    /* Screen shake */
-    .shake {
-      animation: shake 0.3s ease-out;
-    }
-    
-    @keyframes shake {
-      0%, 100% { transform: translate(0, 0); }
-      20% { transform: translate(-3px, 2px); }
-      40% { transform: translate(3px, -2px); }
-      60% { transform: translate(-2px, 3px); }
-      80% { transform: translate(2px, -3px); }
-    }
-  </style>
+    <style>
+        /* ============================================
+           CSS CUSTOM PROPERTIES
+           ============================================ */
+        :root {
+            /* Night sky colors */
+            --sky-top: #0a0a1a;
+            --sky-middle: #1a1a3a;
+            --sky-bottom: #2a2a4a;
+            --sky-horizon: #3a3a5a;
+            
+            /* UI Colors */
+            --panel-bg: rgba(20, 20, 40, 0.95);
+            --panel-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --accent: #ffd700;
+            --accent-hover: #ffed4a;
+            
+            /* Firework Colors */
+            --fw-gold: #ffd700;
+            --fw-ruby: #e31c3d;
+            --fw-sapphire: #0071bc;
+            --fw-emerald: #2e8540;
+            --fw-amethyst: #9b59b6;
+            --fw-silver: #c0c0c0;
+            --fw-copper: #b87333;
+            --fw-pink: #ff69b4;
+            --fw-cyan: #00ced1;
+            --fw-white: #ffffff;
+            
+            /* Spacing */
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+        }
+
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(
+                to bottom,
+                var(--sky-top) 0%,
+                var(--sky-middle) 40%,
+                var(--sky-bottom) 70%,
+                var(--sky-horizon) 100%
+            );
+            color: var(--text-primary);
+        }
+
+        /* ============================================
+           MAIN CANVAS CONTAINER
+           ============================================ */
+        #pyrotechnica-app {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #sky-canvas {
+            flex: 1;
+            width: 100%;
+            cursor: crosshair;
+        }
+
+        /* ============================================
+           HEADER
+           ============================================ */
+        .app-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: var(--space-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .app-header > * {
+            pointer-events: auto;
+        }
+
+        .app-title {
+            font-size: 1.5rem;
+            font-weight: 300;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            background: var(--panel-bg);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-fast);
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent);
+        }
+
+        .icon-btn:focus {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        /* ============================================
+           STATUS BAR
+           ============================================ */
+        .status-bar {
+            position: absolute;
+            bottom: var(--space-md);
+            left: 50%;
+            transform: translateX(-50%);
+            padding: var(--space-sm) var(--space-lg);
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 20px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            z-index: 10;
+        }
+
+        .status-bar kbd {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.75rem;
+        }
+
+        /* ============================================
+           STARS BACKGROUND
+           ============================================ */
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: twinkle 3s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* ============================================
+           ACCESSIBILITY
+           ============================================ */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Focus visible for keyboard users */
+        :focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+    </style>
 </head>
 <body>
-  <canvas id="canvas"></canvas>
-  <div class="flash-overlay" id="flashOverlay"></div>
-  
-  <div class="overlay" id="mainOverlay">
-    <div class="title">2025</div>
-    <div class="subtitle">Happy New Year</div>
-    <div class="message">✨ Cheers to New Beginnings ✨</div>
-  </div>
-  
-  <div class="finale-text" id="finaleText">🎆 GRAND FINALE 🎆</div>
-  
-  <div class="controls-hint">
-    <kbd>F</kbd> Grand Finale · <kbd>S</kbd> Sound · <kbd>Click</kbd> Launch
-  </div>
+    <!-- Main Application Container -->
+    <div id="pyrotechnica-app" x-data="pyrotechnica">
+        <!-- Stars Background -->
+        <div class="stars" aria-hidden="true">
+            <template x-for="star in stars" :key="star.id">
+                <div class="star" 
+                     :style="`left: ${star.x}%; top: ${star.y}%; animation-delay: ${star.delay}s; opacity: ${star.opacity};`">
+                </div>
+            </template>
+        </div>
 
-  <script>
-  (function() {
-    // ═══════════════════════════════════════════════════════════
-    // CANVAS SETUP
-    // ═══════════════════════════════════════════════════════════
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d', { alpha: false });
-    const flashOverlay = document.getElementById('flashOverlay');
-    const mainOverlay = document.getElementById('mainOverlay');
-    const finaleText = document.getElementById('finaleText');
-    
-    let W, H;
-    let skyGradientCache = null;
-    
-    // Performance limits
-    const MAX_PARTICLES = 1000; // Increased for finale
-    const MAX_ROCKETS = 20;
-    const MAX_CONFETTI = 120;
-    const TRAIL_LENGTH = 5;
-    
-    // State
-    let soundEnabled = false;
-    let finaleMode = false;
-    let finaleEndTime = 0;
-    
-    function resize() {
-      W = canvas.width = window.innerWidth;
-      H = canvas.height = window.innerHeight;
-      skyGradientCache = null;
-    }
-    
-    window.addEventListener('resize', resize);
-    resize();
-    
-    // ═══════════════════════════════════════════════════════════
-    // WEB AUDIO - SOUND EFFECTS
-    // ═══════════════════════════════════════════════════════════
-    let audioCtx = null;
-    
-    function initAudio() {
-      if (audioCtx) return;
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    
-    function playLaunch() {
-      if (!soundEnabled || !audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.3);
-      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.3);
-    }
-    
-    function playBoom(big) {
-      if (!soundEnabled || !audioCtx) return;
-      const bufferSize = audioCtx.sampleRate * 0.4;
-      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.15));
-      }
-      const noise = audioCtx.createBufferSource();
-      noise.buffer = buffer;
-      const filter = audioCtx.createBiquadFilter();
-      filter.type = 'lowpass';
-      filter.frequency.value = big ? 400 : 600;
-      const gain = audioCtx.createGain();
-      gain.gain.value = big ? 0.4 : 0.25;
-      noise.connect(filter);
-      filter.connect(gain);
-      gain.connect(audioCtx.destination);
-      noise.start();
-    }
-    
-    function playCrackle() {
-      if (!soundEnabled || !audioCtx) return;
-      const bufferSize = audioCtx.sampleRate * 0.08;
-      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
-      }
-      const noise = audioCtx.createBufferSource();
-      noise.buffer = buffer;
-      const filter = audioCtx.createBiquadFilter();
-      filter.type = 'highpass';
-      filter.frequency.value = 2000;
-      const gain = audioCtx.createGain();
-      gain.gain.value = 0.1;
-      noise.connect(filter);
-      filter.connect(gain);
-      gain.connect(audioCtx.destination);
-      noise.start();
-    }
-    
-    // ═══════════════════════════════════════════════════════════
-    // VISUAL EFFECTS
-    // ═══════════════════════════════════════════════════════════
-    function screenFlash(intensity) {
-      flashOverlay.style.opacity = intensity;
-      setTimeout(() => { flashOverlay.style.opacity = 0; }, 50);
-    }
-    
-    function screenShake() {
-      mainOverlay.classList.add('shake');
-      setTimeout(() => mainOverlay.classList.remove('shake'), 300);
-    }
-    
-    // ═══════════════════════════════════════════════════════════
-    // COLOR PALETTES
-    // ═══════════════════════════════════════════════════════════
-    const palettes = [
-      ['#FFD700', '#FFA500', '#FF8C00', '#FFEA00'],           // Gold
-      ['#FF1744', '#FF5252', '#FF4081', '#F50057'],           // Red/Pink
-      ['#00E5FF', '#18FFFF', '#00B8D4', '#84FFFF'],           // Cyan
-      ['#00E676', '#69F0AE', '#00C853', '#B9F6CA'],           // Green
-      ['#AA00FF', '#E040FB', '#D500F9', '#EA80FC'],           // Purple
-      ['#FFFFFF', '#E0E0E0', '#F5F5F5', '#BDBDBD'],           // White/Silver
-      ['#FF6D00', '#FF9100', '#FFAB00', '#FFD600'],           // Orange
-      ['#2979FF', '#448AFF', '#2962FF', '#82B1FF'],           // Blue
-      ['#F50057', '#FF4081', '#FF80AB', '#FF1744'],           // Pink
-      ['#76FF03', '#B2FF59', '#CCFF90', '#64DD17'],           // Lime
-    ];
-    
-    // ═══════════════════════════════════════════════════════════
-    // STARS
-    // ═══════════════════════════════════════════════════════════
-    const stars = [];
-    
-    function createStars() {
-      stars.length = 0;
-      const count = Math.min(Math.floor((W * H) / 4000), 200); // Limit stars
-      for (let i = 0; i < count; i++) {
-        stars.push({
-          x: Math.random() * W,
-          y: Math.random() * H * 0.75,
-          r: Math.random() * 1.5 + 0.5,
-          twinkle: Math.random() * Math.PI * 2
+        <!-- Header -->
+        <header class="app-header">
+            <h1 class="app-title">Pyrotechnica</h1>
+            <div class="header-controls">
+                <button class="icon-btn" 
+                        @click="toggleFullscreen()" 
+                        :title="isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'"
+                        aria-label="Toggle fullscreen">
+                    <span x-text="isFullscreen ? '⛶' : '⛶'">⛶</span>
+                </button>
+                <button class="icon-btn" 
+                        @click="showInfo = !showInfo" 
+                        title="About Pyrotechnica"
+                        aria-label="Show information">
+                    ℹ
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Canvas -->
+        <canvas id="sky-canvas" 
+                @click="launchAtPosition($event)"
+                @touchstart.prevent="launchAtPosition($event)"
+                aria-label="Fireworks display canvas. Click anywhere to launch a firework.">
+        </canvas>
+
+        <!-- Status Bar -->
+        <div class="status-bar" role="status" aria-live="polite">
+            <span x-text="statusMessage">Click anywhere to launch • Press <kbd>Space</kbd> for random</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+         JAVASCRIPT: MODULAR FIREWORK ENGINE
+         ============================================ -->
+    <script>
+        /**
+         * ============================================
+         * FIREWORK COLOR PALETTES
+         * ============================================
+         */
+        const PALETTES = {
+            gold: ['#ffd700', '#ffed4a', '#ffb700', '#fff8dc'],
+            ruby: ['#e31c3d', '#ff4d4d', '#c9190b', '#ff6b6b'],
+            sapphire: ['#0071bc', '#4dabf7', '#1c7ed6', '#74c0fc'],
+            emerald: ['#2e8540', '#51cf66', '#37b24d', '#8ce99a'],
+            amethyst: ['#9b59b6', '#be4bdb', '#7950f2', '#da77f2'],
+            silver: ['#c0c0c0', '#e8e8e8', '#a8a8a8', '#ffffff'],
+            copper: ['#b87333', '#cd853f', '#d2691e', '#daa520'],
+            pink: ['#ff69b4', '#ff85c8', '#ff1493', '#ffb6c1'],
+            cyan: ['#00ced1', '#48d1cc', '#40e0d0', '#7fffd4'],
+            white: ['#ffffff', '#f8f9fa', '#e9ecef', '#dee2e6'],
+            rainbow: ['#e31c3d', '#ffd700', '#2e8540', '#0071bc', '#9b59b6', '#ff69b4']
+        };
+
+        /**
+         * ============================================
+         * FIREWORK TYPES CONFIGURATION
+         * ============================================
+         */
+        const FIREWORK_TYPES = {
+            spherical: {
+                name: 'Spherical',
+                particleCount: 100,
+                spread: 360,
+                velocity: { min: 2, max: 6 },
+                lifetime: { min: 60, max: 90 },
+                gravity: 0.03,
+                trail: true,
+                sparkle: false
+            },
+            chrysanthemum: {
+                name: 'Chrysanthemum',
+                particleCount: 150,
+                spread: 360,
+                velocity: { min: 3, max: 7 },
+                lifetime: { min: 80, max: 120 },
+                gravity: 0.02,
+                trail: true,
+                sparkle: true
+            },
+            ring: {
+                name: 'Ring',
+                particleCount: 60,
+                spread: 360,
+                velocity: { min: 4, max: 4.5 },
+                lifetime: { min: 50, max: 70 },
+                gravity: 0.02,
+                trail: false,
+                sparkle: false
+            },
+            willow: {
+                name: 'Willow',
+                particleCount: 120,
+                spread: 360,
+                velocity: { min: 2, max: 5 },
+                lifetime: { min: 100, max: 150 },
+                gravity: 0.06,
+                trail: true,
+                sparkle: false
+            },
+            doubleBurst: {
+                name: 'Double Burst',
+                particleCount: 80,
+                spread: 360,
+                velocity: { min: 3, max: 6 },
+                lifetime: { min: 60, max: 90 },
+                gravity: 0.03,
+                trail: true,
+                sparkle: false,
+                secondary: true
+            },
+            crossette: {
+                name: 'Crossette',
+                particleCount: 40,
+                spread: 360,
+                velocity: { min: 4, max: 6 },
+                lifetime: { min: 40, max: 60 },
+                gravity: 0.02,
+                trail: true,
+                sparkle: false,
+                splits: true
+            },
+            heart: {
+                name: 'Heart',
+                particleCount: 80,
+                spread: 360,
+                velocity: { min: 3, max: 5 },
+                lifetime: { min: 70, max: 100 },
+                gravity: 0.025,
+                trail: true,
+                sparkle: true,
+                shape: 'heart'
+            },
+            star: {
+                name: 'Star',
+                particleCount: 60,
+                spread: 360,
+                velocity: { min: 3, max: 5 },
+                lifetime: { min: 70, max: 100 },
+                gravity: 0.025,
+                trail: true,
+                sparkle: true,
+                shape: 'star'
+            },
+            spiral: {
+                name: 'Spiral',
+                particleCount: 100,
+                spread: 360,
+                velocity: { min: 2, max: 4 },
+                lifetime: { min: 80, max: 120 },
+                gravity: 0.02,
+                trail: true,
+                sparkle: false,
+                spiral: true
+            },
+            megaCrackle: {
+                name: 'Mega Crackle',
+                particleCount: 200,
+                spread: 360,
+                velocity: { min: 1, max: 4 },
+                lifetime: { min: 40, max: 80 },
+                gravity: 0.04,
+                trail: false,
+                sparkle: true,
+                crackle: true
+            }
+        };
+
+        /**
+         * ============================================
+         * PARTICLE CLASS
+         * ============================================
+         */
+        class Particle {
+            constructor(x, y, vx, vy, color, config) {
+                this.x = x;
+                this.y = y;
+                this.vx = vx;
+                this.vy = vy;
+                this.color = color;
+                this.alpha = 1;
+                this.life = config.lifetime.min + Math.random() * (config.lifetime.max - config.lifetime.min);
+                this.maxLife = this.life;
+                this.gravity = config.gravity;
+                this.trail = config.trail;
+                this.sparkle = config.sparkle;
+                this.size = 2 + Math.random() * 2;
+                this.history = [];
+                this.historyLength = config.trail ? 8 : 0;
+            }
+
+            update() {
+                // Store position history for trails
+                if (this.trail && this.historyLength > 0) {
+                    this.history.unshift({ x: this.x, y: this.y, alpha: this.alpha });
+                    if (this.history.length > this.historyLength) {
+                        this.history.pop();
+                    }
+                }
+
+                // Physics
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += this.gravity;
+                this.vx *= 0.99; // Air resistance
+                this.vy *= 0.99;
+
+                // Life decay
+                this.life--;
+                this.alpha = Math.max(0, this.life / this.maxLife);
+            }
+
+            draw(ctx) {
+                // Draw trail
+                if (this.trail && this.history.length > 0) {
+                    for (let i = 0; i < this.history.length; i++) {
+                        const point = this.history[i];
+                        const trailAlpha = (1 - i / this.history.length) * this.alpha * 0.5;
+                        ctx.beginPath();
+                        ctx.arc(point.x, point.y, this.size * (1 - i / this.history.length), 0, Math.PI * 2);
+                        ctx.fillStyle = this.colorWithAlpha(trailAlpha);
+                        ctx.fill();
+                    }
+                }
+
+                // Draw main particle
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.colorWithAlpha(this.alpha);
+                ctx.fill();
+
+                // Sparkle effect
+                if (this.sparkle && Math.random() > 0.7) {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2);
+                    ctx.fillStyle = this.colorWithAlpha(this.alpha * 0.3);
+                    ctx.fill();
+                }
+            }
+
+            colorWithAlpha(alpha) {
+                // Convert hex to rgba
+                const hex = this.color.replace('#', '');
+                const r = parseInt(hex.substring(0, 2), 16);
+                const g = parseInt(hex.substring(2, 4), 16);
+                const b = parseInt(hex.substring(4, 6), 16);
+                return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+            }
+
+            get isDead() {
+                return this.life <= 0;
+            }
+        }
+
+        /**
+         * ============================================
+         * ROCKET CLASS (Rising firework)
+         * ============================================
+         */
+        class Rocket {
+            constructor(x, targetY, type, palette) {
+                this.x = x;
+                this.y = window.innerHeight;
+                this.targetY = targetY;
+                this.type = type;
+                this.palette = palette;
+                this.vy = -12 - Math.random() * 4;
+                this.trail = [];
+                this.exploded = false;
+            }
+
+            update() {
+                // Store trail
+                this.trail.unshift({ x: this.x, y: this.y });
+                if (this.trail.length > 15) {
+                    this.trail.pop();
+                }
+
+                // Move up
+                this.y += this.vy;
+                this.vy += 0.15; // Gravity slowing it down
+
+                // Check if reached target or slowed enough
+                if (this.y <= this.targetY || this.vy >= -2) {
+                    this.exploded = true;
+                }
+            }
+
+            draw(ctx) {
+                // Draw trail
+                for (let i = 0; i < this.trail.length; i++) {
+                    const point = this.trail[i];
+                    const alpha = 1 - i / this.trail.length;
+                    ctx.beginPath();
+                    ctx.arc(point.x, point.y, 3 - i * 0.15, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 200, 100, ${alpha * 0.8})`;
+                    ctx.fill();
+                }
+
+                // Draw rocket head
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = '#fff';
+                ctx.fill();
+            }
+        }
+
+        /**
+         * ============================================
+         * FIREWORK ENGINE CLASS
+         * ============================================
+         */
+        class FireworkEngine {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.particles = [];
+                this.rockets = [];
+                this.running = false;
+                this.resize();
+            }
+
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+
+            launch(x, y, type = 'spherical', paletteName = 'gold') {
+                const normalizedX = x * this.canvas.width;
+                const targetY = y * this.canvas.height;
+                const rocket = new Rocket(normalizedX, targetY, type, paletteName);
+                this.rockets.push(rocket);
+            }
+
+            explode(x, y, type, paletteName) {
+                const config = FIREWORK_TYPES[type] || FIREWORK_TYPES.spherical;
+                const palette = PALETTES[paletteName] || PALETTES.gold;
+
+                // Handle special shapes
+                if (config.shape === 'heart') {
+                    this.createHeartExplosion(x, y, config, palette);
+                } else if (config.shape === 'star') {
+                    this.createStarExplosion(x, y, config, palette);
+                } else if (config.spiral) {
+                    this.createSpiralExplosion(x, y, config, palette);
+                } else {
+                    this.createSphericalExplosion(x, y, config, palette);
+                }
+
+                // Secondary burst for double burst type
+                if (config.secondary) {
+                    setTimeout(() => {
+                        this.createSphericalExplosion(x, y, { ...config, particleCount: 40 }, palette);
+                    }, 200);
+                }
+            }
+
+            createSphericalExplosion(x, y, config, palette) {
+                for (let i = 0; i < config.particleCount; i++) {
+                    const angle = (Math.PI * 2 * i) / config.particleCount + Math.random() * 0.2;
+                    const velocity = config.velocity.min + Math.random() * (config.velocity.max - config.velocity.min);
+                    const vx = Math.cos(angle) * velocity;
+                    const vy = Math.sin(angle) * velocity;
+                    const color = palette[Math.floor(Math.random() * palette.length)];
+                    this.particles.push(new Particle(x, y, vx, vy, color, config));
+                }
+            }
+
+            createHeartExplosion(x, y, config, palette) {
+                for (let i = 0; i < config.particleCount; i++) {
+                    const t = (i / config.particleCount) * Math.PI * 2;
+                    // Heart parametric equations
+                    const heartX = 16 * Math.pow(Math.sin(t), 3);
+                    const heartY = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                    const scale = 0.3;
+                    const vx = heartX * scale * 0.15;
+                    const vy = heartY * scale * 0.15;
+                    const color = palette[Math.floor(Math.random() * palette.length)];
+                    this.particles.push(new Particle(x, y, vx, vy, color, config));
+                }
+            }
+
+            createStarExplosion(x, y, config, palette) {
+                const points = 5;
+                const outerRadius = 5;
+                const innerRadius = 2;
+                
+                for (let i = 0; i < config.particleCount; i++) {
+                    const angle = (i / config.particleCount) * Math.PI * 2;
+                    const pointIndex = Math.floor((angle / (Math.PI * 2)) * points * 2);
+                    const radius = pointIndex % 2 === 0 ? outerRadius : innerRadius;
+                    const velocity = radius * (config.velocity.min + Math.random() * 0.5);
+                    const vx = Math.cos(angle) * velocity;
+                    const vy = Math.sin(angle) * velocity;
+                    const color = palette[Math.floor(Math.random() * palette.length)];
+                    this.particles.push(new Particle(x, y, vx, vy, color, config));
+                }
+            }
+
+            createSpiralExplosion(x, y, config, palette) {
+                for (let i = 0; i < config.particleCount; i++) {
+                    const angle = (i / config.particleCount) * Math.PI * 8; // Multiple rotations
+                    const radius = (i / config.particleCount) * 6;
+                    const vx = Math.cos(angle) * radius;
+                    const vy = Math.sin(angle) * radius;
+                    const color = palette[Math.floor(Math.random() * palette.length)];
+                    const particle = new Particle(x, y, vx, vy, color, config);
+                    particle.delay = i * 0.5; // Stagger for spiral effect
+                    this.particles.push(particle);
+                }
+            }
+
+            update() {
+                // Update rockets
+                for (let i = this.rockets.length - 1; i >= 0; i--) {
+                    const rocket = this.rockets[i];
+                    rocket.update();
+                    if (rocket.exploded) {
+                        this.explode(rocket.x, rocket.y, rocket.type, rocket.palette);
+                        this.rockets.splice(i, 1);
+                    }
+                }
+
+                // Update particles
+                for (let i = this.particles.length - 1; i >= 0; i--) {
+                    const particle = this.particles[i];
+                    particle.update();
+                    if (particle.isDead) {
+                        this.particles.splice(i, 1);
+                    }
+                }
+            }
+
+            draw() {
+                // Semi-transparent clear for trail effect
+                this.ctx.fillStyle = 'rgba(10, 10, 26, 0.2)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+                // Draw rockets
+                for (const rocket of this.rockets) {
+                    rocket.draw(this.ctx);
+                }
+
+                // Draw particles
+                for (const particle of this.particles) {
+                    particle.draw(this.ctx);
+                }
+            }
+
+            start() {
+                if (this.running) return;
+                this.running = true;
+                this.loop();
+            }
+
+            stop() {
+                this.running = false;
+            }
+
+            loop() {
+                if (!this.running) return;
+                this.update();
+                this.draw();
+                requestAnimationFrame(() => this.loop());
+            }
+
+            clear() {
+                this.particles = [];
+                this.rockets = [];
+                this.ctx.fillStyle = 'rgba(10, 10, 26, 1)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            }
+        }
+
+        /**
+         * ============================================
+         * ALPINE.JS APPLICATION STATE
+         * ============================================
+         */
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('pyrotechnica', () => ({
+                // State
+                engine: null,
+                stars: [],
+                isFullscreen: false,
+                showInfo: false,
+                statusMessage: 'Click anywhere to launch • Press Space for random',
+                
+                // Current launch settings
+                currentType: 'spherical',
+                currentPalette: 'gold',
+                
+                // Initialize
+                init() {
+                    const canvas = document.getElementById('sky-canvas');
+                    this.engine = new FireworkEngine(canvas);
+                    this.engine.start();
+                    
+                    // Generate stars
+                    this.generateStars();
+                    
+                    // Handle resize
+                    window.addEventListener('resize', () => {
+                        this.engine.resize();
+                    });
+                    
+                    // Keyboard controls
+                    window.addEventListener('keydown', (e) => this.handleKeydown(e));
+                    
+                    console.log('🎆 Pyrotechnica initialized');
+                    console.log('Available types:', Object.keys(FIREWORK_TYPES));
+                    console.log('Available palettes:', Object.keys(PALETTES));
+                },
+                
+                generateStars() {
+                    this.stars = [];
+                    for (let i = 0; i < 100; i++) {
+                        this.stars.push({
+                            id: i,
+                            x: Math.random() * 100,
+                            y: Math.random() * 60, // Only in upper portion
+                            delay: Math.random() * 3,
+                            opacity: 0.3 + Math.random() * 0.7
+                        });
+                    }
+                },
+                
+                launchAtPosition(event) {
+                    const rect = this.engine.canvas.getBoundingClientRect();
+                    let clientX, clientY;
+                    
+                    if (event.touches) {
+                        clientX = event.touches[0].clientX;
+                        clientY = event.touches[0].clientY;
+                    } else {
+                        clientX = event.clientX;
+                        clientY = event.clientY;
+                    }
+                    
+                    const x = (clientX - rect.left) / rect.width;
+                    const y = (clientY - rect.top) / rect.height;
+                    
+                    this.engine.launch(x, y, this.currentType, this.currentPalette);
+                    this.statusMessage = `Launched ${FIREWORK_TYPES[this.currentType].name} in ${this.currentPalette}`;
+                },
+                
+                launchRandom() {
+                    const types = Object.keys(FIREWORK_TYPES);
+                    const palettes = Object.keys(PALETTES);
+                    const type = types[Math.floor(Math.random() * types.length)];
+                    const palette = palettes[Math.floor(Math.random() * palettes.length)];
+                    const x = 0.2 + Math.random() * 0.6;
+                    const y = 0.2 + Math.random() * 0.4;
+                    
+                    this.engine.launch(x, y, type, palette);
+                    this.statusMessage = `Random: ${FIREWORK_TYPES[type].name} in ${palette}`;
+                },
+                
+                handleKeydown(e) {
+                    if (e.code === 'Space') {
+                        e.preventDefault();
+                        this.launchRandom();
+                    }
+                    
+                    // Number keys 1-0 for firework types
+                    const typeKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+                    const typeIndex = typeKeys.indexOf(e.key);
+                    if (typeIndex !== -1) {
+                        const types = Object.keys(FIREWORK_TYPES);
+                        if (typeIndex < types.length) {
+                            this.currentType = types[typeIndex];
+                            this.statusMessage = `Selected: ${FIREWORK_TYPES[this.currentType].name}`;
+                        }
+                    }
+                },
+                
+                toggleFullscreen() {
+                    if (!document.fullscreenElement) {
+                        document.documentElement.requestFullscreen();
+                        this.isFullscreen = true;
+                    } else {
+                        document.exitFullscreen();
+                        this.isFullscreen = false;
+                    }
+                }
+            }));
         });
-      }
-    }
-    createStars();
-    window.addEventListener('resize', createStars);
-    
-    function drawStars(time) {
-      ctx.fillStyle = '#ffffff';
-      for (let i = 0; i < stars.length; i++) {
-        const s = stars[i];
-        const alpha = 0.5 + Math.sin(time * 0.002 + s.twinkle) * 0.3;
-        ctx.globalAlpha = alpha;
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-    }
-    
-    // ═══════════════════════════════════════════════════════════
-    // PARTICLES
-    // ═══════════════════════════════════════════════════════════
-    const particles = [];
-    
-    // Pre-parse color cache to avoid repeated hex parsing
-    const colorCache = new Map();
-    
-    function getRGB(hex) {
-      if (colorCache.has(hex)) return colorCache.get(hex);
-      const rgb = {
-        r: parseInt(hex.slice(1, 3), 16),
-        g: parseInt(hex.slice(3, 5), 16),
-        b: parseInt(hex.slice(5, 7), 16)
-      };
-      colorCache.set(hex, rgb);
-      return rgb;
-    }
-    
-    function createParticle(x, y, angle, speed, color, size, gravity, drag, life) {
-      // Enforce particle limit - skip if at max
-      if (particles.length >= MAX_PARTICLES) return;
-      
-      particles.push({
-        x: x,
-        y: y,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        color: color,
-        rgb: getRGB(color),
-        size: size,
-        gravity: gravity,
-        drag: drag,
-        life: life,
-        maxLife: life,
-        trailIdx: 0,
-        trailX: new Float32Array(TRAIL_LENGTH),
-        trailY: new Float32Array(TRAIL_LENGTH)
-      });
-    }
-    
-    function updateParticles() {
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        
-        // Store trail using ring buffer (no array allocation)
-        p.trailX[p.trailIdx] = p.x;
-        p.trailY[p.trailIdx] = p.y;
-        p.trailIdx = (p.trailIdx + 1) % TRAIL_LENGTH;
-        
-        // Physics
-        p.vy += p.gravity;
-        p.vx *= p.drag;
-        p.vy *= p.drag;
-        p.x += p.vx;
-        p.y += p.vy;
-        p.life -= 1;
-        
-        // Remove dead particles or off-screen particles
-        if (p.life <= 0 || p.y > H + 50) {
-          particles.splice(i, 1);
-        }
-      }
-    }
-    
-    function drawParticles() {
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-        const alpha = p.life / p.maxLife;
-        const size = p.size * alpha;
-        const rgb = p.rgb;
-        
-        // Skip very faded particles
-        if (alpha < 0.05) continue;
-        
-        // Draw trail (simplified - no gradient per trail point)
-        ctx.fillStyle = 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + (alpha * 0.3) + ')';
-        for (let j = 0; j < TRAIL_LENGTH; j++) {
-          const idx = (p.trailIdx + j) % TRAIL_LENGTH;
-          const tx = p.trailX[idx];
-          const ty = p.trailY[idx];
-          if (tx === 0 && ty === 0) continue;
-          const trailSize = size * (j / TRAIL_LENGTH) * 0.5;
-          ctx.beginPath();
-          ctx.arc(tx, ty, trailSize, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        
-        // Draw glow (simplified - single color, no gradient)
-        ctx.globalAlpha = alpha * 0.4;
-        ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, size * 2.5, 0, Math.PI * 2);
-        ctx.fill();
-        
-        // Draw core
-        ctx.globalAlpha = alpha;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-    }
-    
-    // ═══════════════════════════════════════════════════════════
-    // ROCKETS
-    // ═══════════════════════════════════════════════════════════
-    const rockets = [];
-    
-    function launchRocket(specialType) {
-      if (rockets.length >= MAX_ROCKETS) return;
-      
-      const x = W * 0.15 + Math.random() * W * 0.7;
-      const type = specialType !== undefined ? specialType : Math.floor(Math.random() * 10);
-      rockets.push({
-        x: x,
-        y: H + 20,
-        vx: (Math.random() - 0.5) * 2,
-        vy: -(10 + Math.random() * 5),
-        targetY: H * 0.15 + Math.random() * H * 0.35,
-        palette: palettes[Math.floor(Math.random() * palettes.length)],
-        trailIdx: 0,
-        trailX: new Float32Array(12),
-        trailY: new Float32Array(12),
-        trailLife: new Float32Array(12),
-        type: type
-      });
-      playLaunch();
-    }
-    
-    function updateRockets() {
-      for (let i = rockets.length - 1; i >= 0; i--) {
-        const r = rockets[i];
-        
-        // Store trail using ring buffer
-        r.trailX[r.trailIdx] = r.x;
-        r.trailY[r.trailIdx] = r.y;
-        r.trailLife[r.trailIdx] = 1;
-        r.trailIdx = (r.trailIdx + 1) % 12;
-        
-        // Decay trail
-        for (let j = 0; j < 12; j++) {
-          r.trailLife[j] -= 0.08;
-        }
-        
-        // Physics
-        r.vy += 0.12;
-        r.x += r.vx;
-        r.y += r.vy;
-        
-        // Check for explosion
-        if (r.y <= r.targetY || r.vy >= -1) {
-          explode(r);
-          rockets.splice(i, 1);
-        }
-      }
-    }
-    
-    function drawRockets() {
-      for (let i = 0; i < rockets.length; i++) {
-        const r = rockets[i];
-        
-        // Draw trail (simplified)
-        for (let j = 0; j < 12; j++) {
-          const life = r.trailLife[j];
-          if (life <= 0) continue;
-          const tx = r.trailX[j];
-          const ty = r.trailY[j];
-          const alpha = life * 0.6;
-          const size = 3 + (j / 12) * 3;
-          
-          ctx.globalAlpha = alpha;
-          ctx.fillStyle = '#ffcc66';
-          ctx.beginPath();
-          ctx.arc(tx, ty, size, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        ctx.globalAlpha = 1;
-        
-        // Draw rocket head (simplified - no gradient)
-        ctx.fillStyle = '#ffdd00';
-        ctx.beginPath();
-        ctx.arc(r.x, r.y, 4, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(r.x, r.y, 2, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-    
-    // ═══════════════════════════════════════════════════════════
-    // EXPLOSIONS - NOW WITH SPECIAL SHAPES!
-    // ═══════════════════════════════════════════════════════════
-    function explode(rocket) {
-      const x = rocket.x;
-      const y = rocket.y;
-      const palette = rocket.palette;
-      const type = rocket.type;
-      
-      // Visual effects
-      const isBigBoom = type >= 6;
-      screenFlash(isBigBoom ? 0.4 : 0.2);
-      if (isBigBoom) screenShake();
-      playBoom(isBigBoom);
-      
-      // Flash particles
-      for (let i = 0; i < 5; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 2;
-        createParticle(x, y, angle, speed, '#FFFFFF', 6, 0, 0.95, 12);
-      }
-      
-      const count = 80 + Math.floor(Math.random() * 40);
-      
-      switch(type) {
-        case 0: // Spherical
-          for (let i = 0; i < count; i++) {
-            const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.2;
-            const speed = 3 + Math.random() * 3.5;
-            const color = palette[Math.floor(Math.random() * palette.length)];
-            createParticle(x, y, angle, speed, color, 2.5 + Math.random(), 0.08, 0.985, 60 + Math.random() * 30);
-          }
-          break;
-          
-        case 1: // Chrysanthemum
-          for (let layer = 0; layer < 3; layer++) {
-            const layerCount = Math.floor(count / 3);
-            const speed = 2 + layer * 1.5;
-            for (let i = 0; i < layerCount; i++) {
-              const angle = (i / layerCount) * Math.PI * 2;
-              const color = layer % 2 === 0 ? palette[0] : '#FFFFFF';
-              createParticle(x, y, angle, speed + Math.random(), color, 2 + Math.random(), 0.06, 0.988, 70 + Math.random() * 25);
-            }
-          }
-          break;
-          
-        case 2: // Ring
-          for (let i = 0; i < count; i++) {
-            const angle = (i / count) * Math.PI * 2;
-            const speed = 4.5 + Math.random();
-            const color = palette[i % palette.length];
-            const vx = Math.cos(angle) * speed;
-            const vy = Math.sin(angle) * speed * 0.3;
-            if (particles.length < MAX_PARTICLES) {
-              const rgb = getRGB(color);
-              particles.push({
-                x: x, y: y, vx: vx, vy: vy,
-                color: color, rgb: rgb, size: 2.5, gravity: 0.05, drag: 0.985,
-                life: 55, maxLife: 55, trailIdx: 0,
-                trailX: new Float32Array(TRAIL_LENGTH),
-                trailY: new Float32Array(TRAIL_LENGTH)
-              });
-            }
-          }
-          for (let i = 0; i < 20; i++) {
-            const angle = Math.random() * Math.PI * 2;
-            const speed = Math.random() * 2.5;
-            createParticle(x, y, angle, speed, '#FFFFFF', 1.5, 0.03, 0.98, 40);
-          }
-          break;
-          
-        case 3: // Willow
-          for (let i = 0; i < count; i++) {
-            const angle = (i / count) * Math.PI * 2;
-            const speed = 2 + Math.random() * 2;
-            createParticle(x, y, angle, speed, palette[0], 2, 0.12, 0.992, 90 + Math.random() * 30);
-          }
-          break;
-          
-        case 4: // Double burst
-          for (let i = 0; i < count / 2; i++) {
-            const angle = (i / (count / 2)) * Math.PI * 2;
-            createParticle(x, y, angle, 3 + Math.random(), palette[0], 2.5, 0.07, 0.985, 60);
-          }
-          for (let i = 0; i < count / 2; i++) {
-            const angle = (i / (count / 2)) * Math.PI * 2 + 0.1;
-            createParticle(x, y, angle, 5 + Math.random(), palette[2] || palette[1], 2.5, 0.07, 0.985, 60);
-          }
-          break;
-          
-        case 5: // Crossette
-          const arms = 5;
-          for (let arm = 0; arm < arms; arm++) {
-            const baseAngle = (arm / arms) * Math.PI * 2;
-            for (let i = 0; i < count / arms; i++) {
-              const spread = (Math.random() - 0.5) * 0.4;
-              const angle = baseAngle + spread;
-              const speed = 2 + (i / (count / arms)) * 4.5;
-              const color = palette[arm % palette.length];
-              createParticle(x, y, angle, speed, color, 2 + Math.random(), 0.07, 0.985, 60 + Math.random() * 15);
-            }
-          }
-          break;
-          
-        case 6: // ❤️ HEART SHAPE
-          const heartPoints = 60;
-          for (let i = 0; i < heartPoints; i++) {
-            const t = (i / heartPoints) * Math.PI * 2;
-            const hx = 16 * Math.pow(Math.sin(t), 3);
-            const hy = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
-            const angle = Math.atan2(hy, hx);
-            const dist = Math.sqrt(hx*hx + hy*hy);
-            const speed = dist * 0.25 + Math.random() * 0.5;
-            createParticle(x, y, angle, speed, '#FF1744', 3, 0.06, 0.988, 80 + Math.random() * 20);
-          }
-          // Fill with pink
-          for (let i = 0; i < 30; i++) {
-            const t = Math.random() * Math.PI * 2;
-            const scale = Math.random() * 0.7;
-            const hx = 16 * Math.pow(Math.sin(t), 3) * scale;
-            const hy = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)) * scale;
-            const angle = Math.atan2(hy, hx);
-            const dist = Math.sqrt(hx*hx + hy*hy);
-            createParticle(x, y, angle, dist * 0.2, '#FF80AB', 2, 0.05, 0.99, 70);
-          }
-          break;
-          
-        case 7: // ⭐ STAR SHAPE
-          const starPoints = 5;
-          const outerR = 5;
-          const innerR = 2;
-          for (let i = 0; i < 50; i++) {
-            const idx = i % (starPoints * 2);
-            const angle = (idx / (starPoints * 2)) * Math.PI * 2 - Math.PI / 2;
-            const r = idx % 2 === 0 ? outerR : innerR;
-            const speed = r + Math.random() * 1.5;
-            createParticle(x, y, angle, speed, palette[0], 3, 0.06, 0.985, 70 + Math.random() * 20);
-          }
-          // Star trails
-          for (let i = 0; i < starPoints; i++) {
-            const angle = (i / starPoints) * Math.PI * 2 - Math.PI / 2;
-            for (let j = 0; j < 8; j++) {
-              const speed = 1 + j * 0.7;
-              createParticle(x, y, angle, speed, '#FFFFFF', 2, 0.04, 0.99, 80);
-            }
-          }
-          break;
-          
-        case 8: // 🌀 SPIRAL
-          const spiralArms = 3;
-          const spiralPoints = 40;
-          for (let arm = 0; arm < spiralArms; arm++) {
-            const armOffset = (arm / spiralArms) * Math.PI * 2;
-            for (let i = 0; i < spiralPoints; i++) {
-              const t = i / spiralPoints;
-              const angle = armOffset + t * Math.PI * 4;
-              const speed = 1 + t * 5;
-              const color = palette[arm % palette.length];
-              createParticle(x, y, angle, speed, color, 2.5, 0.05, 0.988, 70 + Math.random() * 20);
-            }
-          }
-          break;
-          
-        case 9: // 💥 MEGA CRACKLE (with delayed secondary explosions)
-          for (let i = 0; i < count; i++) {
-            const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.3;
-            const speed = 3 + Math.random() * 3;
-            const color = palette[Math.floor(Math.random() * palette.length)];
-            createParticle(x, y, angle, speed, color, 2.5, 0.07, 0.985, 50 + Math.random() * 20);
-          }
-          // Schedule crackle effects
-          for (let i = 0; i < 8; i++) {
-            setTimeout(() => {
-              const cx = x + (Math.random() - 0.5) * 150;
-              const cy = y + (Math.random() - 0.5) * 150;
-              for (let j = 0; j < 10; j++) {
-                const angle = Math.random() * Math.PI * 2;
-                const speed = 1 + Math.random() * 2;
-                createParticle(cx, cy, angle, speed, '#FFFFFF', 1.5, 0.1, 0.97, 25);
-              }
-              playCrackle();
-              screenFlash(0.1);
-            }, 200 + i * 100 + Math.random() * 100);
-          }
-          break;
-      }
-      
-      // Extra sparkles
-      for (let i = 0; i < 15; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const speed = 1 + Math.random() * 1.5;
-        createParticle(x, y, angle, speed, '#FFFFFF', 1, 0.02, 0.98, 30 + Math.random() * 15);
-      }
-    }
-    
-    // ═══════════════════════════════════════════════════════════
-    // CONFETTI
-    // ═══════════════════════════════════════════════════════════
-    const confetti = [];
-    const confettiColors = ['#ff0080', '#ffef00', '#00ff88', '#00cfff', '#ff8c00', '#a855f7'];
-    
-    function spawnConfetti() {
-      if (confetti.length < MAX_CONFETTI && Math.random() < 0.3) {
-        confetti.push({
-          x: Math.random() * W,
-          y: -10,
-          vx: (Math.random() - 0.5) * 2,
-          vy: 2 + Math.random() * 2,
-          size: 6 + Math.random() * 6,
-          color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
-          rotation: Math.random() * 360,
-          rotationSpeed: (Math.random() - 0.5) * 8,
-          wobble: Math.random() * Math.PI * 2,
-          wobbleSpeed: 0.05 + Math.random() * 0.05
-        });
-      }
-    }
-    
-    function updateConfetti() {
-      for (let i = confetti.length - 1; i >= 0; i--) {
-        const c = confetti[i];
-        c.wobble += c.wobbleSpeed;
-        c.x += c.vx + Math.sin(c.wobble) * 1.5;
-        c.y += c.vy;
-        c.rotation += c.rotationSpeed;
-        
-        if (c.y > H + 20) {
-          confetti.splice(i, 1);
-        }
-      }
-    }
-    
-    function drawConfetti() {
-      for (let i = 0; i < confetti.length; i++) {
-        const c = confetti[i];
-        ctx.save();
-        ctx.translate(c.x, c.y);
-        ctx.rotate(c.rotation * Math.PI / 180);
-        ctx.fillStyle = c.color;
-        ctx.fillRect(-c.size / 2, -c.size / 4, c.size, c.size / 2);
-        ctx.restore();
-      }
-    }
-    
-    // ═══════════════════════════════════════════════════════════
-    // MAIN LOOP
-    // ═══════════════════════════════════════════════════════════
-    let lastLaunch = 0;
-    let launchInterval = 300;
-    
-    function animate(time) {
-      // Cache sky gradient
-      if (!skyGradientCache) {
-        skyGradientCache = ctx.createLinearGradient(0, 0, 0, H);
-        skyGradientCache.addColorStop(0, '#0a0a18');
-        skyGradientCache.addColorStop(0.5, '#101028');
-        skyGradientCache.addColorStop(1, '#1a1a38');
-      }
-      ctx.fillStyle = skyGradientCache;
-      ctx.fillRect(0, 0, W, H);
-      
-      drawStars(time);
-      
-      // Finale mode - rapid fire!
-      if (finaleMode && time < finaleEndTime) {
-        if (time - lastLaunch > 80) {
-          launchRocket(Math.floor(Math.random() * 10));
-          if (Math.random() < 0.3) launchRocket(6 + Math.floor(Math.random() * 4)); // Special shapes
-          lastLaunch = time;
-        }
-      } else {
-        if (finaleMode) finaleMode = false;
-        if (time - lastLaunch > launchInterval) {
-          launchRocket();
-          lastLaunch = time;
-          launchInterval = 250 + Math.random() * 500;
-        }
-      }
-      
-      updateRockets();
-      updateParticles();
-      spawnConfetti();
-      updateConfetti();
-      
-      drawConfetti();
-      drawRockets();
-      drawParticles();
-      
-      requestAnimationFrame(animate);
-    }
-    
-    // ═══════════════════════════════════════════════════════════
-    // GRAND FINALE
-    // ═══════════════════════════════════════════════════════════
-    function triggerFinale() {
-      if (finaleMode) return;
-      initAudio();
-      finaleMode = true;
-      finaleEndTime = performance.now() + 10000; // 10 seconds
-      finaleText.classList.add('show');
-      setTimeout(() => finaleText.classList.remove('show'), 3000);
-      
-      // Launch initial burst
-      for (let i = 0; i < 5; i++) {
-        setTimeout(() => launchRocket(6 + Math.floor(Math.random() * 4)), i * 50);
-      }
-    }
-    
-    // ═══════════════════════════════════════════════════════════
-    // KEYBOARD CONTROLS
-    // ═══════════════════════════════════════════════════════════
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'f' || e.key === 'F') {
-        triggerFinale();
-      }
-      if (e.key === 's' || e.key === 'S') {
-        initAudio();
-        soundEnabled = !soundEnabled;
-        console.log('%c🔊 Sound: ' + (soundEnabled ? 'ON' : 'OFF'), 'font-size:14px; color:#00E5FF;');
-      }
-    });
-    
-    // ═══════════════════════════════════════════════════════════
-    // CLICK TO LAUNCH EXTRA FIREWORKS
-    // ═══════════════════════════════════════════════════════════
-    document.addEventListener('click', function(e) {
-      initAudio();
-      for (let i = 0; i < 3; i++) {
-        setTimeout(function() {
-          if (rockets.length >= MAX_ROCKETS) return;
-          const specialChance = Math.random();
-          const type = specialChance < 0.3 ? (6 + Math.floor(Math.random() * 4)) : Math.floor(Math.random() * 6);
-          const r = {
-            x: e.clientX + (Math.random() - 0.5) * 80,
-            y: H + 20,
-            vx: (Math.random() - 0.5) * 3,
-            vy: -(12 + Math.random() * 4),
-            targetY: e.clientY * 0.8,
-            palette: palettes[Math.floor(Math.random() * palettes.length)],
-            trailIdx: 0,
-            trailX: new Float32Array(12),
-            trailY: new Float32Array(12),
-            trailLife: new Float32Array(12),
-            type: type
-          };
-          rockets.push(r);
-          playLaunch();
-        }, i * 100);
-      }
-    });
-    
-    // ═══════════════════════════════════════════════════════════
-    // START THE SHOW!!!
-    // ═══════════════════════════════════════════════════════════
-    
-    for (let i = 0; i < 8; i++) {
-      setTimeout(launchRocket, i * 120);
-    }
-    
-    requestAnimationFrame(animate);
-    
-    console.log('%c🎆 Happy New Year 2025! 🎆', 'font-size:24px; color:#FFD700; text-shadow:0 0 10px #FF6600;');
-    console.log('%c✨ SO AWESOME!!! ✨', 'font-size:18px; color:#FF0080;');
-    console.log('%cControls: [F] Grand Finale | [S] Toggle Sound | [Click] Launch', 'font-size:14px; color:#00E5FF;');
-    
-  })();
-  </script>
+    </script>
 </body>
 </html>
