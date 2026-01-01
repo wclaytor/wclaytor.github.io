@@ -46,6 +46,7 @@ _— From our screens to yours, Happy New Year 2025! 🥂_
 - **Click Interaction** — Click anywhere to launch bonus fireworks
 - **Fully Responsive** — Works on any screen size
 - **Zero Dependencies** — Pure vanilla JavaScript, no libraries needed
+- **Performance Optimized** — Smooth 60fps with capped particles and efficient rendering
 
 ---
 
@@ -332,18 +333,119 @@ This creates organic variation while maintaining constant spectacle.
 
 ---
 
+## ⚡ Performance Optimizations
+
+The fireworks display has been optimized for smooth 60fps performance even during extended viewing sessions.
+
+### Memory Management
+
+**Object Limits** — Hard caps prevent unbounded growth:
+| Object Type | Max Count |
+|-------------|-----------|
+| Particles | 800 |
+| Rockets | 15 |
+| Confetti | 100 |
+| Stars | 200 |
+
+**Pre-allocated Buffers** — Trail data uses `Float32Array` ring buffers instead of dynamic arrays:
+
+```javascript
+// Before: Created new objects every frame (GC pressure)
+p.trail.push({ x: p.x, y: p.y });
+if (p.trail.length > 8) p.trail.shift();
+
+// After: Fixed-size typed arrays with ring buffer index
+p.trailX[p.trailIdx] = p.x;
+p.trailY[p.trailIdx] = p.y;
+p.trailIdx = (p.trailIdx + 1) % TRAIL_LENGTH;
+```
+
+**Color Caching** — Hex colors are parsed once and cached:
+
+```javascript
+const colorCache = new Map();
+function getRGB(hex) {
+  if (colorCache.has(hex)) return colorCache.get(hex);
+  const rgb = { r, g, b }; // Parse once
+  colorCache.set(hex, rgb);
+  return rgb;
+}
+```
+
+### Rendering Optimizations
+
+**Canvas Context** — Alpha disabled for faster compositing:
+
+```javascript
+ctx.getContext("2d", { alpha: false });
+```
+
+**Cached Gradients** — Sky gradient created once, not every frame:
+
+```javascript
+// Before: New gradient every frame
+function animate(time) {
+  const skyGradient = ctx.createLinearGradient(0, 0, 0, H); // Expensive!
+  ...
+}
+
+// After: Cache and reuse
+if (!skyGradientCache) {
+  skyGradientCache = ctx.createLinearGradient(0, 0, 0, H);
+}
+```
+
+**Simplified Particle Rendering** — Replaced expensive radial gradients with `globalAlpha`:
+
+```javascript
+// Before: Gradient per particle (very expensive)
+const gradient = ctx.createRadialGradient(x, y, 0, x, y, size * 3);
+gradient.addColorStop(0, rgba(color, alpha * 0.8));
+gradient.addColorStop(0.5, rgba(color, alpha * 0.3));
+gradient.addColorStop(1, rgba(color, 0));
+
+// After: Simple alpha blending (much faster)
+ctx.globalAlpha = alpha * 0.4;
+ctx.fillStyle = color;
+ctx.beginPath();
+ctx.arc(x, y, size * 2.5, 0, Math.PI * 2);
+ctx.fill();
+```
+
+### Early Culling
+
+- Skip particles with alpha < 0.05 (nearly invisible)
+- Remove off-screen particles immediately
+- Batch star rendering with single `fillStyle` change
+
+### Reduced Particle Counts
+
+| Element             | Before    | After     |
+| ------------------- | --------- | --------- |
+| Explosion particles | 150-250   | 80-120    |
+| Flash particles     | 10        | 5         |
+| Extra sparkles      | 30        | 15        |
+| Trail length        | 8         | 5         |
+| Launch interval     | 150-550ms | 250-750ms |
+
+These optimizations maintain visual appeal while ensuring smooth performance on a wide range of devices.
+
+---
+
 ## 📊 By The Numbers
 
 | Metric                   | Value                             |
 | ------------------------ | --------------------------------- |
-| Lines of Code            | ~450                              |
-| File Size                | ~15 KB                            |
+| Lines of Code            | ~500                              |
+| File Size                | ~16 KB                            |
 | Dependencies             | 0                                 |
 | Canvases                 | 1                                 |
 | Particle Types           | 4 (normal, comet, sparkle, flash) |
 | Explosion Types          | 6                                 |
 | Color Palettes           | 10                                |
-| Max Concurrent Particles | ~2000+                            |
+| Max Concurrent Particles | 800 (optimized)                   |
+| Max Rockets              | 15                                |
+| Max Confetti             | 100                               |
 | Target Frame Rate        | 60 fps                            |
 
 ---
