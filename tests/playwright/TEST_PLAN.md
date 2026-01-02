@@ -1,17 +1,17 @@
 # Test Plan for wclaytor.github.io
 
-> *"The act of writing tests first, before the code, changes the way we think about the code."* — Kent Beck
+> _"The act of writing tests first, before the code, changes the way we think about the code."_ — Kent Beck
 
 ## Document Information
 
-| Field | Value |
-|-------|-------|
-| **Project** | wclaytor.github.io Portfolio Website |
-| **Version** | 1.0 |
-| **Created** | December 2024 |
-| **Status** | Draft |
-| **Test Framework** | Playwright with Python |
-| **Influenced By** | Kent Beck (TDD), Martin Fowler (Refactoring) |
+| Field              | Value                                        |
+| ------------------ | -------------------------------------------- |
+| **Project**        | wclaytor.github.io Portfolio Website         |
+| **Version**        | 1.0                                          |
+| **Created**        | December 2024                                |
+| **Status**         | Draft                                        |
+| **Test Framework** | Playwright with Python                       |
+| **Influenced By**  | Kent Beck (TDD), Martin Fowler (Refactoring) |
 
 ---
 
@@ -59,25 +59,25 @@ This test plan defines the testing approach for the wclaytor.github.io portfolio
 
 ### 2.1 Pages Under Test
 
-| Page | URL | Priority | Description |
-|------|-----|----------|-------------|
-| Homepage | `/` | Critical | Main landing page with all sections |
-| Projects | `/projects/` | High | Projects gallery listing |
-| Alpine Resume | `/projects/alpine-resume/` | High | Featured PWA project |
-| Alpine Presentation | `/projects/alpine-markdown-presentation/` | High | Featured PWA project |
-| Resume | `/assets/resume/william_claytor_resume.html` | High | Resume page |
-| Background Transformer | `/projects/alpine-background-transformer/` | Medium | Experimental project |
-| Dynamic Resume | `/projects/dynamic-resume/` | Medium | Experimental project |
+| Page                   | URL                                          | Priority | Description                                 |
+| ---------------------- | -------------------------------------------- | -------- | ------------------------------------------- |
+| Homepage               | `/`                                          | Critical | Main landing page with all sections         |
+| Projects               | `/projects/`                                 | High     | Redirect page to main page projects section |
+| Alpine Resume          | `/projects/alpine-resume/`                   | High     | Featured PWA project                        |
+| Alpine Presentation    | `/projects/alpine-markdown-presentation/`    | High     | Featured PWA project                        |
+| Resume                 | `/assets/resume/william_claytor_resume.html` | High     | Resume page                                 |
+| Background Transformer | `/projects/alpine-background-transformer/`   | Medium   | Experimental project                        |
+| Dynamic Resume         | `/projects/dynamic-resume/`                  | Medium   | Experimental project                        |
 
 ### 2.2 Components Under Test
 
-| Component | Appears On | Priority |
-|-----------|-----------|----------|
-| Navigation | All pages | Critical |
-| Footer | All pages | High |
-| Project Cards | Homepage, Projects | High |
-| Expertise Cards | Homepage | Medium |
-| Social Links | Contact section | Medium |
+| Component       | Appears On         | Priority |
+| --------------- | ------------------ | -------- |
+| Navigation      | All pages          | Critical |
+| Footer          | All pages          | High     |
+| Project Cards   | Homepage, Projects | High     |
+| Expertise Cards | Homepage           | Medium   |
+| Social Links    | Contact section    | Medium   |
 
 ---
 
@@ -89,13 +89,13 @@ This test plan defines the testing approach for the wclaytor.github.io portfolio
 **Execution**: Every commit, every deployment  
 **Duration Target**: < 1 minute
 
-| ID | Test Case | Expected Result |
-|----|-----------|-----------------|
-| SM-001 | Homepage loads | HTTP 200, page renders |
-| SM-002 | Projects page loads | HTTP 200, page renders |
-| SM-003 | Resume page loads | HTTP 200, page renders |
-| SM-004 | Navigation is visible | Nav bar displayed on all pages |
-| SM-005 | No console errors | Zero JavaScript errors |
+| ID     | Test Case              | Expected Result                               |
+| ------ | ---------------------- | --------------------------------------------- |
+| SM-001 | Homepage loads         | HTTP 200, page renders                        |
+| SM-002 | Projects page loads    | HTTP 200, page renders                        |
+| SM-003 | Resume page loads      | HTTP 200, page renders                        |
+| SM-004 | Navigation is visible  | Nav bar displayed on all pages                |
+| SM-005 | No console errors      | Zero JavaScript errors                        |
 | SM-006 | Featured projects load | Alpine Resume, Alpine Presentation accessible |
 
 ### 3.2 Functional Tests - Homepage (P1 - High)
@@ -106,139 +106,140 @@ This test plan defines the testing approach for the wclaytor.github.io portfolio
 
 #### 3.2.1 Masthead Section
 
-| ID | Test Case | Steps | Expected Result |
-|----|-----------|-------|-----------------|
-| HP-M-001 | Name is displayed | Load homepage | "William Claytor" visible in masthead |
-| HP-M-002 | Tagline is displayed | Load homepage | "25 Years" mentioned in tagline |
-| HP-M-003 | Subtitle is displayed | Load homepage | "Senior Software Engineer" visible |
-| HP-M-004 | Scroll indicator works | Click scroll indicator | Page scrolls to About section |
-| HP-M-005 | Scroll indicator keyboard accessible | Tab to indicator, press Enter | Page scrolls to About section |
+| ID       | Test Case                            | Steps                         | Expected Result                       |
+| -------- | ------------------------------------ | ----------------------------- | ------------------------------------- |
+| HP-M-001 | Name is displayed                    | Load homepage                 | "William Claytor" visible in masthead |
+| HP-M-002 | Tagline is displayed                 | Load homepage                 | "25 Years" mentioned in tagline       |
+| HP-M-003 | Subtitle is displayed                | Load homepage                 | "Senior Software Engineer" visible    |
+| HP-M-004 | Scroll indicator works               | Click scroll indicator        | Page scrolls to About section         |
+| HP-M-005 | Scroll indicator keyboard accessible | Tab to indicator, press Enter | Page scrolls to About section         |
 
 #### 3.2.2 About Section
 
-| ID | Test Case | Steps | Expected Result |
-|----|-----------|-------|-----------------|
-| HP-A-001 | Headshot is visible | Scroll to About | Profile image displayed |
-| HP-A-002 | Headshot has alt text | Inspect image | Meaningful alt text present |
-| HP-A-003 | Bio text is displayed | Scroll to About | Biography paragraphs visible |
-| HP-A-004 | Software Development card | Scroll to Expertise | Card with relevant skills displayed |
-| HP-A-005 | Quality Assurance card | Scroll to Expertise | Card with relevant skills displayed |
-| HP-A-006 | Test Automation card | Scroll to Expertise | Card with relevant skills displayed |
-| HP-A-007 | View Resume button | Click button | Navigates to resume page |
-| HP-A-008 | View Resume keyboard | Tab to button, Enter | Navigates to resume page |
+| ID       | Test Case                 | Steps                | Expected Result                     |
+| -------- | ------------------------- | -------------------- | ----------------------------------- |
+| HP-A-001 | Headshot is visible       | Scroll to About      | Profile image displayed             |
+| HP-A-002 | Headshot has alt text     | Inspect image        | Meaningful alt text present         |
+| HP-A-003 | Bio text is displayed     | Scroll to About      | Biography paragraphs visible        |
+| HP-A-004 | Software Development card | Scroll to Expertise  | Card with relevant skills displayed |
+| HP-A-005 | Quality Assurance card    | Scroll to Expertise  | Card with relevant skills displayed |
+| HP-A-006 | Test Automation card      | Scroll to Expertise  | Card with relevant skills displayed |
+| HP-A-007 | View Resume button        | Click button         | Navigates to resume page            |
+| HP-A-008 | View Resume keyboard      | Tab to button, Enter | Navigates to resume page            |
 
 #### 3.2.3 Projects Section
 
-| ID | Test Case | Steps | Expected Result |
-|----|-----------|-------|-----------------|
-| HP-P-001 | Section heading visible | Scroll to Projects | "Featured Projects" heading displayed |
-| HP-P-002 | Alpine Resume card | View Projects section | Card with title, description, badges |
-| HP-P-003 | Alpine Resume link | Click "View Project" | Navigates to Alpine Resume |
-| HP-P-004 | Alpine Presentation card | View Projects section | Card with title, description, badges |
-| HP-P-005 | Alpine Presentation link | Click "View Project" | Navigates to presentation project |
-| HP-P-006 | Experiments section | Scroll past Featured | Experiments section visible |
-| HP-P-007 | Background Transformer card | View Experiments | Card displayed with "Experiment" badge |
-| HP-P-008 | Dynamic Resume card | View Experiments | Card displayed with "Experiment" badge |
+| ID       | Test Case                   | Steps                 | Expected Result                        |
+| -------- | --------------------------- | --------------------- | -------------------------------------- |
+| HP-P-001 | Section heading visible     | Scroll to Projects    | "Featured Projects" heading displayed  |
+| HP-P-002 | Alpine Resume card          | View Projects section | Card with title, description, badges   |
+| HP-P-003 | Alpine Resume link          | Click "View Project"  | Navigates to Alpine Resume             |
+| HP-P-004 | Alpine Presentation card    | View Projects section | Card with title, description, badges   |
+| HP-P-005 | Alpine Presentation link    | Click "View Project"  | Navigates to presentation project      |
+| HP-P-006 | Experiments section         | Scroll past Featured  | Experiments section visible            |
+| HP-P-007 | Background Transformer card | View Experiments      | Card displayed with "Experiment" badge |
+| HP-P-008 | Dynamic Resume card         | View Experiments      | Card displayed with "Experiment" badge |
 
 #### 3.2.4 Contact Section
 
-| ID | Test Case | Steps | Expected Result |
-|----|-----------|-------|-----------------|
-| HP-C-001 | Email displayed | Scroll to Contact | Email address visible |
-| HP-C-002 | Email link works | Click email | Opens mailto: link |
-| HP-C-003 | LinkedIn link | Click LinkedIn icon | Opens LinkedIn profile (new tab) |
-| HP-C-004 | GitHub link | Click GitHub icon | Opens GitHub profile (new tab) |
-| HP-C-005 | Social links accessible | Tab through links | All links keyboard accessible |
+| ID       | Test Case               | Steps               | Expected Result                  |
+| -------- | ----------------------- | ------------------- | -------------------------------- |
+| HP-C-001 | Email displayed         | Scroll to Contact   | Email address visible            |
+| HP-C-002 | Email link works        | Click email         | Opens mailto: link               |
+| HP-C-003 | LinkedIn link           | Click LinkedIn icon | Opens LinkedIn profile (new tab) |
+| HP-C-004 | GitHub link             | Click GitHub icon   | Opens GitHub profile (new tab)   |
+| HP-C-005 | Social links accessible | Tab through links   | All links keyboard accessible    |
 
 ### 3.3 Functional Tests - Navigation (P1 - High)
 
-| ID | Test Case | Steps | Expected Result |
-|----|-----------|-------|-----------------|
-| NAV-001 | Brand link visible | Load any page | "wclaytor.github.io" visible |
-| NAV-002 | Brand link works | Click brand | Navigates to homepage |
-| NAV-003 | About link | Click "About" | Scrolls to About section |
-| NAV-004 | Projects link | Click "Projects" | Scrolls to Projects section |
-| NAV-005 | Contact link | Click "Contact" | Scrolls to Contact section |
-| NAV-006 | Resume link | Click "Resume" | Opens resume page |
-| NAV-007 | Nav sticky on scroll | Scroll down page | Navigation stays visible |
-| NAV-008 | Nav keyboard accessible | Tab through nav | All links accessible |
+| ID      | Test Case               | Steps            | Expected Result              |
+| ------- | ----------------------- | ---------------- | ---------------------------- |
+| NAV-001 | Brand link visible      | Load any page    | "wclaytor.github.io" visible |
+| NAV-002 | Brand link works        | Click brand      | Navigates to homepage        |
+| NAV-003 | About link              | Click "About"    | Scrolls to About section     |
+| NAV-004 | Projects link           | Click "Projects" | Scrolls to Projects section  |
+| NAV-005 | Contact link            | Click "Contact"  | Scrolls to Contact section   |
+| NAV-006 | Resume link             | Click "Resume"   | Opens resume page            |
+| NAV-007 | Nav sticky on scroll    | Scroll down page | Navigation stays visible     |
+| NAV-008 | Nav keyboard accessible | Tab through nav  | All links accessible         |
 
 ### 3.4 Functional Tests - Projects Page (P1 - High)
 
-| ID | Test Case | Steps | Expected Result |
-|----|-----------|-------|-----------------|
-| PRJ-001 | Page loads | Navigate to /projects/ | Page renders correctly |
-| PRJ-002 | Home link | Click "Home" in nav | Returns to homepage |
-| PRJ-003 | Showcase section | View page | Projects listed in Showcase section |
-| PRJ-004 | Alpine Resume listing | Find Alpine Resume | Project with description and link |
-| PRJ-005 | Alpine Presentation listing | Find Alpine Presentation | Project with description and link |
-| PRJ-006 | Project links work | Click "Visit Site" | Navigates to project |
+| ID      | Test Case              | Steps                  | Expected Result                     |
+| ------- | ---------------------- | ---------------------- | ----------------------------------- |
+| PRJ-001 | Page loads             | Navigate to /projects/ | Redirect page renders               |
+| PRJ-002 | Meta redirect present  | Check HTML meta tag    | Contains refresh to /#projects      |
+| PRJ-003 | Canonical link present | Check HTML link tag    | Points to /#projects                |
+| PRJ-004 | Redirect message shown | View page briefly      | "Redirecting to Projects" displayed |
+| PRJ-005 | Manual link works      | Click fallback link    | Navigates to /#projects             |
+| PRJ-006 | Automatic redirect     | Wait on page           | Redirects to /#projects             |
+| PRJ-007 | Spinner animation      | View page briefly      | Loading spinner visible             |
 
 ### 3.5 Responsive Tests (P1 - High)
 
 **Viewports**: Mobile (375px), Tablet (768px), Desktop (1920px)
 
-| ID | Test Case | Viewport | Expected Result |
-|----|-----------|----------|-----------------|
-| RSP-001 | Mobile menu toggle | Mobile | Hamburger menu visible |
-| RSP-002 | Mobile menu opens | Mobile | Click toggle opens menu |
-| RSP-003 | Mobile nav links work | Mobile | Can navigate via mobile menu |
-| RSP-004 | Tablet layout | Tablet | Content properly arranged |
-| RSP-005 | Desktop layout | Desktop | Full navigation visible |
-| RSP-006 | Cards stack on mobile | Mobile | Cards display vertically |
-| RSP-007 | Cards grid on desktop | Desktop | Cards display in grid |
-| RSP-008 | Headshot scales | All | Image properly sized |
-| RSP-009 | Text readable | All | Font sizes appropriate |
-| RSP-010 | Touch targets | Mobile | Buttons >= 44x44px |
+| ID      | Test Case             | Viewport | Expected Result              |
+| ------- | --------------------- | -------- | ---------------------------- |
+| RSP-001 | Mobile menu toggle    | Mobile   | Hamburger menu visible       |
+| RSP-002 | Mobile menu opens     | Mobile   | Click toggle opens menu      |
+| RSP-003 | Mobile nav links work | Mobile   | Can navigate via mobile menu |
+| RSP-004 | Tablet layout         | Tablet   | Content properly arranged    |
+| RSP-005 | Desktop layout        | Desktop  | Full navigation visible      |
+| RSP-006 | Cards stack on mobile | Mobile   | Cards display vertically     |
+| RSP-007 | Cards grid on desktop | Desktop  | Cards display in grid        |
+| RSP-008 | Headshot scales       | All      | Image properly sized         |
+| RSP-009 | Text readable         | All      | Font sizes appropriate       |
+| RSP-010 | Touch targets         | Mobile   | Buttons >= 44x44px           |
 
 ### 3.6 Accessibility Tests (P1 - High)
 
-| ID | Test Case | Tool/Method | Expected Result |
-|----|-----------|-------------|-----------------|
-| A11Y-001 | Skip to content link | Keyboard | Skip link present and works |
-| A11Y-002 | Heading hierarchy | axe-core | Proper h1-h6 structure |
-| A11Y-003 | Image alt text | axe-core | All images have alt text |
-| A11Y-004 | Color contrast | axe-core | WCAG AA compliance |
-| A11Y-005 | Focus indicators | Keyboard | Visible focus on all interactive elements |
-| A11Y-006 | ARIA labels | axe-core | Proper labels on icons/buttons |
-| A11Y-007 | Form labels | axe-core | All inputs labeled |
-| A11Y-008 | Link purpose | Manual | Link text is descriptive |
-| A11Y-009 | Keyboard navigation | Keyboard | All content accessible via keyboard |
-| A11Y-010 | No keyboard traps | Keyboard | Can tab through entire page |
+| ID       | Test Case            | Tool/Method | Expected Result                           |
+| -------- | -------------------- | ----------- | ----------------------------------------- |
+| A11Y-001 | Skip to content link | Keyboard    | Skip link present and works               |
+| A11Y-002 | Heading hierarchy    | axe-core    | Proper h1-h6 structure                    |
+| A11Y-003 | Image alt text       | axe-core    | All images have alt text                  |
+| A11Y-004 | Color contrast       | axe-core    | WCAG AA compliance                        |
+| A11Y-005 | Focus indicators     | Keyboard    | Visible focus on all interactive elements |
+| A11Y-006 | ARIA labels          | axe-core    | Proper labels on icons/buttons            |
+| A11Y-007 | Form labels          | axe-core    | All inputs labeled                        |
+| A11Y-008 | Link purpose         | Manual      | Link text is descriptive                  |
+| A11Y-009 | Keyboard navigation  | Keyboard    | All content accessible via keyboard       |
+| A11Y-010 | No keyboard traps    | Keyboard    | Can tab through entire page               |
 
 ### 3.7 Visual Regression Tests (P2 - Medium)
 
-| ID | Test Case | Viewport | Description |
-|----|-----------|----------|-------------|
-| VIS-001 | Homepage masthead | Desktop | Hero section appearance |
-| VIS-002 | Homepage about | Desktop | About section appearance |
-| VIS-003 | Homepage projects | Desktop | Projects section appearance |
-| VIS-004 | Homepage contact | Desktop | Contact section appearance |
-| VIS-005 | Homepage full | Desktop | Full page screenshot |
-| VIS-006 | Homepage full | Tablet | Full page at tablet size |
-| VIS-007 | Homepage full | Mobile | Full page at mobile size |
-| VIS-008 | Projects page | Desktop | Projects gallery appearance |
-| VIS-009 | Navigation desktop | Desktop | Nav bar appearance |
-| VIS-010 | Navigation mobile open | Mobile | Mobile menu open state |
-| VIS-011 | Footer | Desktop | Footer appearance |
-| VIS-012 | Expertise cards | Desktop | Card styling consistency |
-| VIS-013 | Project cards | Desktop | Featured project cards |
-| VIS-014 | Experiment cards | Desktop | Experiment badges and cards |
+| ID      | Test Case              | Viewport | Description                 |
+| ------- | ---------------------- | -------- | --------------------------- |
+| VIS-001 | Homepage masthead      | Desktop  | Hero section appearance     |
+| VIS-002 | Homepage about         | Desktop  | About section appearance    |
+| VIS-003 | Homepage projects      | Desktop  | Projects section appearance |
+| VIS-004 | Homepage contact       | Desktop  | Contact section appearance  |
+| VIS-005 | Homepage full          | Desktop  | Full page screenshot        |
+| VIS-006 | Homepage full          | Tablet   | Full page at tablet size    |
+| VIS-007 | Homepage full          | Mobile   | Full page at mobile size    |
+| VIS-008 | Projects page          | Desktop  | Projects gallery appearance |
+| VIS-009 | Navigation desktop     | Desktop  | Nav bar appearance          |
+| VIS-010 | Navigation mobile open | Mobile   | Mobile menu open state      |
+| VIS-011 | Footer                 | Desktop  | Footer appearance           |
+| VIS-012 | Expertise cards        | Desktop  | Card styling consistency    |
+| VIS-013 | Project cards          | Desktop  | Featured project cards      |
+| VIS-014 | Experiment cards       | Desktop  | Experiment badges and cards |
 
 ### 3.8 Cross-Browser Tests (P2 - Medium)
 
 **Browsers**: Chromium, Firefox, WebKit (Safari)
 
-| ID | Test Case | Browsers | Description |
-|----|-----------|----------|-------------|
-| XB-001 | Homepage renders | All | Page displays correctly |
-| XB-002 | Navigation works | All | Nav links function |
-| XB-003 | Animations smooth | All | CSS transitions work |
-| XB-004 | Fonts load | All | Custom fonts render |
-| XB-005 | Layout consistent | All | No layout shifts |
-| XB-006 | Mobile menu | All | Hamburger menu works |
-| XB-007 | Scroll behavior | All | Smooth scroll works |
-| XB-008 | Links work | All | All links functional |
+| ID     | Test Case         | Browsers | Description             |
+| ------ | ----------------- | -------- | ----------------------- |
+| XB-001 | Homepage renders  | All      | Page displays correctly |
+| XB-002 | Navigation works  | All      | Nav links function      |
+| XB-003 | Animations smooth | All      | CSS transitions work    |
+| XB-004 | Fonts load        | All      | Custom fonts render     |
+| XB-005 | Layout consistent | All      | No layout shifts        |
+| XB-006 | Mobile menu       | All      | Hamburger menu works    |
+| XB-007 | Scroll behavior   | All      | Smooth scroll works     |
+| XB-008 | Links work        | All      | All links functional    |
 
 ---
 
@@ -261,21 +262,21 @@ Purpose: Final validation, cross-browser testing
 
 ### 4.3 Browser Matrix
 
-| Browser | Version | Platform | Priority |
-|---------|---------|----------|----------|
-| Chrome/Chromium | Latest | Linux, macOS, Windows | P0 |
-| Firefox | Latest | Linux, macOS, Windows | P1 |
-| Safari/WebKit | Latest | macOS, iOS | P1 |
-| Edge | Latest | Windows | P2 |
+| Browser         | Version | Platform              | Priority |
+| --------------- | ------- | --------------------- | -------- |
+| Chrome/Chromium | Latest  | Linux, macOS, Windows | P0       |
+| Firefox         | Latest  | Linux, macOS, Windows | P1       |
+| Safari/WebKit   | Latest  | macOS, iOS            | P1       |
+| Edge            | Latest  | Windows               | P2       |
 
 ### 4.4 Device Matrix
 
-| Device | Viewport | Priority |
-|--------|----------|----------|
-| iPhone SE | 375x667 | P0 |
-| iPad | 768x1024 | P1 |
-| Desktop HD | 1920x1080 | P0 |
-| Desktop 4K | 3840x2160 | P2 |
+| Device     | Viewport  | Priority |
+| ---------- | --------- | -------- |
+| iPhone SE  | 375x667   | P0       |
+| iPad       | 768x1024  | P1       |
+| Desktop HD | 1920x1080 | P0       |
+| Desktop 4K | 3840x2160 | P2       |
 
 ---
 
@@ -299,7 +300,7 @@ uv run pytest tests/smoke -v --tb=short
 uv run pytest tests/functional tests/accessibility -v
 ```
 
-**Tests**: All HP-*, NAV-*, PRJ-*, RSP-*, A11Y-*  
+**Tests**: All HP-_, NAV-_, PRJ-_, RSP-_, A11Y-\*  
 **Duration**: < 5 minutes  
 **Pass Criteria**: 100% pass
 
@@ -309,7 +310,7 @@ uv run pytest tests/functional tests/accessibility -v
 uv run pytest tests/visual -v
 ```
 
-**Tests**: All VIS-*  
+**Tests**: All VIS-\*  
 **Duration**: < 3 minutes  
 **Pass Criteria**: No unexpected visual changes
 
@@ -325,13 +326,13 @@ uv run pytest tests/smoke tests/functional --browser chromium --browser firefox 
 
 ### 5.2 Test Execution Schedule
 
-| Trigger | Suites Run | Blocking |
-|---------|------------|----------|
-| Push to any branch | Smoke | Yes |
-| PR to main | Smoke, Regression, Visual | Yes |
-| Merge to main | Smoke, Regression, Visual | Yes |
-| Weekly | Cross-Browser, Full Visual | No |
-| Pre-Release | All suites | Yes |
+| Trigger            | Suites Run                 | Blocking |
+| ------------------ | -------------------------- | -------- |
+| Push to any branch | Smoke                      | Yes      |
+| PR to main         | Smoke, Regression, Visual  | Yes      |
+| Merge to main      | Smoke, Regression, Visual  | Yes      |
+| Weekly             | Cross-Browser, Full Visual | No       |
+| Pre-Release        | All suites                 | Yes      |
 
 ---
 
@@ -339,22 +340,22 @@ uv run pytest tests/smoke tests/functional --browser chromium --browser firefox 
 
 ### 6.1 Overall Quality Gates
 
-| Gate | Criteria |
-|------|----------|
-| Smoke | 100% tests pass |
-| Functional | 100% tests pass |
-| Accessibility | Zero critical/serious violations |
-| Visual | All changes reviewed and approved |
-| Cross-Browser | 95% tests pass |
+| Gate          | Criteria                          |
+| ------------- | --------------------------------- |
+| Smoke         | 100% tests pass                   |
+| Functional    | 100% tests pass                   |
+| Accessibility | Zero critical/serious violations  |
+| Visual        | All changes reviewed and approved |
+| Cross-Browser | 95% tests pass                    |
 
 ### 6.2 Defect Severity
 
-| Severity | Description | Example |
-|----------|-------------|---------|
-| Critical | Site unusable | Page won't load |
-| High | Major feature broken | Navigation doesn't work |
-| Medium | Feature degraded | Visual glitch |
-| Low | Minor issue | Typo |
+| Severity | Description          | Example                 |
+| -------- | -------------------- | ----------------------- |
+| Critical | Site unusable        | Page won't load         |
+| High     | Major feature broken | Navigation doesn't work |
+| Medium   | Feature degraded     | Visual glitch           |
+| Low      | Minor issue          | Typo                    |
 
 ### 6.3 Release Criteria
 
@@ -382,7 +383,7 @@ NAME = "William Claytor"
 TAGLINE_CONTAINS = "25 Years"
 EXPERTISE_AREAS = [
     "Software Development",
-    "Quality Assurance", 
+    "Quality Assurance",
     "Test Automation"
 ]
 
@@ -412,14 +413,14 @@ NAV_LINKS = ["About", "Projects", "Contact", "Resume"]
 
 class URLs:
     HOME = "/"
-    PROJECTS = "/projects/"
-    PROJECTS_INDEX = "/projects/index.html"
+    PROJECTS = "/projects/"  # Redirects to /#projects
+    PROJECTS_SECTION = "/#projects"  # Projects section on main page
     RESUME = "/assets/resume/william_claytor_resume.html"
-    
+
     # Featured projects
     ALPINE_RESUME = "/projects/alpine-resume/releases/20251214/index.html"
     ALPINE_PRESENTATION = "/projects/alpine-markdown-presentation/index.html"
-    
+
     # Experiments
     BACKGROUND_TRANSFORMER = "/projects/alpine-background-transformer/index.html"
     DYNAMIC_RESUME = "/projects/dynamic-resume/releases/v2.3/william_claytor_resume.html"
@@ -431,13 +432,13 @@ class URLs:
 
 ### 8.1 Test Reports
 
-| Report | Format | Audience |
-|--------|--------|----------|
-| Console Output | Text | Developers |
-| JUnit XML | XML | CI/CD |
-| HTML Report | HTML | Stakeholders |
-| Screenshots | PNG | Visual review |
-| Recordings | WebM | Debug |
+| Report         | Format | Audience      |
+| -------------- | ------ | ------------- |
+| Console Output | Text   | Developers    |
+| JUnit XML      | XML    | CI/CD         |
+| HTML Report    | HTML   | Stakeholders  |
+| Screenshots    | PNG    | Visual review |
+| Recordings     | WebM   | Debug         |
 
 ### 8.2 Metrics to Track
 
@@ -451,13 +452,13 @@ class URLs:
 
 ## 9. Risk Assessment
 
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| Flaky tests | Medium | High | Proper waits, retry logic |
-| Visual false positives | Medium | Medium | Appropriate diff thresholds |
-| Cross-browser differences | Medium | Low | Document known differences |
-| Test maintenance burden | Low | Medium | Page Object Model |
-| CI timeout | Low | High | Parallel execution |
+| Risk                      | Probability | Impact | Mitigation                  |
+| ------------------------- | ----------- | ------ | --------------------------- |
+| Flaky tests               | Medium      | High   | Proper waits, retry logic   |
+| Visual false positives    | Medium      | Medium | Appropriate diff thresholds |
+| Cross-browser differences | Medium      | Low    | Document known differences  |
+| Test maintenance burden   | Low         | Medium | Page Object Model           |
+| CI timeout                | Low         | High   | Parallel execution          |
 
 ---
 
@@ -508,12 +509,12 @@ uv run playwright show-trace recordings/traces/test_name.zip
 
 ## Approval
 
-| Role | Name | Date | Signature |
-|------|------|------|-----------|
-| Test Lead | | | |
-| Developer | | | |
-| Stakeholder | | | |
+| Role        | Name | Date | Signature |
+| ----------- | ---- | ---- | --------- |
+| Test Lead   |      |      |           |
+| Developer   |      |      |           |
+| Stakeholder |      |      |           |
 
 ---
 
-*"Test until fear transforms into boredom."* — Kent Beck
+_"Test until fear transforms into boredom."_ — Kent Beck

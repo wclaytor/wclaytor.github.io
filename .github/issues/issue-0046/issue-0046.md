@@ -2,15 +2,15 @@
 assignees:
 - wclaytor
 author: wclaytor
-closed_at: null
+closed_at: '2026-01-01T22:21:00Z'
 comment_count: 0
 created_at: '2026-01-01T18:22:59Z'
 issue_number: 46
 labels: []
 milestone: null
-state: OPEN
+state: CLOSED
 title: Pyrotechnica
-updated_at: '2026-01-01T18:23:02Z'
+updated_at: '2026-01-01T22:21:00Z'
 ---
 
 # Issue #46: Pyrotechnica
