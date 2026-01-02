@@ -17,7 +17,7 @@ Functional tests for the homepage verify that all features work correctly. These
 | ------------------------------------------------------ | ---------------------- | -------------- |
 | [test_homepage_masthead.py](test_homepage_masthead.py) | 3.2.1 Masthead Section | ✅ Implemented |
 | [test_homepage_about.py](test_homepage_about.py)       | 3.2.2 About Section    | ✅ Implemented |
-| `test_homepage_projects.py`                            | 3.2.3 Projects Section | ❌ Not Created |
+| [test_homepage_projects.py](test_homepage_projects.py) | 3.2.3 Projects Section | ✅ Implemented |
 | `test_homepage_contact.py`                             | 3.2.4 Contact Section  | ❌ Not Created |
 
 ## Test Coverage Status
@@ -47,16 +47,16 @@ Functional tests for the homepage verify that all features work correctly. These
 
 ### 3.2.3 Projects Section
 
-| ID       | Test Case                   | Expected Result                           | Status             | Test Location |
-| -------- | --------------------------- | ----------------------------------------- | ------------------ | ------------- |
-| HP-P-001 | Section heading visible     | "Featured Projects" heading displayed     | ❌ Not Implemented | -             |
-| HP-P-002 | Alpine Resume card          | Card with title, description, badges      | ❌ Not Implemented | -             |
-| HP-P-003 | Alpine Resume link          | Click "View Project" navigates to project | ❌ Not Implemented | -             |
-| HP-P-004 | Alpine Presentation card    | Card with title, description, badges      | ❌ Not Implemented | -             |
-| HP-P-005 | Alpine Presentation link    | Click "View Project" navigates to project | ❌ Not Implemented | -             |
-| HP-P-006 | Experiments section         | Experiments section visible               | ❌ Not Implemented | -             |
-| HP-P-007 | Background Transformer card | Card with "Experiment" badge              | ❌ Not Implemented | -             |
-| HP-P-008 | Dynamic Resume card         | Card with "Experiment" badge              | ❌ Not Implemented | -             |
+| ID       | Test Case                   | Expected Result                           | Status         | Test Location                                                                       |
+| -------- | --------------------------- | ----------------------------------------- | -------------- | ----------------------------------------------------------------------------------- |
+| HP-P-001 | Section heading visible     | "Featured Projects" heading displayed     | ✅ Implemented | `test_homepage_projects.py::TestHomepageProjects::test_section_heading_visible`     |
+| HP-P-002 | Alpine Resume card          | Card with title, description, badges      | ✅ Implemented | `test_homepage_projects.py::TestHomepageProjects::test_alpine_resume_card`          |
+| HP-P-003 | Alpine Resume link          | Click "View Project" navigates to project | ✅ Implemented | `test_homepage_projects.py::TestHomepageProjects::test_alpine_resume_link`          |
+| HP-P-004 | Alpine Presentation card    | Card with title, description, badges      | ✅ Implemented | `test_homepage_projects.py::TestHomepageProjects::test_alpine_presentation_card`    |
+| HP-P-005 | Alpine Presentation link    | Click "View Project" navigates to project | ✅ Implemented | `test_homepage_projects.py::TestHomepageProjects::test_alpine_presentation_link`    |
+| HP-P-006 | Experiments section         | Experiments section visible               | ✅ Implemented | `test_homepage_projects.py::TestHomepageProjects::test_experiments_section_visible` |
+| HP-P-007 | Background Transformer card | Card with "Experiment" badge              | ✅ Implemented | `test_homepage_projects.py::TestHomepageProjects::test_background_transformer_card` |
+| HP-P-008 | Dynamic Resume card         | Card with "Experiment" badge              | ✅ Implemented | `test_homepage_projects.py::TestHomepageProjects::test_dynamic_resume_card`         |
 
 ### 3.2.4 Contact Section
 
@@ -74,9 +74,9 @@ Functional tests for the homepage verify that all features work correctly. These
 | --------------- | ------ | ----------- | --------------- | -------- |
 | Masthead (HP-M) | 5      | 5           | 0               | 100%     |
 | About (HP-A)    | 8      | 8           | 0               | 100%     |
-| Projects (HP-P) | 8      | 0           | 8               | 0%       |
+| Projects (HP-P) | 8      | 8           | 0               | 100%     |
 | Contact (HP-C)  | 5      | 0           | 5               | 0%       |
-| **Total**       | **26** | **13**      | **13**          | **50%**  |
+| **Total**       | **26** | **21**      | **5**           | **81%**  |
 
 ## Test Details
 
@@ -112,6 +112,25 @@ Tests the About section of the homepage including headshot, bio, expertise cards
 | `test_test_automation_card`            | HP-A-006     | Verifies Test Automation expertise card      |
 | `test_view_resume_button`              | HP-A-007     | Click View Resume navigates to resume page   |
 | `test_view_resume_keyboard_accessible` | HP-A-008     | Tab + Enter on View Resume button works      |
+
+**Page Object**: Uses `HomePage` page object from `pages/home_page.py`
+
+### test_homepage_projects.py
+
+Tests the Projects section of the homepage including featured projects and experiments.
+
+#### `TestHomepageProjects`
+
+| Test                               | Test Plan ID | Description                                           |
+| ---------------------------------- | ------------ | ----------------------------------------------------- |
+| `test_section_heading_visible`     | HP-P-001     | Verifies "Featured Projects" heading is displayed     |
+| `test_alpine_resume_card`          | HP-P-002     | Verifies Alpine Resume card with badges               |
+| `test_alpine_resume_link`          | HP-P-003     | Click View Project navigates to Alpine Resume         |
+| `test_alpine_presentation_card`    | HP-P-004     | Verifies Alpine Presentation card with badges         |
+| `test_alpine_presentation_link`    | HP-P-005     | Click View Project navigates to Alpine Presentation   |
+| `test_experiments_section_visible` | HP-P-006     | Verifies Experiments section is visible               |
+| `test_background_transformer_card` | HP-P-007     | Verifies Background Transformer with Experiment badge |
+| `test_dynamic_resume_card`         | HP-P-008     | Verifies Dynamic Resume with Experiment badge         |
 
 **Page Object**: Uses `HomePage` page object from `pages/home_page.py`
 
@@ -179,7 +198,7 @@ class TestData:
 ### High Priority (P1)
 
 1. ~~Create `test_homepage_about.py` - About section tests (HP-A-001 to HP-A-008)~~ ✅ Complete
-2. Create `test_homepage_projects.py` - Projects section tests (HP-P-001 to HP-P-008)
+2. ~~Create `test_homepage_projects.py` - Projects section tests (HP-P-001 to HP-P-008)~~ ✅ Complete
 3. Create `test_homepage_contact.py` - Contact section tests (HP-C-001 to HP-C-005)
 
 ### Implementation Approach
