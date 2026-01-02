@@ -18,7 +18,7 @@ Functional tests for the homepage verify that all features work correctly. These
 | [test_homepage_masthead.py](test_homepage_masthead.py) | 3.2.1 Masthead Section | ✅ Implemented |
 | [test_homepage_about.py](test_homepage_about.py)       | 3.2.2 About Section    | ✅ Implemented |
 | [test_homepage_projects.py](test_homepage_projects.py) | 3.2.3 Projects Section | ✅ Implemented |
-| `test_homepage_contact.py`                             | 3.2.4 Contact Section  | ❌ Not Created |
+| [test_homepage_contact.py](test_homepage_contact.py)   | 3.2.4 Contact Section  | ✅ Implemented |
 
 ## Test Coverage Status
 
@@ -60,13 +60,13 @@ Functional tests for the homepage verify that all features work correctly. These
 
 ### 3.2.4 Contact Section
 
-| ID       | Test Case               | Expected Result                        | Status             | Test Location |
-| -------- | ----------------------- | -------------------------------------- | ------------------ | ------------- |
-| HP-C-001 | Email displayed         | Email address visible                  | ❌ Not Implemented | -             |
-| HP-C-002 | Email link works        | Click opens mailto: link               | ❌ Not Implemented | -             |
-| HP-C-003 | LinkedIn link           | Click opens LinkedIn profile (new tab) | ❌ Not Implemented | -             |
-| HP-C-004 | GitHub link             | Click opens GitHub profile (new tab)   | ❌ Not Implemented | -             |
-| HP-C-005 | Social links accessible | Tab through links works                | ❌ Not Implemented | -             |
+| ID       | Test Case               | Expected Result                        | Status         | Test Location                                                                 |
+| -------- | ----------------------- | -------------------------------------- | -------------- | ----------------------------------------------------------------------------- |
+| HP-C-001 | Email displayed         | Email address visible                  | ✅ Implemented | `test_homepage_contact.py::TestHomepageContact::test_email_displayed`         |
+| HP-C-002 | Email link works        | Click opens mailto: link               | ✅ Implemented | `test_homepage_contact.py::TestHomepageContact::test_email_link_works`        |
+| HP-C-003 | LinkedIn link           | Click opens LinkedIn profile (new tab) | ✅ Implemented | `test_homepage_contact.py::TestHomepageContact::test_linkedin_link`           |
+| HP-C-004 | GitHub link             | Click opens GitHub profile (new tab)   | ✅ Implemented | `test_homepage_contact.py::TestHomepageContact::test_github_link`             |
+| HP-C-005 | Social links accessible | Tab through links works                | ✅ Implemented | `test_homepage_contact.py::TestHomepageContact::test_social_links_accessible` |
 
 ### Coverage Summary
 
@@ -75,8 +75,8 @@ Functional tests for the homepage verify that all features work correctly. These
 | Masthead (HP-M) | 5      | 5           | 0               | 100%     |
 | About (HP-A)    | 8      | 8           | 0               | 100%     |
 | Projects (HP-P) | 8      | 8           | 0               | 100%     |
-| Contact (HP-C)  | 5      | 0           | 5               | 0%       |
-| **Total**       | **26** | **21**      | **5**           | **81%**  |
+| Contact (HP-C)  | 5      | 5           | 0               | 100%     |
+| **Total**       | **26** | **26**      | **0**           | **100%** |
 
 ## Test Details
 
@@ -131,6 +131,22 @@ Tests the Projects section of the homepage including featured projects and exper
 | `test_experiments_section_visible` | HP-P-006     | Verifies Experiments section is visible               |
 | `test_background_transformer_card` | HP-P-007     | Verifies Background Transformer with Experiment badge |
 | `test_dynamic_resume_card`         | HP-P-008     | Verifies Dynamic Resume with Experiment badge         |
+
+**Page Object**: Uses `HomePage` page object from `pages/home_page.py`
+
+### test_homepage_contact.py
+
+Tests the Contact section of the homepage including email and social media links.
+
+#### `TestHomepageContact`
+
+| Test                           | Test Plan ID | Description                                       |
+| ------------------------------ | ------------ | ------------------------------------------------- |
+| `test_email_displayed`         | HP-C-001     | Verifies email address is displayed               |
+| `test_email_link_works`        | HP-C-002     | Verifies mailto: link is correctly formed         |
+| `test_linkedin_link`           | HP-C-003     | Verifies LinkedIn link with accessibility         |
+| `test_github_link`             | HP-C-004     | Verifies GitHub link with accessibility           |
+| `test_social_links_accessible` | HP-C-005     | Verifies all social links are keyboard accessible |
 
 **Page Object**: Uses `HomePage` page object from `pages/home_page.py`
 
@@ -199,7 +215,9 @@ class TestData:
 
 1. ~~Create `test_homepage_about.py` - About section tests (HP-A-001 to HP-A-008)~~ ✅ Complete
 2. ~~Create `test_homepage_projects.py` - Projects section tests (HP-P-001 to HP-P-008)~~ ✅ Complete
-3. Create `test_homepage_contact.py` - Contact section tests (HP-C-001 to HP-C-005)
+3. ~~Create `test_homepage_contact.py` - Contact section tests (HP-C-001 to HP-C-005)~~ ✅ Complete
+
+**🎉 All Homepage Functional Tests Complete! (26/26 - 100% Coverage)**
 
 ### Implementation Approach
 
