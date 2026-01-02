@@ -1,0 +1,15 @@
+.github/issues/issue-0033/issue-0033.md
+.github/issues/issue-0033/wclaytor.md
+.github/issues/issue-0035/issue-0035.md
+.github/issues/issue-0036/issue-0036.md
+.github/issues/issue-0037/issue-0037.md
+.github/issues/issue-0038/issue-0038.md
+.github/issues/issue-0039/issue-0039.md
+.github/issues/issue-0040/issue-0040.md
+.github/issues/issue-0041/issue-0041.md
+.github/issues/issue-0042/issue-0042.md
+.github/issues/issue-0044/issue-0044.md
+.github/issues/issue-0044/plan-01.md
+.github/issues/issue-0044/wclaytor.md
+projects/nye-2025/README.md
+projects/nye-2025/index.html
