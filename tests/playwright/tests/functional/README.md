@@ -4,7 +4,7 @@
 
 ## Overview
 
-Functional tests verify that all features work correctly. These tests cover the homepage sections (Masthead, About, Projects, Contact) and site-wide components (Navigation).
+Functional tests verify that all features work correctly. These tests cover the homepage sections (Masthead, About, Projects, Contact), site-wide components (Navigation), and the Projects redirect page.
 
 **Purpose**: Verify site features work correctly  
 **Execution**: Before merge to main  
@@ -13,11 +13,14 @@ Functional tests verify that all features work correctly. These tests cover the 
 
 ## Test Files
 
-| File                                                   | Section                    | Status         |
-| ------------------------------------------------------ | -------------------------- | -------------- |
-| [test_homepage_masthead.py](test_homepage_masthead.py) | 3.2.1 Masthead Section     | ✅ Implemented |
-| [test_homepage_about.py](test_homepage_about.py)       | 3.2.2 About Section        | ✅ Implemented |
-| [test_homepage_projects.py](test_homepage_projects.py) | 3.2.3 Projects Section     | ✅ Implemented |
+| File                                                   | Section                       | Status         |
+| ------------------------------------------------------ | ----------------------------- | -------------- |
+| [test_homepage_masthead.py](test_homepage_masthead.py) | 3.2.1 Masthead Section        | ✅ Implemented |
+| [test_homepage_about.py](test_homepage_about.py)       | 3.2.2 About Section           | ✅ Implemented |
+| [test_homepage_projects.py](test_homepage_projects.py) | 3.2.3 Projects Section        | ✅ Implemented |
+| [test_homepage_contact.py](test_homepage_contact.py)   | 3.2.4 Contact Section         | ✅ Implemented |
+| [test_navigation.py](test_navigation.py)               | 3.3 Navigation (P1 - High)    | ✅ Implemented |
+| [test_projects_page.py](test_projects_page.py)         | 3.4 Projects Page (P1 - High) | ✅ Implemented |
 | [test_homepage_contact.py](test_homepage_contact.py)   | 3.2.4 Contact Section      | ✅ Implemented |
 | [test_navigation.py](test_navigation.py)               | 3.3 Navigation (P1 - High) | ✅ Implemented |
 
@@ -71,14 +74,15 @@ Functional tests verify that all features work correctly. These tests cover the 
 
 ### Coverage Summary
 
-| Section          | Total  | Implemented | Not Implemented | Coverage |
-| ---------------- | ------ | ----------- | --------------- | -------- |
-| Masthead (HP-M)  | 5      | 5           | 0               | 100%     |
-| About (HP-A)     | 8      | 8           | 0               | 100%     |
-| Projects (HP-P)  | 8      | 8           | 0               | 100%     |
-| Contact (HP-C)   | 5      | 5           | 0               | 100%     |
-| Navigation (NAV) | 8      | 8           | 0               | 100%     |
-| **Total**        | **34** | **34**      | **0**           | **100%** |
+| Section             | Total  | Implemented | Not Implemented | Coverage |
+| ------------------- | ------ | ----------- | --------------- | -------- |
+| Masthead (HP-M)     | 5      | 5           | 0               | 100%     |
+| About (HP-A)        | 8      | 8           | 0               | 100%     |
+| Projects (HP-P)     | 8      | 8           | 0               | 100%     |
+| Contact (HP-C)      | 5      | 5           | 0               | 100%     |
+| Navigation (NAV)    | 8      | 8           | 0               | 100%     |
+| Projects Page (PRJ) | 7      | 7           | 0               | 100%     |
+| **Total**           | **41** | **41**      | **0**           | **100%** |
 
 ---
 
@@ -121,6 +125,45 @@ Tests the navigation component that appears on all pages.
 | `test_nav_visible_on_homepage`    | Verifies nav is visible on homepage    |
 | `test_nav_visible_on_resume_page` | Verifies nav/page loads on resume page |
 | `test_all_nav_links_present`      | Verifies all expected nav links exist  |
+
+---
+
+## 3.4 Projects Page Section
+
+### Test Coverage
+
+| ID      | Test Case              | Expected Result                          | Status         | Test Location                                                  |
+| ------- | ---------------------- | ---------------------------------------- | -------------- | -------------------------------------------------------------- |
+| PRJ-001 | Page loads             | Redirect page renders                    | ✅ Implemented | `test_projects_page.py::TestProjectsPage::test_page_loads`     |
+| PRJ-002 | Meta redirect present  | Contains refresh to /#projects           | ✅ Implemented | `test_projects_page.py::TestProjectsPage::test_meta_redirect_present` |
+| PRJ-003 | Canonical link present | Points to /#projects                     | ✅ Implemented | `test_projects_page.py::TestProjectsPage::test_canonical_link_present` |
+| PRJ-004 | Redirect message shown | "Redirecting to Projects" displayed      | ✅ Implemented | `test_projects_page.py::TestProjectsPage::test_redirect_message_shown` |
+| PRJ-005 | Manual link works      | Navigates to /#projects                  | ✅ Implemented | `test_projects_page.py::TestProjectsPage::test_manual_link_works` |
+| PRJ-006 | Automatic redirect     | Redirects to /#projects                  | ✅ Implemented | `test_projects_page.py::TestProjectsPage::test_automatic_redirect` |
+| PRJ-007 | Spinner animation      | Loading spinner visible                  | ✅ Implemented | `test_projects_page.py::TestProjectsPage::test_spinner_animation` |
+
+### test_projects_page.py
+
+Tests the /projects/ redirect page that sends users to the homepage #projects section.
+
+#### `TestProjectsPage`
+
+| Test                        | Test Plan ID | Description                                      |
+| --------------------------- | ------------ | ------------------------------------------------ |
+| `test_page_loads`           | PRJ-001      | Verifies page loads or redirects successfully    |
+| `test_meta_redirect_present`| PRJ-002      | Verifies meta refresh tag exists for redirect    |
+| `test_canonical_link_present`| PRJ-003     | Verifies canonical link points to #projects      |
+| `test_redirect_message_shown`| PRJ-004     | Verifies "Redirecting" message in HTML           |
+| `test_manual_link_works`    | PRJ-005      | Verifies fallback link to #projects exists       |
+| `test_automatic_redirect`   | PRJ-006      | Verifies page automatically redirects            |
+| `test_spinner_animation`    | PRJ-007      | Verifies loading spinner exists with animation   |
+
+#### `TestProjectsPageStructure`
+
+| Test                            | Description                                 |
+| ------------------------------- | ------------------------------------------- |
+| `test_page_has_proper_title`    | Verifies page has descriptive title         |
+| `test_fallback_link_is_accessible` | Verifies fallback link for JS-disabled users |
 
 ---
 
@@ -263,14 +306,16 @@ class TestData:
 2. ~~Create `test_homepage_projects.py` - Projects section tests (HP-P-001 to HP-P-008)~~ ✅ Complete
 3. ~~Create `test_homepage_contact.py` - Contact section tests (HP-C-001 to HP-C-005)~~ ✅ Complete
 4. ~~Create `test_navigation.py` - Navigation tests (NAV-001 to NAV-008)~~ ✅ Complete
+5. ~~Create `test_projects_page.py` - Projects Page tests (PRJ-001 to PRJ-007)~~ ✅ Complete
 
-**🎉 All Homepage & Navigation Functional Tests Complete! (34/34 - 100% Coverage)**
+**🎉 All Functional Tests Complete! (46/46 tests - 41/41 test plan items - 100% Coverage)**
 
 ### Next Sections (per TEST_PLAN.md)
 
-5. Create Projects Page tests (PRJ-001 to PRJ-007) - Section 3.4
 6. Create Responsive tests (RSP-001 to RSP-010) - Section 3.5
 7. Create Accessibility tests (A11Y-001 to A11Y-010) - Section 3.6
+8. Create Visual Regression tests (VIS-001 to VIS-014) - Section 3.7
+9. Create Cross-Browser tests (XB-001 to XB-008) - Section 3.8
 
 ### Implementation Approach
 
@@ -287,7 +332,7 @@ Homepage functional tests will be tracked in GitHub under:
 
 ## References
 
-- [TEST_PLAN.md](../../TEST_PLAN.md) - Section 3.2 Functional Tests - Homepage
+- [TEST_PLAN.md](../../TEST_PLAN.md) - Section 3.2-3.4 Functional Tests
 - [TESTING_STRATEGY.md](../../TESTING_STRATEGY.md) - Testing philosophy
 - [TEST_ARCHITECTURE.md](../../TEST_ARCHITECTURE.md) - Technical architecture
 - [pages/home_page.py](../../pages/home_page.py) - HomePage page object
