@@ -16,7 +16,7 @@ Functional tests for the homepage verify that all features work correctly. These
 | File                                                   | Section                | Status         |
 | ------------------------------------------------------ | ---------------------- | -------------- |
 | [test_homepage_masthead.py](test_homepage_masthead.py) | 3.2.1 Masthead Section | ✅ Implemented |
-| `test_homepage_about.py`                               | 3.2.2 About Section    | ❌ Not Created |
+| [test_homepage_about.py](test_homepage_about.py)       | 3.2.2 About Section    | ✅ Implemented |
 | `test_homepage_projects.py`                            | 3.2.3 Projects Section | ❌ Not Created |
 | `test_homepage_contact.py`                             | 3.2.4 Contact Section  | ❌ Not Created |
 
@@ -34,16 +34,16 @@ Functional tests for the homepage verify that all features work correctly. These
 
 ### 3.2.2 About Section
 
-| ID       | Test Case                 | Expected Result                          | Status             | Test Location |
-| -------- | ------------------------- | ---------------------------------------- | ------------------ | ------------- |
-| HP-A-001 | Headshot is visible       | Profile image displayed                  | ❌ Not Implemented | -             |
-| HP-A-002 | Headshot has alt text     | Meaningful alt text present              | ❌ Not Implemented | -             |
-| HP-A-003 | Bio text is displayed     | Biography paragraphs visible             | ❌ Not Implemented | -             |
-| HP-A-004 | Software Development card | Card with relevant skills displayed      | ❌ Not Implemented | -             |
-| HP-A-005 | Quality Assurance card    | Card with relevant skills displayed      | ❌ Not Implemented | -             |
-| HP-A-006 | Test Automation card      | Card with relevant skills displayed      | ❌ Not Implemented | -             |
-| HP-A-007 | View Resume button        | Click navigates to resume page           | ❌ Not Implemented | -             |
-| HP-A-008 | View Resume keyboard      | Tab to button, Enter navigates to resume | ❌ Not Implemented | -             |
+| ID       | Test Case                 | Expected Result                          | Status         | Test Location                                                                     |
+| -------- | ------------------------- | ---------------------------------------- | -------------- | --------------------------------------------------------------------------------- |
+| HP-A-001 | Headshot is visible       | Profile image displayed                  | ✅ Implemented | `test_homepage_about.py::TestHomepageAbout::test_headshot_is_visible`             |
+| HP-A-002 | Headshot has alt text     | Meaningful alt text present              | ✅ Implemented | `test_homepage_about.py::TestHomepageAbout::test_headshot_has_alt_text`           |
+| HP-A-003 | Bio text is displayed     | Biography paragraphs visible             | ✅ Implemented | `test_homepage_about.py::TestHomepageAbout::test_bio_text_is_displayed`           |
+| HP-A-004 | Software Development card | Card with relevant skills displayed      | ✅ Implemented | `test_homepage_about.py::TestHomepageAbout::test_software_development_card`       |
+| HP-A-005 | Quality Assurance card    | Card with relevant skills displayed      | ✅ Implemented | `test_homepage_about.py::TestHomepageAbout::test_quality_assurance_card`          |
+| HP-A-006 | Test Automation card      | Card with relevant skills displayed      | ✅ Implemented | `test_homepage_about.py::TestHomepageAbout::test_test_automation_card`            |
+| HP-A-007 | View Resume button        | Click navigates to resume page           | ✅ Implemented | `test_homepage_about.py::TestHomepageAbout::test_view_resume_button`              |
+| HP-A-008 | View Resume keyboard      | Tab to button, Enter navigates to resume | ✅ Implemented | `test_homepage_about.py::TestHomepageAbout::test_view_resume_keyboard_accessible` |
 
 ### 3.2.3 Projects Section
 
@@ -73,10 +73,10 @@ Functional tests for the homepage verify that all features work correctly. These
 | Section         | Total  | Implemented | Not Implemented | Coverage |
 | --------------- | ------ | ----------- | --------------- | -------- |
 | Masthead (HP-M) | 5      | 5           | 0               | 100%     |
-| About (HP-A)    | 8      | 0           | 8               | 0%       |
+| About (HP-A)    | 8      | 8           | 0               | 100%     |
 | Projects (HP-P) | 8      | 0           | 8               | 0%       |
 | Contact (HP-C)  | 5      | 0           | 5               | 0%       |
-| **Total**       | **26** | **5**       | **21**          | **19%**  |
+| **Total**       | **26** | **13**      | **13**          | **50%**  |
 
 ## Test Details
 
@@ -93,6 +93,25 @@ Tests the hero/masthead section at the top of the homepage.
 | `test_subtitle_is_displayed`                | HP-M-003     | Verifies "Senior Software Engineer" in subtitle |
 | `test_scroll_indicator_works`               | HP-M-004     | Click scroll indicator scrolls to About section |
 | `test_scroll_indicator_keyboard_accessible` | HP-M-005     | Tab + Enter on scroll indicator works           |
+
+**Page Object**: Uses `HomePage` page object from `pages/home_page.py`
+
+### test_homepage_about.py
+
+Tests the About section of the homepage including headshot, bio, expertise cards, and resume button.
+
+#### `TestHomepageAbout`
+
+| Test                                   | Test Plan ID | Description                                  |
+| -------------------------------------- | ------------ | -------------------------------------------- |
+| `test_headshot_is_visible`             | HP-A-001     | Verifies profile headshot image is displayed |
+| `test_headshot_has_alt_text`           | HP-A-002     | Verifies headshot has meaningful alt text    |
+| `test_bio_text_is_displayed`           | HP-A-003     | Verifies biography paragraphs are visible    |
+| `test_software_development_card`       | HP-A-004     | Verifies Software Development expertise card |
+| `test_quality_assurance_card`          | HP-A-005     | Verifies Quality Assurance expertise card    |
+| `test_test_automation_card`            | HP-A-006     | Verifies Test Automation expertise card      |
+| `test_view_resume_button`              | HP-A-007     | Click View Resume navigates to resume page   |
+| `test_view_resume_keyboard_accessible` | HP-A-008     | Tab + Enter on View Resume button works      |
 
 **Page Object**: Uses `HomePage` page object from `pages/home_page.py`
 
@@ -159,7 +178,7 @@ class TestData:
 
 ### High Priority (P1)
 
-1. Create `test_homepage_about.py` - About section tests (HP-A-001 to HP-A-008)
+1. ~~Create `test_homepage_about.py` - About section tests (HP-A-001 to HP-A-008)~~ ✅ Complete
 2. Create `test_homepage_projects.py` - Projects section tests (HP-P-001 to HP-P-008)
 3. Create `test_homepage_contact.py` - Contact section tests (HP-C-001 to HP-C-005)
 
