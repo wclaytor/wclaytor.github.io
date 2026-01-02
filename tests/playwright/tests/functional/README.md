@@ -1,24 +1,25 @@
-# Functional Tests - Homepage (P1 - High)
+# Functional Tests (P1 - High)
 
 > _"The tests are the executable specification."_ — Martin Fowler
 
 ## Overview
 
-Functional tests for the homepage verify that all features work correctly. These tests cover the four main sections of the homepage: Masthead, About, Projects, and Contact.
+Functional tests verify that all features work correctly. These tests cover the homepage sections (Masthead, About, Projects, Contact) and site-wide components (Navigation).
 
-**Purpose**: Verify homepage features work correctly  
+**Purpose**: Verify site features work correctly  
 **Execution**: Before merge to main  
-**Duration Target**: < 3 minutes  
+**Duration Target**: < 5 minutes  
 **Pass Criteria**: 100% pass required
 
 ## Test Files
 
-| File                                                   | Section                | Status         |
-| ------------------------------------------------------ | ---------------------- | -------------- |
-| [test_homepage_masthead.py](test_homepage_masthead.py) | 3.2.1 Masthead Section | ✅ Implemented |
-| [test_homepage_about.py](test_homepage_about.py)       | 3.2.2 About Section    | ✅ Implemented |
-| [test_homepage_projects.py](test_homepage_projects.py) | 3.2.3 Projects Section | ✅ Implemented |
-| [test_homepage_contact.py](test_homepage_contact.py)   | 3.2.4 Contact Section  | ✅ Implemented |
+| File                                                   | Section                    | Status         |
+| ------------------------------------------------------ | -------------------------- | -------------- |
+| [test_homepage_masthead.py](test_homepage_masthead.py) | 3.2.1 Masthead Section     | ✅ Implemented |
+| [test_homepage_about.py](test_homepage_about.py)       | 3.2.2 About Section        | ✅ Implemented |
+| [test_homepage_projects.py](test_homepage_projects.py) | 3.2.3 Projects Section     | ✅ Implemented |
+| [test_homepage_contact.py](test_homepage_contact.py)   | 3.2.4 Contact Section      | ✅ Implemented |
+| [test_navigation.py](test_navigation.py)               | 3.3 Navigation (P1 - High) | ✅ Implemented |
 
 ## Test Coverage Status
 
@@ -70,13 +71,58 @@ Functional tests for the homepage verify that all features work correctly. These
 
 ### Coverage Summary
 
-| Section         | Total  | Implemented | Not Implemented | Coverage |
-| --------------- | ------ | ----------- | --------------- | -------- |
-| Masthead (HP-M) | 5      | 5           | 0               | 100%     |
-| About (HP-A)    | 8      | 8           | 0               | 100%     |
-| Projects (HP-P) | 8      | 8           | 0               | 100%     |
-| Contact (HP-C)  | 5      | 5           | 0               | 100%     |
-| **Total**       | **26** | **26**      | **0**           | **100%** |
+| Section          | Total  | Implemented | Not Implemented | Coverage |
+| ---------------- | ------ | ----------- | --------------- | -------- |
+| Masthead (HP-M)  | 5      | 5           | 0               | 100%     |
+| About (HP-A)     | 8      | 8           | 0               | 100%     |
+| Projects (HP-P)  | 8      | 8           | 0               | 100%     |
+| Contact (HP-C)   | 5      | 5           | 0               | 100%     |
+| Navigation (NAV) | 8      | 8           | 0               | 100%     |
+| **Total**        | **34** | **34**      | **0**           | **100%** |
+
+---
+
+## 3.3 Navigation Section
+
+### Test Coverage
+
+| ID      | Test Case               | Expected Result                        | Status         | Test Location                                                      |
+| ------- | ----------------------- | -------------------------------------- | -------------- | ------------------------------------------------------------------ |
+| NAV-001 | Brand link visible      | "wclaytor.github.io" visible           | ✅ Implemented | `test_navigation.py::TestNavigation::test_brand_link_visible`      |
+| NAV-002 | Brand link works        | Click brand navigates to homepage      | ✅ Implemented | `test_navigation.py::TestNavigation::test_brand_link_works`        |
+| NAV-003 | About link              | Click scrolls to About section         | ✅ Implemented | `test_navigation.py::TestNavigation::test_about_link`              |
+| NAV-004 | Projects link           | Click scrolls to Projects section      | ✅ Implemented | `test_navigation.py::TestNavigation::test_projects_link`           |
+| NAV-005 | Contact link            | Click scrolls to Contact section       | ✅ Implemented | `test_navigation.py::TestNavigation::test_contact_link`            |
+| NAV-006 | Resume link             | Click opens resume page                | ✅ Implemented | `test_navigation.py::TestNavigation::test_resume_link`             |
+| NAV-007 | Nav sticky on scroll    | Navigation stays visible when scrolled | ✅ Implemented | `test_navigation.py::TestNavigation::test_nav_sticky_on_scroll`    |
+| NAV-008 | Nav keyboard accessible | All links accessible via keyboard      | ✅ Implemented | `test_navigation.py::TestNavigation::test_nav_keyboard_accessible` |
+
+### test_navigation.py
+
+Tests the navigation component that appears on all pages.
+
+#### `TestNavigation`
+
+| Test                           | Test Plan ID | Description                                    |
+| ------------------------------ | ------------ | ---------------------------------------------- |
+| `test_brand_link_visible`      | NAV-001      | Verifies brand link "wclaytor.github.io" shown |
+| `test_brand_link_works`        | NAV-002      | Click brand scrolls to top of page             |
+| `test_about_link`              | NAV-003      | Click About scrolls to About section           |
+| `test_projects_link`           | NAV-004      | Click Projects scrolls to Projects section     |
+| `test_contact_link`            | NAV-005      | Click Contact scrolls to Contact section       |
+| `test_resume_link`             | NAV-006      | Click Resume navigates to resume page          |
+| `test_nav_sticky_on_scroll`    | NAV-007      | Nav has fixed position when page scrolled      |
+| `test_nav_keyboard_accessible` | NAV-008      | All nav links can receive keyboard focus       |
+
+#### `TestNavigationAllPages`
+
+| Test                              | Description                            |
+| --------------------------------- | -------------------------------------- |
+| `test_nav_visible_on_homepage`    | Verifies nav is visible on homepage    |
+| `test_nav_visible_on_resume_page` | Verifies nav/page loads on resume page |
+| `test_all_nav_links_present`      | Verifies all expected nav links exist  |
+
+---
 
 ## Test Details
 
@@ -216,8 +262,15 @@ class TestData:
 1. ~~Create `test_homepage_about.py` - About section tests (HP-A-001 to HP-A-008)~~ ✅ Complete
 2. ~~Create `test_homepage_projects.py` - Projects section tests (HP-P-001 to HP-P-008)~~ ✅ Complete
 3. ~~Create `test_homepage_contact.py` - Contact section tests (HP-C-001 to HP-C-005)~~ ✅ Complete
+4. ~~Create `test_navigation.py` - Navigation tests (NAV-001 to NAV-008)~~ ✅ Complete
 
-**🎉 All Homepage Functional Tests Complete! (26/26 - 100% Coverage)**
+**🎉 All Homepage & Navigation Functional Tests Complete! (34/34 - 100% Coverage)**
+
+### Next Sections (per TEST_PLAN.md)
+
+5. Create Projects Page tests (PRJ-001 to PRJ-007) - Section 3.4
+6. Create Responsive tests (RSP-001 to RSP-010) - Section 3.5
+7. Create Accessibility tests (A11Y-001 to A11Y-010) - Section 3.6
 
 ### Implementation Approach
 
