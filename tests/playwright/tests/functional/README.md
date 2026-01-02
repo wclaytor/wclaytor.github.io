@@ -21,8 +21,8 @@ Functional tests verify that all features work correctly. These tests cover the 
 | [test_homepage_contact.py](test_homepage_contact.py)   | 3.2.4 Contact Section         | ✅ Implemented |
 | [test_navigation.py](test_navigation.py)               | 3.3 Navigation (P1 - High)    | ✅ Implemented |
 | [test_projects_page.py](test_projects_page.py)         | 3.4 Projects Page (P1 - High) | ✅ Implemented |
-| [test_homepage_contact.py](test_homepage_contact.py)   | 3.2.4 Contact Section      | ✅ Implemented |
-| [test_navigation.py](test_navigation.py)               | 3.3 Navigation (P1 - High) | ✅ Implemented |
+| [test_homepage_contact.py](test_homepage_contact.py)   | 3.2.4 Contact Section         | ✅ Implemented |
+| [test_navigation.py](test_navigation.py)               | 3.3 Navigation (P1 - High)    | ✅ Implemented |
 
 ## Test Coverage Status
 
@@ -132,15 +132,15 @@ Tests the navigation component that appears on all pages.
 
 ### Test Coverage
 
-| ID      | Test Case              | Expected Result                          | Status         | Test Location                                                  |
-| ------- | ---------------------- | ---------------------------------------- | -------------- | -------------------------------------------------------------- |
-| PRJ-001 | Page loads             | Redirect page renders                    | ✅ Implemented | `test_projects_page.py::TestProjectsPage::test_page_loads`     |
-| PRJ-002 | Meta redirect present  | Contains refresh to /#projects           | ✅ Implemented | `test_projects_page.py::TestProjectsPage::test_meta_redirect_present` |
-| PRJ-003 | Canonical link present | Points to /#projects                     | ✅ Implemented | `test_projects_page.py::TestProjectsPage::test_canonical_link_present` |
-| PRJ-004 | Redirect message shown | "Redirecting to Projects" displayed      | ✅ Implemented | `test_projects_page.py::TestProjectsPage::test_redirect_message_shown` |
-| PRJ-005 | Manual link works      | Navigates to /#projects                  | ✅ Implemented | `test_projects_page.py::TestProjectsPage::test_manual_link_works` |
-| PRJ-006 | Automatic redirect     | Redirects to /#projects                  | ✅ Implemented | `test_projects_page.py::TestProjectsPage::test_automatic_redirect` |
-| PRJ-007 | Spinner animation      | Loading spinner visible                  | ✅ Implemented | `test_projects_page.py::TestProjectsPage::test_spinner_animation` |
+| ID      | Test Case              | Expected Result                     | Status         | Test Location                                                          |
+| ------- | ---------------------- | ----------------------------------- | -------------- | ---------------------------------------------------------------------- |
+| PRJ-001 | Page loads             | Redirect page renders               | ✅ Implemented | `test_projects_page.py::TestProjectsPage::test_page_loads`             |
+| PRJ-002 | Meta redirect present  | Contains refresh to /#projects      | ✅ Implemented | `test_projects_page.py::TestProjectsPage::test_meta_redirect_present`  |
+| PRJ-003 | Canonical link present | Points to /#projects                | ✅ Implemented | `test_projects_page.py::TestProjectsPage::test_canonical_link_present` |
+| PRJ-004 | Redirect message shown | "Redirecting to Projects" displayed | ✅ Implemented | `test_projects_page.py::TestProjectsPage::test_redirect_message_shown` |
+| PRJ-005 | Manual link works      | Navigates to /#projects             | ✅ Implemented | `test_projects_page.py::TestProjectsPage::test_manual_link_works`      |
+| PRJ-006 | Automatic redirect     | Redirects to /#projects             | ✅ Implemented | `test_projects_page.py::TestProjectsPage::test_automatic_redirect`     |
+| PRJ-007 | Spinner animation      | Loading spinner visible             | ✅ Implemented | `test_projects_page.py::TestProjectsPage::test_spinner_animation`      |
 
 ### test_projects_page.py
 
@@ -148,21 +148,21 @@ Tests the /projects/ redirect page that sends users to the homepage #projects se
 
 #### `TestProjectsPage`
 
-| Test                        | Test Plan ID | Description                                      |
-| --------------------------- | ------------ | ------------------------------------------------ |
-| `test_page_loads`           | PRJ-001      | Verifies page loads or redirects successfully    |
-| `test_meta_redirect_present`| PRJ-002      | Verifies meta refresh tag exists for redirect    |
-| `test_canonical_link_present`| PRJ-003     | Verifies canonical link points to #projects      |
-| `test_redirect_message_shown`| PRJ-004     | Verifies "Redirecting" message in HTML           |
-| `test_manual_link_works`    | PRJ-005      | Verifies fallback link to #projects exists       |
-| `test_automatic_redirect`   | PRJ-006      | Verifies page automatically redirects            |
-| `test_spinner_animation`    | PRJ-007      | Verifies loading spinner exists with animation   |
+| Test                          | Test Plan ID | Description                                    |
+| ----------------------------- | ------------ | ---------------------------------------------- |
+| `test_page_loads`             | PRJ-001      | Verifies page loads or redirects successfully  |
+| `test_meta_redirect_present`  | PRJ-002      | Verifies meta refresh tag exists for redirect  |
+| `test_canonical_link_present` | PRJ-003      | Verifies canonical link points to #projects    |
+| `test_redirect_message_shown` | PRJ-004      | Verifies "Redirecting" message in HTML         |
+| `test_manual_link_works`      | PRJ-005      | Verifies fallback link to #projects exists     |
+| `test_automatic_redirect`     | PRJ-006      | Verifies page automatically redirects          |
+| `test_spinner_animation`      | PRJ-007      | Verifies loading spinner exists with animation |
 
 #### `TestProjectsPageStructure`
 
-| Test                            | Description                                 |
-| ------------------------------- | ------------------------------------------- |
-| `test_page_has_proper_title`    | Verifies page has descriptive title         |
+| Test                               | Description                                  |
+| ---------------------------------- | -------------------------------------------- |
+| `test_page_has_proper_title`       | Verifies page has descriptive title          |
 | `test_fallback_link_is_accessible` | Verifies fallback link for JS-disabled users |
 
 ---
