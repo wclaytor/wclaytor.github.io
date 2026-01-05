@@ -41,7 +41,8 @@ class TestNavigationLinks:
 
     def test_brand_link_goes_home(self, page: Page, base_url: str):
         """
-        Clicking the brand logo navigates to homepage.
+        Clicking the brand logo navigates to the branded homepage.
+        The brand link always points to the production site.
         """
         # Start on projects page
         page.goto(f"{base_url}{URLs.PROJECTS}")
@@ -49,9 +50,10 @@ class TestNavigationLinks:
         # Click brand
         page.locator(".navbar-brand").click()
 
-        # Should be on homepage - accept both "/" and "/index.html" as valid
-        assert page.url in [f"{base_url}/", f"{base_url}/index.html"], \
-            f"Expected homepage, got {page.url}"
+        # Brand link should always go to the branded website (production URL)
+        branded_url = "https://wclaytor.github.io/"
+        assert page.url.startswith(branded_url), \
+            f"Expected branded homepage ({branded_url}), got {page.url}"
 
     def test_about_link_scrolls_to_section(self, page: Page, base_url: str):
         """
