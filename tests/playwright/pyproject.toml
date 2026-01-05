@@ -43,6 +43,7 @@ python_functions = ["test_*"]
 markers = [
     "smoke: Critical path tests that must always pass",
     "functional: Feature-specific functional tests",
+    "responsive: Responsive design and viewport tests",
     "visual: Visual regression tests",
     "a11y: Accessibility tests",
     "performance: Performance tests",
