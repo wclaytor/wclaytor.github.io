@@ -13,7 +13,7 @@ Usage:
 
 from .models import TestCase, TestSuite
 from .parser import parse_junit_xml
-from .formatter import format_duration, get_status_emoji, generate_markdown
+from .formatter import format_duration, get_status_emoji, get_test_file_path, generate_markdown
 from .cli import main
 
 __all__ = [
@@ -22,6 +22,7 @@ __all__ = [
     "parse_junit_xml",
     "format_duration",
     "get_status_emoji",
+    "get_test_file_path",
     "generate_markdown",
     "main",
 ]

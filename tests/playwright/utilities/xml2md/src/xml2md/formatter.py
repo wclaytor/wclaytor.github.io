@@ -28,6 +28,39 @@ def get_status_emoji(status: str) -> str:
     }.get(status, "❓")
 
 
+def get_test_file_path(classname: str) -> str | None:
+    """
+    Extract the test file path from a classname.
+
+    Args:
+        classname: The full classname (e.g., 'tests.smoke.test_critical_navigation.TestClass')
+
+    Returns:
+        Relative file path (e.g., 'tests/smoke/test_critical_navigation.py') or None
+    """
+    if not classname:
+        return None
+
+    # Split the classname into parts
+    parts = classname.split(".")
+
+    # Find where the test file ends (test files start with 'test_')
+    # and class names are CamelCase
+    file_parts = []
+    for part in parts:
+        # Class names are typically CamelCase and don't start with 'test_'
+        # or they start with 'Test' (capital T)
+        if part and (part[0].isupper() or part.startswith("Test")):
+            break
+        file_parts.append(part)
+
+    if not file_parts:
+        return None
+
+    # Join with '/' and add .py extension
+    return "/".join(file_parts) + ".py"
+
+
 def generate_markdown(suites: list[TestSuite], xml_path: Path) -> str:
     """
     Generate a Markdown report from test suites.
@@ -162,7 +195,16 @@ def generate_markdown(suites: list[TestSuite], xml_path: Path) -> str:
                     lines.append("")
 
                 if tc.details:
-                    lines.append("**Details:**")
+                    # Add file link if we can extract the path
+                    file_path = get_test_file_path(tc.classname)
+                    if file_path:
+                        file_name = file_path.split("/")[-1]
+                        lines.append(f"**Details:**")
+                        lines.append(f"File: [{file_name}](../../{file_path})")
+                        lines.append("")
+                    else:
+                        lines.append("**Details:**")
+
                     lines.append("```")
                     lines.append(tc.details.strip())
                     lines.append("```")
