@@ -9,7 +9,7 @@ dependencies = [
 ]
 
 [project.scripts]
-xml2md = "xml2md:main"
+xml2md = "xml2md.cli:main"
 
 [build-system]
 requires = ["hatchling"]
