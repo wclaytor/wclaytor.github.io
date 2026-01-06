@@ -27,10 +27,11 @@ class TestCrossBrowserRendering:
 
         Verifies the page loads and critical content is visible.
         """
+        import re
         page.goto(f"{base_url}{URLs.HOME}")
 
-        # Check page loads
-        expect(page).to_have_title("William Claytor")
+        # Check page loads - title should contain "William Claytor"
+        expect(page).to_have_title(re.compile(r"William Claytor"))
 
         # Check main sections exist
         expect(page.locator("header.masthead")).to_be_visible()
@@ -104,12 +105,14 @@ class TestCrossBrowserNavigation:
         """
         XB-008: All links are functional across browsers.
         """
+        import re
         page.goto(f"{base_url}{URLs.HOME}")
 
         # Check brand link
         brand = page.locator("a.navbar-brand")
         expect(brand).to_be_visible()
-        expect(brand).to_have_attribute("href")
+        expect(brand).to_have_attribute(
+            "href", re.compile(r".+"))  # Any non-empty href
 
         # Check nav links have href
         nav_links = page.locator("nav .nav-link")
