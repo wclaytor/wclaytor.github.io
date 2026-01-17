@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="description" content="Personal songbook PWA for offline access to your music collection">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Songbook">
+    <title>Songbook</title>
+    
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Marked.js for markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <style>
+        /* ===== CSS Custom Properties (Dark Mode Default) ===== */
+        :root {
+            /* Colors */
+            --color-bg-primary: #0f0f1a;
+            --color-bg-secondary: #1a1a2e;
+            --color-bg-tertiary: #252542;
+            --color-bg-hover: #2d2d4a;
+            --color-text-primary: #e8e8f0;
+            --color-text-secondary: #a0a0b8;
+            --color-text-muted: #6a6a82;
+            --color-accent: #6c5ce7;
+            --color-accent-hover: #7d6ef0;
+            --color-success: #00b894;
+            --color-warning: #fdcb6e;
+            --color-error: #e74c3c;
+            --color-border: #3a3a5c;
+            
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            
+            /* Typography */
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.25rem;
+            --font-size-xl: 1.5rem;
+            --font-size-2xl: 2rem;
+            
+            /* Layout */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+            
+            /* Touch targets */
+            --touch-target: 44px;
+            
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+        }
+        
+        /* Light mode override */
+        [data-theme="light"] {
+            --color-bg-primary: #f5f5f8;
+            --color-bg-secondary: #ffffff;
+            --color-bg-tertiary: #e8e8f0;
+            --color-bg-hover: #dcdce8;
+            --color-text-primary: #1a1a2e;
+            --color-text-secondary: #4a4a6a;
+            --color-text-muted: #8a8aa8;
+            --color-border: #d0d0e0;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* ===== Reset & Base ===== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html {
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
+        }
+        
+        body {
+            font-family: var(--font-family);
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+        }
+        
+        /* Prevent body scroll when modal open */
+        body.modal-open {
+            overflow: hidden;
+        }
+        
+        [x-cloak] { display: none !important; }
+        
+        /* ===== App Layout ===== */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            min-height: 100dvh;
+        }
+        
+        /* ===== Header ===== */
+        .app-header {
+            background: var(--color-bg-secondary);
+            border-bottom: 1px solid var(--color-border);
+            padding: var(--spacing-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--spacing-md);
+        }
+        
+        .app-title {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            color: var(--color-accent);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .app-title svg {
+            width: 28px;
+            height: 28px;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        /* ===== Buttons ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            min-height: var(--touch-target);
+            min-width: var(--touch-target);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-base);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: var(--color-accent);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--color-accent-hover);
+        }
+        
+        .btn-secondary {
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--color-bg-hover);
+        }
+        
+        .btn-ghost {
+            background: transparent;
+            color: var(--color-text-secondary);
+        }
+        
+        .btn-ghost:hover {
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+        }
+        
+        .btn-icon {
+            padding: var(--spacing-sm);
+        }
+        
+        .btn svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+        
+        /* ===== Search Bar ===== */
+        .search-container {
+            padding: var(--spacing-md);
+            background: var(--color-bg-secondary);
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .search-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+        
+        .search-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            height: var(--touch-target);
+            padding: var(--spacing-sm) var(--spacing-md);
+            padding-left: 44px;
+            background: var(--color-bg-tertiary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            color: var(--color-text-primary);
+            font-size: var(--font-size-base);
+            transition: border-color var(--transition-fast);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--color-accent);
+        }
+        
+        .search-input::placeholder {
+            color: var(--color-text-muted);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: var(--spacing-md);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-text-muted);
+            width: 20px;
+            height: 20px;
+            pointer-events: none;
+        }
+        
+        /* ===== Tab Navigation ===== */
+        .tab-nav {
+            display: flex;
+            background: var(--color-bg-secondary);
+            border-bottom: 1px solid var(--color-border);
+            padding: 0 var(--spacing-md);
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md);
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-base);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            min-height: var(--touch-target);
+        }
+        
+        .tab-btn:hover {
+            color: var(--color-text-primary);
+            background: var(--color-bg-tertiary);
+        }
+        
+        .tab-btn.active {
+            color: var(--color-accent);
+            border-bottom-color: var(--color-accent);
+        }
+        
+        .tab-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .tab-count {
+            background: var(--color-bg-tertiary);
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-sm);
+        }
+        
+        .tab-btn.active .tab-count {
+            background: var(--color-accent);
+            color: white;
+        }
+        
+        /* ===== Main Content ===== */
+        .main-content {
+            flex: 1;
+            padding: var(--spacing-md);
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        /* ===== Empty State ===== */
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-xl) var(--spacing-md);
+            color: var(--color-text-secondary);
+        }
+        
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: var(--spacing-md);
+            opacity: 0.5;
+        }
+        
+        .empty-state h2 {
+            font-size: var(--font-size-xl);
+            margin-bottom: var(--spacing-sm);
+            color: var(--color-text-primary);
+        }
+        
+        .empty-state p {
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        /* ===== Drop Zone ===== */
+        .drop-zone {
+            border: 2px dashed var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            text-align: center;
+            transition: all var(--transition-fast);
+            cursor: pointer;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .drop-zone:hover,
+        .drop-zone.drag-over {
+            border-color: var(--color-accent);
+            background: rgba(108, 92, 231, 0.1);
+        }
+        
+        .drop-zone svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: var(--spacing-md);
+            color: var(--color-text-muted);
+        }
+        
+        .drop-zone h3 {
+            margin-bottom: var(--spacing-sm);
+            color: var(--color-text-primary);
+        }
+        
+        .drop-zone p {
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-sm);
+        }
+        
+        /* ===== List Items ===== */
+        .list-container {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        
+        .list-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            min-height: var(--touch-target);
+        }
+        
+        .list-item:hover {
+            background: var(--color-bg-hover);
+            border-color: var(--color-accent);
+        }
+        
+        .list-item-icon {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--color-bg-tertiary);
+            border-radius: var(--radius-md);
+            flex-shrink: 0;
+        }
+        
+        .list-item-icon svg {
+            width: 24px;
+            height: 24px;
+            color: var(--color-accent);
+        }
+        
+        .list-item-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .list-item-title {
+            font-weight: 500;
+            color: var(--color-text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .list-item-subtitle {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .list-item-actions {
+            display: flex;
+            gap: var(--spacing-xs);
+        }
+        
+        /* ===== Detail View ===== */
+        .detail-view {
+            position: fixed;
+            inset: 0;
+            background: var(--color-bg-primary);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .detail-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            background: var(--color-bg-secondary);
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .detail-title {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .detail-title h1 {
+            font-size: var(--font-size-lg);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .detail-title p {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+        
+        .detail-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing-md);
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .lyrics-content {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            white-space: pre-wrap;
+            background: var(--color-bg-secondary);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border);
+        }
+        
+        .artist-bio {
+            line-height: 1.8;
+        }
+        
+        .artist-bio h2 {
+            font-size: var(--font-size-lg);
+            margin: var(--spacing-lg) 0 var(--spacing-md);
+            color: var(--color-accent);
+        }
+        
+        .artist-bio h2:first-child {
+            margin-top: 0;
+        }
+        
+        .artist-songs-list {
+            margin-top: var(--spacing-lg);
+        }
+        
+        /* ===== Modal ===== */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-md);
+        }
+        
+        .modal {
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-lg);
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .modal-header h2 {
+            font-size: var(--font-size-lg);
+        }
+        
+        .modal-body {
+            padding: var(--spacing-lg);
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-top: 1px solid var(--color-border);
+        }
+        
+        /* ===== Toast Notifications ===== */
+        .toast-container {
+            position: fixed;
+            bottom: var(--spacing-lg);
+            right: var(--spacing-lg);
+            z-index: 400;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            animation: slideIn 0.3s ease;
+            max-width: 350px;
+        }
+        
+        .toast.success {
+            border-left: 4px solid var(--color-success);
+        }
+        
+        .toast.error {
+            border-left: 4px solid var(--color-error);
+        }
+        
+        .toast.warning {
+            border-left: 4px solid var(--color-warning);
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* ===== Stats Bar ===== */
+        .stats-bar {
+            display: flex;
+            gap: var(--spacing-lg);
+            padding: var(--spacing-md);
+            background: var(--color-bg-tertiary);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            color: var(--color-accent);
+        }
+        
+        .stat-label {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+        
+        /* ===== Settings Panel ===== */
+        .settings-section {
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .settings-section h3 {
+            font-size: var(--font-size-base);
+            margin-bottom: var(--spacing-md);
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .settings-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-md);
+            background: var(--color-bg-tertiary);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .settings-row label {
+            font-weight: 500;
+        }
+        
+        /* Toggle Switch */
+        .toggle {
+            position: relative;
+            width: 52px;
+            height: 28px;
+            cursor: pointer;
+        }
+        
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            inset: 0;
+            background: var(--color-bg-hover);
+            border-radius: 28px;
+            transition: background var(--transition-fast);
+        }
+        
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: transform var(--transition-fast);
+        }
+        
+        .toggle input:checked + .toggle-slider {
+            background: var(--color-accent);
+        }
+        
+        .toggle input:checked + .toggle-slider::before {
+            transform: translateX(24px);
+        }
+        
+        /* ===== Loading State ===== */
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--color-bg-tertiary);
+            border-top-color: var(--color-accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* ===== Responsive ===== */
+        @media (max-width: 600px) {
+            .header-content {
+                flex-wrap: wrap;
+            }
+            
+            .app-title {
+                font-size: var(--font-size-lg);
+            }
+            
+            .btn-text {
+                display: none;
+            }
+            
+            .toast-container {
+                left: var(--spacing-md);
+                right: var(--spacing-md);
+            }
+            
+            .toast {
+                max-width: 100%;
+            }
+            
+            .stats-bar {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body x-data="songbookApp()" x-init="init()" :data-theme="darkMode ? 'dark' : 'light'">
+    
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1 class="app-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 18V5l12-2v13"/>
+                        <circle cx="6" cy="18" r="3"/>
+                        <circle cx="18" cy="16" r="3"/>
+                    </svg>
+                    Songbook
+                </h1>
+                
+                <div class="header-actions">
+                    <!-- Import Files Button -->
+                    <button class="btn btn-secondary" @click="showImportModal = true" title="Import Files">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                        <span class="btn-text">Import</span>
+                    </button>
+                    
+                    <!-- Export Button -->
+                    <button class="btn btn-secondary" @click="exportCollection()" :disabled="songs.length === 0 && artists.length === 0" title="Export Collection">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        <span class="btn-text">Export</span>
+                    </button>
+                    
+                    <!-- Settings Button -->
+                    <button class="btn btn-ghost btn-icon" @click="showSettingsModal = true" title="Settings">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Search Bar -->
+        <div class="search-container" x-show="songs.length > 0 || artists.length > 0">
+            <div class="search-wrapper">
+                <div class="search-input-wrapper">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input 
+                        type="search" 
+                        class="search-input" 
+                        placeholder="Search songs and artists..."
+                        x-model="searchTerm"
+                        @input.debounce.300ms="filterItems()"
+                    >
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab Navigation -->
+        <nav class="tab-nav" x-show="songs.length > 0 || artists.length > 0">
+            <button 
+                class="tab-btn" 
+                :class="{ active: activeTab === 'songs' }"
+                @click="activeTab = 'songs'"
+            >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 18V5l12-2v13"/>
+                    <circle cx="6" cy="18" r="3"/>
+                    <circle cx="18" cy="16" r="3"/>
+                </svg>
+                Songs
+                <span class="tab-count" x-text="filteredSongs.length"></span>
+            </button>
+            <button 
+                class="tab-btn" 
+                :class="{ active: activeTab === 'artists' }"
+                @click="activeTab = 'artists'"
+            >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                Artists
+                <span class="tab-count" x-text="filteredArtists.length"></span>
+            </button>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Empty State -->
+            <template x-if="songs.length === 0 && artists.length === 0 && !loading">
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M9 18V5l12-2v13"/>
+                        <circle cx="6" cy="18" r="3"/>
+                        <circle cx="18" cy="16" r="3"/>
+                    </svg>
+                    <h2>Welcome to Songbook</h2>
+                    <p>Import your song and artist markdown files to get started.</p>
+                    
+                    <!-- Drop Zone -->
+                    <div 
+                        class="drop-zone"
+                        :class="{ 'drag-over': isDragging }"
+                        @dragover.prevent="isDragging = true"
+                        @dragleave.prevent="isDragging = false"
+                        @drop.prevent="handleDrop($event)"
+                        @click="$refs.fileInput.click()"
+                    >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                        <h3>Drop files here</h3>
+                        <p>or click to select markdown files</p>
+                    </div>
+                    
+                    <input 
+                        type="file" 
+                        x-ref="fileInput"
+                        @change="handleFileSelect($event)"
+                        multiple
+                        accept=".md,.markdown"
+                        style="display: none;"
+                    >
+                    
+                    <p style="margin-top: var(--spacing-lg); color: var(--color-text-muted);">
+                        Or import a previously exported collection
+                    </p>
+                    <button class="btn btn-primary" @click="$refs.importJsonInput.click()" style="margin-top: var(--spacing-sm);">
+                        Import Collection File
+                    </button>
+                    <input 
+                        type="file" 
+                        x-ref="importJsonInput"
+                        @change="importCollection($event)"
+                        accept=".json"
+                        style="display: none;"
+                    >
+                </div>
+            </template>
+            
+            <!-- Loading State -->
+            <template x-if="loading">
+                <div class="empty-state">
+                    <div class="loading-spinner"></div>
+                    <p style="margin-top: var(--spacing-md);" x-text="loadingMessage"></p>
+                </div>
+            </template>
+            
+            <!-- Songs List -->
+            <template x-if="!loading && (songs.length > 0 || artists.length > 0) && activeTab === 'songs'">
+                <div class="list-container">
+                    <template x-for="song in filteredSongs" :key="song.id">
+                        <div class="list-item" @click="viewSong(song)">
+                            <div class="list-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 18V5l12-2v13"/>
+                                    <circle cx="6" cy="18" r="3"/>
+                                    <circle cx="18" cy="16" r="3"/>
+                                </svg>
+                            </div>
+                            <div class="list-item-content">
+                                <div class="list-item-title" x-text="song.title"></div>
+                                <div class="list-item-subtitle" x-text="song.artist || 'Unknown Artist'"></div>
+                            </div>
+                            <div class="list-item-actions">
+                                <button class="btn btn-ghost btn-icon" @click.stop="deleteSong(song.id)" title="Delete">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3 6 5 6 21 6"/>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                    
+                    <template x-if="filteredSongs.length === 0 && searchTerm">
+                        <div class="empty-state">
+                            <p>No songs match your search.</p>
+                        </div>
+                    </template>
+                </div>
+            </template>
+            
+            <!-- Artists List -->
+            <template x-if="!loading && (songs.length > 0 || artists.length > 0) && activeTab === 'artists'">
+                <div class="list-container">
+                    <template x-for="artist in filteredArtists" :key="artist.id">
+                        <div class="list-item" @click="viewArtist(artist)">
+                            <div class="list-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                </svg>
+                            </div>
+                            <div class="list-item-content">
+                                <div class="list-item-title" x-text="artist.name"></div>
+                                <div class="list-item-subtitle" x-text="(artist.songCount || 0) + ' songs'"></div>
+                            </div>
+                            <div class="list-item-actions">
+                                <button class="btn btn-ghost btn-icon" @click.stop="deleteArtist(artist.id)" title="Delete">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3 6 5 6 21 6"/>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                    
+                    <template x-if="filteredArtists.length === 0 && searchTerm">
+                        <div class="empty-state">
+                            <p>No artists match your search.</p>
+                        </div>
+                    </template>
+                </div>
+            </template>
+        </main>
+    </div>
+    
+    <!-- Song Detail View -->
+    <div class="detail-view" x-show="selectedSong" x-cloak x-transition>
+        <div class="detail-header">
+            <button class="btn btn-ghost btn-icon" @click="selectedSong = null">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5"/>
+                    <polyline points="12 19 5 12 12 5"/>
+                </svg>
+            </button>
+            <div class="detail-title">
+                <h1 x-text="selectedSong?.title"></h1>
+                <p x-text="selectedSong?.artist || 'Unknown Artist'"></p>
+            </div>
+        </div>
+        <div class="detail-content">
+            <div class="lyrics-content" x-text="selectedSong?.lyrics || selectedSong?.content || 'No lyrics available'"></div>
+        </div>
+    </div>
+    
+    <!-- Artist Detail View -->
+    <div class="detail-view" x-show="selectedArtist" x-cloak x-transition>
+        <div class="detail-header">
+            <button class="btn btn-ghost btn-icon" @click="selectedArtist = null">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5"/>
+                    <polyline points="12 19 5 12 12 5"/>
+                </svg>
+            </button>
+            <div class="detail-title">
+                <h1 x-text="selectedArtist?.name"></h1>
+                <p x-text="(selectedArtist?.songCount || 0) + ' songs'"></p>
+            </div>
+        </div>
+        <div class="detail-content">
+            <div class="artist-bio" x-html="selectedArtist?.bioHtml || selectedArtist?.bio || 'No biography available'"></div>
+            
+            <template x-if="getArtistSongs(selectedArtist?.name).length > 0">
+                <div class="artist-songs-list">
+                    <h2 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Songs</h2>
+                    <div class="list-container">
+                        <template x-for="song in getArtistSongs(selectedArtist?.name)" :key="song.id">
+                            <div class="list-item" @click="selectedArtist = null; viewSong(song)">
+                                <div class="list-item-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M9 18V5l12-2v13"/>
+                                        <circle cx="6" cy="18" r="3"/>
+                                        <circle cx="18" cy="16" r="3"/>
+                                    </svg>
+                                </div>
+                                <div class="list-item-content">
+                                    <div class="list-item-title" x-text="song.title"></div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+    
+    <!-- Import Modal -->
+    <div class="modal-backdrop" x-show="showImportModal" x-cloak @click.self="showImportModal = false">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Import Files</h2>
+                <button class="btn btn-ghost btn-icon" @click="showImportModal = false">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div 
+                    class="drop-zone"
+                    :class="{ 'drag-over': isDragging }"
+                    @dragover.prevent="isDragging = true"
+                    @dragleave.prevent="isDragging = false"
+                    @drop.prevent="handleDrop($event); showImportModal = false"
+                    @click="$refs.modalFileInput.click()"
+                >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <h3>Drop markdown files here</h3>
+                    <p>or click to select files</p>
+                </div>
+                <input 
+                    type="file" 
+                    x-ref="modalFileInput"
+                    @change="handleFileSelect($event); showImportModal = false"
+                    multiple
+                    accept=".md,.markdown"
+                    style="display: none;"
+                >
+                
+                <div style="text-align: center; margin-top: var(--spacing-lg);">
+                    <p style="color: var(--color-text-muted); margin-bottom: var(--spacing-sm);">Or import a collection file</p>
+                    <button class="btn btn-secondary" @click="$refs.modalJsonInput.click()">
+                        Import JSON Collection
+                    </button>
+                    <input 
+                        type="file" 
+                        x-ref="modalJsonInput"
+                        @change="importCollection($event); showImportModal = false"
+                        accept=".json"
+                        style="display: none;"
+                    >
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Settings Modal -->
+    <div class="modal-backdrop" x-show="showSettingsModal" x-cloak @click.self="showSettingsModal = false">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="btn btn-ghost btn-icon" @click="showSettingsModal = false">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h3>Appearance</h3>
+                    <div class="settings-row">
+                        <label>Dark Mode</label>
+                        <label class="toggle">
+                            <input type="checkbox" x-model="darkMode" @change="saveSettings()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>Collection</h3>
+                    <div class="stats-bar">
+                        <div class="stat-item">
+                            <div class="stat-value" x-text="songs.length"></div>
+                            <div class="stat-label">Songs</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" x-text="artists.length"></div>
+                            <div class="stat-label">Artists</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>Data Management</h3>
+                    <button class="btn btn-secondary" style="width: 100%; margin-bottom: var(--spacing-sm);" @click="exportCollection()">
+                        Export Collection
+                    </button>
+                    <button class="btn btn-secondary" style="width: 100%; color: var(--color-error);" @click="confirmClearAll()">
+                        Clear All Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Container -->
+    <div class="toast-container">
+        <template x-for="toast in toasts" :key="toast.id">
+            <div class="toast" :class="toast.type" x-show="toast.visible" x-transition>
+                <span x-text="toast.message"></span>
+                <button class="btn btn-ghost btn-icon" @click="removeToast(toast.id)" style="margin-left: auto;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+        </template>
+    </div>
+    
+    <script>
+        // ===== IndexedDB Helper =====
+        const DB_NAME = 'songbook-db';
+        const DB_VERSION = 1;
+        
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => resolve(request.result);
+                
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    
+                    // Songs store
+                    if (!db.objectStoreNames.contains('songs')) {
+                        const songsStore = db.createObjectStore('songs', { keyPath: 'id' });
+                        songsStore.createIndex('title', 'title', { unique: false });
+                        songsStore.createIndex('artist', 'artist', { unique: false });
+                    }
+                    
+                    // Artists store
+                    if (!db.objectStoreNames.contains('artists')) {
+                        const artistsStore = db.createObjectStore('artists', { keyPath: 'id' });
+                        artistsStore.createIndex('name', 'name', { unique: false });
+                    }
+                };
+            });
+        }
+        
+        async function dbGetAll(storeName) {
+            const db = await openDB();
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(storeName, 'readonly');
+                const store = transaction.objectStore(storeName);
+                const request = store.getAll();
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+        
+        async function dbPut(storeName, item) {
+            const db = await openDB();
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(storeName, 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.put(item);
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+        
+        async function dbDelete(storeName, id) {
+            const db = await openDB();
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(storeName, 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.delete(id);
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+        
+        async function dbClear(storeName) {
+            const db = await openDB();
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(storeName, 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.clear();
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+        
+        // ===== Markdown Parser =====
+        function parseSongMarkdown(content, filename) {
+            const lines = content.split('\n');
+            const song = {
+                id: generateId(),
+                title: '',
+                artist: '',
+                genre: '',
+                lyrics: '',
+                content: content,
+                filename: filename,
+                importedAt: new Date().toISOString()
+            };
+            
+            // Extract title from first H1
+            const titleMatch = content.match(/^#\s+(.+)$/m);
+            if (titleMatch) {
+                song.title = titleMatch[1].trim();
+            } else {
+                // Fallback to filename
+                song.title = filename.replace(/\.md$/, '').replace(/_/g, ' ');
+            }
+            
+            // Extract artist
+            const artistMatch = content.match(/\*\*Artist\*\*:\s*\[?([^\]\n\(]+)/);
+            if (artistMatch) {
+                song.artist = artistMatch[1].trim();
+            }
+            
+            // Extract genre
+            const genreMatch = content.match(/\*\*Genre\*\*:\s*(.+)/);
+            if (genreMatch) {
+                song.genre = genreMatch[1].trim();
+            }
+            
+            // Extract lyrics - look for code block or lyrics section
+            const lyricsMatch = content.match(/## Lyrics[\s\S]*?```([\s\S]*?)```/);
+            if (lyricsMatch) {
+                song.lyrics = lyricsMatch[1].trim();
+            } else {
+                // Try to find content after ## Lyrics without code block
+                const lyricsSectionMatch = content.match(/## Lyrics\s*\n([\s\S]+)/);
+                if (lyricsSectionMatch) {
+                    song.lyrics = lyricsSectionMatch[1].trim();
+                }
+            }
+            
+            return song;
+        }
+        
+        function parseArtistMarkdown(content, filename) {
+            const artist = {
+                id: generateId(),
+                name: '',
+                bio: '',
+                bioHtml: '',
+                songCount: 0,
+                content: content,
+                filename: filename,
+                importedAt: new Date().toISOString()
+            };
+            
+            // Extract name from first H1
+            const nameMatch = content.match(/^#\s+(.+)$/m);
+            if (nameMatch) {
+                artist.name = nameMatch[1].trim();
+            } else {
+                artist.name = filename.replace(/\.md$/, '').replace(/_/g, ' ');
+            }
+            
+            // Extract about section
+            const aboutMatch = content.match(/## About\s*\n([\s\S]*?)(?=##|$)/);
+            if (aboutMatch) {
+                artist.bio = aboutMatch[1].trim();
+                // Convert markdown to HTML if marked.js is available
+                if (typeof marked !== 'undefined') {
+                    artist.bioHtml = marked.parse(aboutMatch[1].trim());
+                }
+            }
+            
+            // Count songs in the Songs section
+            const songsMatch = content.match(/## Songs \((\d+)\)/);
+            if (songsMatch) {
+                artist.songCount = parseInt(songsMatch[1], 10);
+            } else {
+                // Count list items under Songs section
+                const songsList = content.match(/## Songs[\s\S]*?(?=##|$)/);
+                if (songsList) {
+                    const songItems = songsList[0].match(/^-\s+/gm);
+                    artist.songCount = songItems ? songItems.length : 0;
+                }
+            }
+            
+            return artist;
+        }
+        
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+        
+        function detectFileType(content, filename) {
+            // Check for song-specific patterns
+            if (content.includes('## Lyrics') || content.includes('**Genre**:')) {
+                return 'song';
+            }
+            // Check for artist-specific patterns
+            if (content.includes('## About') || content.includes('## Songs')) {
+                return 'artist';
+            }
+            // Default based on folder structure hints in filename
+            if (filename.toLowerCase().includes('artist')) {
+                return 'artist';
+            }
+            return 'song';
+        }
+        
+        // ===== Alpine.js App =====
+        function songbookApp() {
+            return {
+                // Data
+                songs: [],
+                artists: [],
+                
+                // UI State
+                activeTab: 'songs',
+                searchTerm: '',
+                selectedSong: null,
+                selectedArtist: null,
+                showImportModal: false,
+                showSettingsModal: false,
+                isDragging: false,
+                loading: false,
+                loadingMessage: '',
+                
+                // Settings
+                darkMode: true,
+                
+                // Toasts
+                toasts: [],
+                
+                // Computed
+                get filteredSongs() {
+                    if (!this.searchTerm) return this.songs;
+                    const term = this.searchTerm.toLowerCase();
+                    return this.songs.filter(song => 
+                        song.title.toLowerCase().includes(term) ||
+                        (song.artist && song.artist.toLowerCase().includes(term))
+                    );
+                },
+                
+                get filteredArtists() {
+                    if (!this.searchTerm) return this.artists;
+                    const term = this.searchTerm.toLowerCase();
+                    return this.artists.filter(artist => 
+                        artist.name.toLowerCase().includes(term)
+                    );
+                },
+                
+                // Lifecycle
+                async init() {
+                    // Load settings
+                    this.loadSettings();
+                    
+                    // Load data from IndexedDB
+                    this.loading = true;
+                    this.loadingMessage = 'Loading your collection...';
+                    
+                    try {
+                        const [songs, artists] = await Promise.all([
+                            dbGetAll('songs'),
+                            dbGetAll('artists')
+                        ]);
+                        
+                        this.songs = songs.sort((a, b) => a.title.localeCompare(b.title));
+                        this.artists = artists.sort((a, b) => a.name.localeCompare(b.name));
+                    } catch (error) {
+                        console.error('Error loading data:', error);
+                        this.showToast('Error loading collection', 'error');
+                    }
+                    
+                    this.loading = false;
+                    
+                    // Watch for detail view close to remove modal-open class
+                    this.$watch('selectedSong', (value) => {
+                        if (!value) document.body.classList.remove('modal-open');
+                    });
+                    this.$watch('selectedArtist', (value) => {
+                        if (!value) document.body.classList.remove('modal-open');
+                    });
+                    
+                    // Register service worker
+                    if ('serviceWorker' in navigator) {
+                        try {
+                            await navigator.serviceWorker.register('./sw.js');
+                        } catch (error) {
+                            console.log('Service worker registration skipped:', error);
+                        }
+                    }
+                },
+                
+                // Settings
+                loadSettings() {
+                    const settings = localStorage.getItem('songbook-settings');
+                    if (settings) {
+                        const parsed = JSON.parse(settings);
+                        this.darkMode = parsed.darkMode ?? true;
+                    }
+                },
+                
+                saveSettings() {
+                    localStorage.setItem('songbook-settings', JSON.stringify({
+                        darkMode: this.darkMode
+                    }));
+                },
+                
+                // File Handling
+                async handleDrop(event) {
+                    this.isDragging = false;
+                    const files = Array.from(event.dataTransfer.files);
+                    await this.processFiles(files);
+                },
+                
+                async handleFileSelect(event) {
+                    const files = Array.from(event.target.files);
+                    await this.processFiles(files);
+                    event.target.value = '';
+                },
+                
+                async processFiles(files) {
+                    const mdFiles = files.filter(f => 
+                        f.name.endsWith('.md') || f.name.endsWith('.markdown')
+                    );
+                    
+                    if (mdFiles.length === 0) {
+                        this.showToast('No markdown files found', 'warning');
+                        return;
+                    }
+                    
+                    this.loading = true;
+                    this.loadingMessage = `Processing ${mdFiles.length} files...`;
+                    
+                    let songsAdded = 0;
+                    let artistsAdded = 0;
+                    
+                    for (const file of mdFiles) {
+                        try {
+                            const content = await file.text();
+                            const fileType = detectFileType(content, file.name);
+                            
+                            if (fileType === 'song') {
+                                const song = parseSongMarkdown(content, file.name);
+                                await dbPut('songs', song);
+                                songsAdded++;
+                            } else {
+                                const artist = parseArtistMarkdown(content, file.name);
+                                await dbPut('artists', artist);
+                                artistsAdded++;
+                            }
+                        } catch (error) {
+                            console.error(`Error processing ${file.name}:`, error);
+                        }
+                    }
+                    
+                    // Reload data
+                    const [songs, artists] = await Promise.all([
+                        dbGetAll('songs'),
+                        dbGetAll('artists')
+                    ]);
+                    
+                    this.songs = songs.sort((a, b) => a.title.localeCompare(b.title));
+                    this.artists = artists.sort((a, b) => a.name.localeCompare(b.name));
+                    
+                    this.loading = false;
+                    this.showToast(`Imported ${songsAdded} songs and ${artistsAdded} artists`, 'success');
+                },
+                
+                // Export/Import Collection
+                async exportCollection() {
+                    const collection = {
+                        version: '1.0',
+                        exportedAt: new Date().toISOString(),
+                        songs: this.songs,
+                        artists: this.artists
+                    };
+                    
+                    const blob = new Blob([JSON.stringify(collection, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `songbook-export-${new Date().toISOString().split('T')[0]}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    this.showToast('Collection exported successfully', 'success');
+                },
+                
+                async importCollection(event) {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    
+                    try {
+                        this.loading = true;
+                        this.loadingMessage = 'Importing collection...';
+                        
+                        const content = await file.text();
+                        const collection = JSON.parse(content);
+                        
+                        if (!collection.songs || !collection.artists) {
+                            throw new Error('Invalid collection format');
+                        }
+                        
+                        // Import songs
+                        for (const song of collection.songs) {
+                            await dbPut('songs', song);
+                        }
+                        
+                        // Import artists
+                        for (const artist of collection.artists) {
+                            await dbPut('artists', artist);
+                        }
+                        
+                        // Reload data
+                        const [songs, artists] = await Promise.all([
+                            dbGetAll('songs'),
+                            dbGetAll('artists')
+                        ]);
+                        
+                        this.songs = songs.sort((a, b) => a.title.localeCompare(b.title));
+                        this.artists = artists.sort((a, b) => a.name.localeCompare(b.name));
+                        
+                        this.loading = false;
+                        this.showToast(`Imported ${collection.songs.length} songs and ${collection.artists.length} artists`, 'success');
+                    } catch (error) {
+                        console.error('Import error:', error);
+                        this.loading = false;
+                        this.showToast('Error importing collection', 'error');
+                    }
+                    
+                    event.target.value = '';
+                },
+                
+                // CRUD Operations
+                viewSong(song) {
+                    this.selectedSong = song;
+                    document.body.classList.add('modal-open');
+                },
+                
+                viewArtist(artist) {
+                    this.selectedArtist = artist;
+                    document.body.classList.add('modal-open');
+                },
+                
+                async deleteSong(id) {
+                    if (!confirm('Delete this song?')) return;
+                    
+                    try {
+                        await dbDelete('songs', id);
+                        this.songs = this.songs.filter(s => s.id !== id);
+                        this.showToast('Song deleted', 'success');
+                    } catch (error) {
+                        this.showToast('Error deleting song', 'error');
+                    }
+                },
+                
+                async deleteArtist(id) {
+                    if (!confirm('Delete this artist?')) return;
+                    
+                    try {
+                        await dbDelete('artists', id);
+                        this.artists = this.artists.filter(a => a.id !== id);
+                        this.showToast('Artist deleted', 'success');
+                    } catch (error) {
+                        this.showToast('Error deleting artist', 'error');
+                    }
+                },
+                
+                async confirmClearAll() {
+                    if (!confirm('This will delete all songs and artists. Are you sure?')) return;
+                    if (!confirm('This cannot be undone. Really delete everything?')) return;
+                    
+                    try {
+                        await Promise.all([
+                            dbClear('songs'),
+                            dbClear('artists')
+                        ]);
+                        
+                        this.songs = [];
+                        this.artists = [];
+                        this.showSettingsModal = false;
+                        this.showToast('All data cleared', 'success');
+                    } catch (error) {
+                        this.showToast('Error clearing data', 'error');
+                    }
+                },
+                
+                getArtistSongs(artistName) {
+                    if (!artistName) return [];
+                    return this.songs.filter(s => 
+                        s.artist && s.artist.toLowerCase() === artistName.toLowerCase()
+                    );
+                },
+                
+                // Toast Notifications
+                showToast(message, type = 'success') {
+                    const id = Date.now();
+                    this.toasts.push({ id, message, type, visible: true });
+                    
+                    setTimeout(() => {
+                        this.removeToast(id);
+                    }, 4000);
+                },
+                
+                removeToast(id) {
+                    const toast = this.toasts.find(t => t.id === id);
+                    if (toast) {
+                        toast.visible = false;
+                        setTimeout(() => {
+                            this.toasts = this.toasts.filter(t => t.id !== id);
+                        }, 300);
+                    }
+                }
+            };
+        }
+    </script>
+    
+    <!-- Inline PWA Manifest -->
+    <script>
+        // Generate and inject manifest dynamically
+        const manifest = {
+            name: 'Songbook',
+            short_name: 'Songbook',
+            description: 'Personal songbook PWA for offline access',
+            start_url: './',
+            display: 'standalone',
+            background_color: '#0f0f1a',
+            theme_color: '#1a1a2e',
+            icons: [
+                {
+                    src: 'data:image/svg+xml,' + encodeURIComponent(`
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                            <rect width="512" height="512" rx="64" fill="#1a1a2e"/>
+                            <g transform="translate(128, 128) scale(1.5)" stroke="#6c5ce7" stroke-width="16" fill="none">
+                                <path d="M72 144V40l96-16v104"/>
+                                <circle cx="48" cy="144" r="24"/>
+                                <circle cx="144" cy="128" r="24"/>
+                            </g>
+                        </svg>
+                    `),
+                    sizes: '512x512',
+                    type: 'image/svg+xml',
+                    purpose: 'any maskable'
+                }
+            ]
+        };
+        
+        const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+        const manifestUrl = URL.createObjectURL(manifestBlob);
+        
+        const link = document.createElement('link');
+        link.rel = 'manifest';
+        link.href = manifestUrl;
+        document.head.appendChild(link);
+        
+        // Apple touch icon
+        const appleIcon = document.createElement('link');
+        appleIcon.rel = 'apple-touch-icon';
+        appleIcon.href = 'data:image/svg+xml,' + encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                <rect width="512" height="512" rx="64" fill="#1a1a2e"/>
+                <g transform="translate(128, 128) scale(1.5)" stroke="#6c5ce7" stroke-width="16" fill="none">
+                    <path d="M72 144V40l96-16v104"/>
+                    <circle cx="48" cy="144" r="24"/>
+                    <circle cx="144" cy="128" r="24"/>
+                </g>
+            </svg>
+        `);
+        document.head.appendChild(appleIcon);
+    </script>
+</body>
+</html>
