@@ -614,6 +614,29 @@
             border-top: 1px solid var(--color-border);
         }
 
+        .form-textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--color-bg-tertiary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            color: var(--color-text-primary);
+            font-size: var(--font-size-base);
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color var(--transition-fast);
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--color-accent);
+        }
+
+        .form-textarea::placeholder {
+            color: var(--color-text-muted);
+        }
+
         /* ===== Toast Notifications ===== */
         .toast-container {
             position: fixed;
@@ -952,7 +975,18 @@
 
             <!-- Songs List -->
             <template x-if="!loading && (songs.length > 0 || artists.length > 0) && activeTab === 'songs'">
-                <div class="list-container">
+                <div>
+                    <div style="display: flex; justify-content: flex-end; margin-bottom: var(--spacing-md);">
+                        <button class="btn btn-primary" @click="openNewSong()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                            <span class="btn-text">New Song</span>
+                        </button>
+                    </div>
+
+                    <div class="list-container">
                     <template x-for="song in filteredSongs" :key="song.id">
                         <div class="list-item" @click="viewSong(song)">
                             <div class="list-item-icon">
@@ -967,6 +1001,14 @@
                                 <div class="list-item-subtitle" x-text="song.artist || 'Unknown Artist'"></div>
                             </div>
                             <div class="list-item-actions">
+                                <button class="btn btn-ghost btn-icon" @click.stop="openEditSong(song)" title="Edit">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path
+                                            d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                        <path
+                                            d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                    </svg>
+                                </button>
                                 <button class="btn btn-ghost btn-icon" @click.stop="deleteSong(song.id)" title="Delete">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <polyline points="3 6 5 6 21 6" />
@@ -983,12 +1025,24 @@
                             <p>No songs match your search.</p>
                         </div>
                     </template>
+                    </div>
                 </div>
             </template>
 
             <!-- Artists List -->
             <template x-if="!loading && (songs.length > 0 || artists.length > 0) && activeTab === 'artists'">
-                <div class="list-container">
+                <div>
+                    <div style="display: flex; justify-content: flex-end; margin-bottom: var(--spacing-md);">
+                        <button class="btn btn-primary" @click="openNewArtist()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                            <span class="btn-text">New Artist</span>
+                        </button>
+                    </div>
+
+                    <div class="list-container">
                     <template x-for="artist in filteredArtists" :key="artist.id">
                         <div class="list-item" @click="viewArtist(artist)">
                             <div class="list-item-icon">
@@ -1002,6 +1056,14 @@
                                 <div class="list-item-subtitle" x-text="(artist.songCount || 0) + ' songs'"></div>
                             </div>
                             <div class="list-item-actions">
+                                <button class="btn btn-ghost btn-icon" @click.stop="openEditArtist(artist)" title="Edit">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path
+                                            d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                        <path
+                                            d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                    </svg>
+                                </button>
                                 <button class="btn btn-ghost btn-icon" @click.stop="deleteArtist(artist.id)"
                                     title="Delete">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1019,6 +1081,7 @@
                             <p>No artists match your search.</p>
                         </div>
                     </template>
+                    </div>
                 </div>
             </template>
 
@@ -1105,6 +1168,12 @@
                 <h1 x-text="selectedSong?.title"></h1>
                 <p x-text="selectedSong?.artist || 'Unknown Artist'"></p>
             </div>
+            <button class="btn btn-ghost btn-icon" @click="openEditSong(selectedSong)" title="Edit">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
+            </button>
         </div>
         <div class="detail-content">
             <div class="lyrics-content" x-text="selectedSong?.lyrics || selectedSong?.content || 'No lyrics available'">
@@ -1148,6 +1217,12 @@
                 <h1 x-text="selectedArtist?.name"></h1>
                 <p x-text="(selectedArtist?.songCount || 0) + ' songs'"></p>
             </div>
+            <button class="btn btn-ghost btn-icon" @click="openEditArtist(selectedArtist)" title="Edit">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
+            </button>
         </div>
         <div class="detail-content">
             <div class="artist-bio" x-html="selectedArtist?.bioHtml || selectedArtist?.bio || 'No biography available'">
@@ -1359,6 +1434,83 @@
                         Clear All Data
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New/Edit Song Modal -->
+    <div class="modal-backdrop" x-show="showSongModal" x-cloak @click.self="showSongModal = false">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 x-text="songForm.id ? 'Edit Song' : 'New Song'"></h2>
+                <button class="btn btn-ghost btn-icon" @click="showSongModal = false">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: var(--spacing-md);">
+                    <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Title</label>
+                    <input type="text" class="search-input" style="padding-left: var(--spacing-md);"
+                        placeholder="Song title" x-model="songForm.title">
+                </div>
+                <div style="margin-bottom: var(--spacing-md);">
+                    <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Artist <span
+                            style="color: var(--color-text-muted);">(optional)</span></label>
+                    <input type="text" class="search-input" style="padding-left: var(--spacing-md);"
+                        placeholder="Artist name" x-model="songForm.artist">
+                </div>
+                <div style="margin-bottom: var(--spacing-md);">
+                    <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Genre <span
+                            style="color: var(--color-text-muted);">(optional)</span></label>
+                    <input type="text" class="search-input" style="padding-left: var(--spacing-md);"
+                        placeholder="e.g. Folk" x-model="songForm.genre">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Lyrics</label>
+                    <textarea class="form-textarea" placeholder="Enter song lyrics or chords"
+                        x-model="songForm.lyrics"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" @click="showSongModal = false">Cancel</button>
+                <button class="btn btn-primary" @click="saveSong()"
+                    :disabled="!songForm.title.trim()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New/Edit Artist Modal -->
+    <div class="modal-backdrop" x-show="showArtistModal" x-cloak @click.self="showArtistModal = false">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 x-text="artistForm.id ? 'Edit Artist' : 'New Artist'"></h2>
+                <button class="btn btn-ghost btn-icon" @click="showArtistModal = false">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: var(--spacing-md);">
+                    <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Name</label>
+                    <input type="text" class="search-input" style="padding-left: var(--spacing-md);"
+                        placeholder="e.g. The Beatles" x-model="artistForm.name">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Bio <span
+                            style="color: var(--color-text-muted);">(optional)</span></label>
+                    <textarea class="form-textarea" placeholder="Enter artist biography"
+                        x-model="artistForm.bio"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" @click="showArtistModal = false">Cancel</button>
+                <button class="btn btn-primary" @click="saveArtist()"
+                    :disabled="!artistForm.name.trim()">Save</button>
             </div>
         </div>
     </div>
@@ -1691,7 +1843,11 @@
                 showSettingsModal: false,
                 showSetlistModal: false,
                 showAddSongsModal: false,
+                showSongModal: false,
+                showArtistModal: false,
                 setlistForm: { id: null, name: '', description: '' },
+                songForm: { id: null, title: '', artist: '', genre: '', lyrics: '' },
+                artistForm: { id: null, name: '', bio: '' },
                 addSongsSearch: '',
                 selectedSongIds: [],
                 performContext: null,
@@ -2005,6 +2161,127 @@
                     return this.songs.filter(s =>
                         s.artist && s.artist.toLowerCase() === artistName.toLowerCase()
                     );
+                },
+
+                // Song CRUD
+                openNewSong() {
+                    this.songForm = { id: null, title: '', artist: '', genre: '', lyrics: '' };
+                    this.showSongModal = true;
+                },
+
+                openEditSong(song) {
+                    if (!song) return;
+                    this.songForm = {
+                        id: song.id,
+                        title: song.title || '',
+                        artist: song.artist || '',
+                        genre: song.genre || '',
+                        lyrics: song.lyrics || ''
+                    };
+                    this.showSongModal = true;
+                },
+
+                async saveSong() {
+                    const title = this.songForm.title.trim();
+                    if (!title) return;
+
+                    try {
+                        if (this.songForm.id) {
+                            const song = this.songs.find(s => s.id === this.songForm.id);
+                            if (song) {
+                                song.title = title;
+                                song.artist = this.songForm.artist.trim();
+                                song.genre = this.songForm.genre.trim();
+                                song.lyrics = this.songForm.lyrics;
+                                song.updatedAt = new Date().toISOString();
+                                await dbPut('songs', JSON.parse(JSON.stringify(song)));
+                                if (this.selectedSong?.id === song.id) {
+                                    this.selectedSong = song;
+                                }
+                            }
+                            this.showToast('Song updated', 'success');
+                        } else {
+                            const song = {
+                                id: generateId(),
+                                title: title,
+                                artist: this.songForm.artist.trim(),
+                                genre: this.songForm.genre.trim(),
+                                lyrics: this.songForm.lyrics,
+                                createdAt: new Date().toISOString(),
+                                updatedAt: new Date().toISOString()
+                            };
+                            await dbPut('songs', song);
+                            this.songs.push(song);
+                            this.showToast('Song created', 'success');
+                        }
+
+                        this.songs.sort((a, b) => a.title.localeCompare(b.title));
+                        this.showSongModal = false;
+                    } catch (error) {
+                        console.error('Error saving song:', error);
+                        this.showToast('Error saving song', 'error');
+                    }
+                },
+
+                // Artist CRUD
+                openNewArtist() {
+                    this.artistForm = { id: null, name: '', bio: '' };
+                    this.showArtistModal = true;
+                },
+
+                openEditArtist(artist) {
+                    if (!artist) return;
+                    this.artistForm = {
+                        id: artist.id,
+                        name: artist.name || '',
+                        bio: artist.bio || ''
+                    };
+                    this.showArtistModal = true;
+                },
+
+                async saveArtist() {
+                    const name = this.artistForm.name.trim();
+                    if (!name) return;
+
+                    try {
+                        const bio = this.artistForm.bio.trim();
+                        const bioHtml = typeof marked !== 'undefined' ? marked.parse(bio) : bio;
+
+                        if (this.artistForm.id) {
+                            const artist = this.artists.find(a => a.id === this.artistForm.id);
+                            if (artist) {
+                                artist.name = name;
+                                artist.bio = bio;
+                                artist.bioHtml = bioHtml;
+                                artist.songCount = this.getArtistSongs(name).length;
+                                artist.updatedAt = new Date().toISOString();
+                                await dbPut('artists', JSON.parse(JSON.stringify(artist)));
+                                if (this.selectedArtist?.id === artist.id) {
+                                    this.selectedArtist = artist;
+                                }
+                            }
+                            this.showToast('Artist updated', 'success');
+                        } else {
+                            const artist = {
+                                id: generateId(),
+                                name: name,
+                                bio: bio,
+                                bioHtml: bioHtml,
+                                songCount: this.getArtistSongs(name).length,
+                                createdAt: new Date().toISOString(),
+                                updatedAt: new Date().toISOString()
+                            };
+                            await dbPut('artists', artist);
+                            this.artists.push(artist);
+                            this.showToast('Artist created', 'success');
+                        }
+
+                        this.artists.sort((a, b) => a.name.localeCompare(b.name));
+                        this.showArtistModal = false;
+                    } catch (error) {
+                        console.error('Error saving artist:', error);
+                        this.showToast('Error saving artist', 'error');
+                    }
                 },
 
                 // Setlist CRUD
