@@ -157,6 +157,14 @@
             height: 28px;
         }
 
+        .app-version {
+            font-size: var(--font-size-sm, 0.75rem);
+            font-weight: 400;
+            opacity: 0.7;
+            align-self: flex-end;
+            margin-bottom: 2px;
+        }
+
         .header-actions {
             display: flex;
             align-items: center;
@@ -402,6 +410,7 @@
         }
 
         .list-item {
+            position: relative;
             display: flex;
             align-items: center;
             gap: var(--spacing-md);
@@ -414,7 +423,8 @@
             min-height: var(--touch-target);
         }
 
-        .list-item:hover {
+        .list-item:hover,
+        .list-item:has(> .list-item-open:focus-visible) {
             background: var(--color-bg-hover);
             border-color: var(--color-accent);
         }
@@ -457,9 +467,34 @@
             text-overflow: ellipsis;
         }
 
+        .list-item-genre {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         .list-item-actions {
+            position: relative;
             display: flex;
             gap: var(--spacing-xs);
+        }
+
+        /* The row's primary action comes before its independent action buttons. */
+        .list-item-open {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            border: 0;
+            border-radius: inherit;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .list-item-open:focus-visible {
+            outline: 3px solid var(--color-accent);
+            outline-offset: 2px;
         }
 
         /* ===== Detail View ===== */
@@ -497,6 +532,12 @@
         .detail-title p {
             font-size: var(--font-size-sm);
             color: var(--color-text-secondary);
+        }
+
+        .detail-title .detail-genre {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            overflow-wrap: anywhere;
         }
 
         .detail-content {
@@ -614,6 +655,19 @@
             border-top: 1px solid var(--color-border);
         }
 
+        .field-limit {
+            display: flex;
+            justify-content: space-between;
+            gap: var(--spacing-sm);
+            margin-top: 4px;
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+        }
+
+        .field-limit-over {
+            color: var(--color-error);
+        }
+
         .form-textarea {
             width: 100%;
             min-height: 200px;
@@ -638,6 +692,23 @@
         }
 
         /* ===== Toast Notifications ===== */
+        .update-banner {
+            position: fixed;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1100;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            background: var(--bg-secondary, #fff);
+            color: var(--text-primary, #000);
+            border: 1px solid var(--border-color, #ccc);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+
         .toast-container {
             position: fixed;
             bottom: var(--spacing-lg);
@@ -849,7 +920,8 @@
 
 <body x-data="songbookApp()" x-init="init()" :data-theme="darkMode ? 'dark' : 'light'">
 
-    <div class="app-container">
+    <div class="app-container" x-ref="appContainer"
+        :inert="selectedSong || selectedArtist || selectedGenre || selectedSetlist || hasFormModal">
         <!-- Header -->
         <header class="app-header">
             <div class="header-content">
@@ -860,6 +932,7 @@
                         <circle cx="18" cy="16" r="3" />
                     </svg>
                     Songbook
+                    <span class="app-version" data-testid="app-version">v0.61</span>
                 </h1>
 
                 <div class="header-actions">
@@ -905,7 +978,8 @@
                         <path d="m21 21-4.35-4.35" />
                     </svg>
                     <input type="search" class="search-input" placeholder="Search songs and artists..."
-                        x-model="searchTerm" @input.debounce.300ms="filterItems()">
+                        :placeholder="activeTab === 'genres' ? 'Search genres...' : 'Search songs and artists...'"
+                        x-model="searchTerm">
                 </div>
             </div>
         </div>
@@ -930,6 +1004,14 @@
                 </svg>
                 Artists
                 <span class="tab-count" x-text="filteredArtists.length"></span>
+            </button>
+            <button class="tab-btn" :class="{ active: activeTab === 'genres' }" @click="activeTab = 'genres'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 13l-7 7L3 10V3h7z" />
+                    <circle cx="7.5" cy="7.5" r="1" />
+                </svg>
+                Genres
+                <span class="tab-count" x-text="filteredGenres.length"></span>
             </button>
             <button class="tab-btn" :class="{ active: activeTab === 'setlists' }" @click="activeTab = 'setlists'">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -956,7 +1038,10 @@
                         <circle cx="18" cy="16" r="3" />
                     </svg>
                     <h2>Welcome to Songbook</h2>
-                    <p>Import your song and artist markdown files to get started.</p>
+                    <p>Import your song and artist markdown files to get started, or create your first song by hand.</p>
+                    <button class="btn btn-primary" @click="openNewSong()" style="margin-bottom: var(--spacing-lg);">
+                        <span class="btn-text">New Song</span>
+                    </button>
 
                     <!-- Drop Zone -->
                     <div class="drop-zone" :class="{ 'drag-over': isDragging }" @dragover.prevent="isDragging = true"
@@ -1008,44 +1093,47 @@
                     </div>
 
                     <div class="list-container">
-                    <template x-for="song in filteredSongs" :key="song.id">
-                        <div class="list-item" @click="viewSong(song)">
-                            <div class="list-item-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M9 18V5l12-2v13" />
-                                    <circle cx="6" cy="18" r="3" />
-                                    <circle cx="18" cy="16" r="3" />
-                                </svg>
-                            </div>
-                            <div class="list-item-content">
-                                <div class="list-item-title" x-text="song.title"></div>
-                                <div class="list-item-subtitle" x-text="song.artist || 'Unknown Artist'"></div>
-                            </div>
-                            <div class="list-item-actions">
-                                <button class="btn btn-ghost btn-icon" @click.stop="openEditSong(song)" title="Edit">
+                        <template x-for="song in filteredSongs" :key="song.id">
+                            <div class="list-item" @click="viewSong(song)">
+                                <button type="button" class="list-item-open"
+                                    :aria-label="'View song: ' + song.title"></button>
+                                <div class="list-item-icon">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path
-                                            d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                        <path
-                                            d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                        <path d="M9 18V5l12-2v13" />
+                                        <circle cx="6" cy="18" r="3" />
+                                        <circle cx="18" cy="16" r="3" />
                                     </svg>
-                                </button>
-                                <button class="btn btn-ghost btn-icon" @click.stop="deleteSong(song.id)" title="Delete">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <polyline points="3 6 5 6 21 6" />
-                                        <path
-                                            d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                                    </svg>
-                                </button>
+                                </div>
+                                <div class="list-item-content">
+                                    <div class="list-item-title" x-text="song.title"></div>
+                                    <div class="list-item-subtitle" x-text="song.artist || 'Unknown Artist'"></div>
+                                    <div class="list-item-genre" x-show="song.genre" x-text="song.genre"></div>
+                                </div>
+                                <div class="list-item-actions">
+                                    <button class="btn btn-ghost btn-icon" @click.stop="openEditSong(song)"
+                                        title="Edit">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                        </svg>
+                                    </button>
+                                    <button class="btn btn-ghost btn-icon" @click.stop="deleteSong(song.id)"
+                                        title="Delete">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="3 6 5 6 21 6" />
+                                            <path
+                                                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    </template>
+                        </template>
 
-                    <template x-if="filteredSongs.length === 0 && searchTerm">
-                        <div class="empty-state">
-                            <p>No songs match your search.</p>
-                        </div>
-                    </template>
+                        <template x-if="filteredSongs.length === 0 && searchTerm">
+                            <div class="empty-state">
+                                <p>No songs match your search.</p>
+                            </div>
+                        </template>
                     </div>
                 </div>
             </template>
@@ -1064,45 +1152,76 @@
                     </div>
 
                     <div class="list-container">
-                    <template x-for="artist in filteredArtists" :key="artist.id">
-                        <div class="list-item" @click="viewArtist(artist)">
+                        <template x-for="artist in filteredArtists" :key="artist.id">
+                            <div class="list-item" @click="viewArtist(artist)">
+                                <button type="button" class="list-item-open"
+                                    :aria-label="'View artist: ' + artist.name"></button>
+                                <div class="list-item-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                        <circle cx="9" cy="7" r="4" />
+                                    </svg>
+                                </div>
+                                <div class="list-item-content">
+                                    <div class="list-item-title" x-text="artist.name"></div>
+                                    <div class="list-item-subtitle" x-text="(artist.songCount || 0) + ' songs'"></div>
+                                </div>
+                                <div class="list-item-actions">
+                                    <button class="btn btn-ghost btn-icon" @click.stop="openEditArtist(artist)"
+                                        title="Edit">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                        </svg>
+                                    </button>
+                                    <button class="btn btn-ghost btn-icon" @click.stop="deleteArtist(artist.id)"
+                                        title="Delete">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="3 6 5 6 21 6" />
+                                            <path
+                                                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+
+                        <template x-if="filteredArtists.length === 0 && searchTerm">
+                            <div class="empty-state">
+                                <p>No artists match your search.</p>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Genres List -->
+            <template x-if="!loading && (songs.length > 0 || artists.length > 0) && activeTab === 'genres'">
+                <div class="list-container">
+                    <template x-for="genre in filteredGenres" :key="genre.key">
+                        <div class="list-item" @click="selectedGenre = genre">
+                            <button type="button" class="list-item-open"
+                                :aria-label="'View genre: ' + genre.name"></button>
                             <div class="list-item-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                    <circle cx="9" cy="7" r="4" />
+                                    <path d="M20 13l-7 7L3 10V3h7z" />
+                                    <circle cx="7.5" cy="7.5" r="1" />
                                 </svg>
                             </div>
                             <div class="list-item-content">
-                                <div class="list-item-title" x-text="artist.name"></div>
-                                <div class="list-item-subtitle" x-text="(artist.songCount || 0) + ' songs'"></div>
-                            </div>
-                            <div class="list-item-actions">
-                                <button class="btn btn-ghost btn-icon" @click.stop="openEditArtist(artist)" title="Edit">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path
-                                            d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                        <path
-                                            d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                    </svg>
-                                </button>
-                                <button class="btn btn-ghost btn-icon" @click.stop="deleteArtist(artist.id)"
-                                    title="Delete">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <polyline points="3 6 5 6 21 6" />
-                                        <path
-                                            d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                                    </svg>
-                                </button>
+                                <div class="list-item-title" x-text="genre.name"></div>
+                                <div class="list-item-subtitle"
+                                    x-text="genre.songCount + (genre.songCount === 1 ? ' song' : ' songs')"></div>
                             </div>
                         </div>
                     </template>
-
-                    <template x-if="filteredArtists.length === 0 && searchTerm">
+                    <template x-if="filteredGenres.length === 0">
                         <div class="empty-state">
-                            <p>No artists match your search.</p>
+                            <p
+                                x-text="searchTerm ? 'No genres match your search.' : 'No genres yet. Add a genre when editing a song.'">
+                            </p>
                         </div>
                     </template>
-                    </div>
                 </div>
             </template>
 
@@ -1122,6 +1241,8 @@
                     <div class="list-container">
                         <template x-for="setlist in filteredSetlists" :key="setlist.id">
                             <div class="list-item" @click="viewSetlist(setlist)">
+                                <button type="button" class="list-item-open"
+                                    :aria-label="'View setlist: ' + setlist.name"></button>
                                 <div class="list-item-icon">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <line x1="8" y1="6" x2="21" y2="6" />
@@ -1177,17 +1298,20 @@
     </div>
 
     <!-- Song Detail View -->
-    <div class="detail-view" x-show="selectedSong" x-cloak x-transition :style="performContext ? 'z-index: 250' : ''">
+    <div class="detail-view" x-show="selectedSong" x-cloak x-transition style="z-index: 250;" x-ref="songDetail"
+        role="dialog" aria-modal="true" aria-labelledby="song-detail-title" :inert="hasFormModal"
+        @keydown.tab="trapModalFocus($event)" @keydown.escape.stop.prevent="closeSong()">
         <div class="detail-header">
-            <button class="btn btn-ghost btn-icon" @click="closeSong()">
+            <button class="btn btn-ghost btn-icon" @click="closeSong()" aria-label="Back from song">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M19 12H5" />
                     <polyline points="12 19 5 12 12 5" />
                 </svg>
             </button>
             <div class="detail-title">
-                <h1 x-text="selectedSong?.title"></h1>
+                <h1 id="song-detail-title" x-text="selectedSong?.title"></h1>
                 <p x-text="selectedSong?.artist || 'Unknown Artist'"></p>
+                <div class="detail-genre" x-show="selectedSong?.genre" x-text="selectedSong?.genre"></div>
             </div>
             <button class="btn btn-ghost btn-icon" @click="openEditSong(selectedSong)" title="Edit">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1195,8 +1319,15 @@
                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                 </svg>
             </button>
+            <button class="btn btn-ghost btn-icon" x-show="!performContext" @click="deleteSelectedSong()" title="Delete"
+                aria-label="Delete">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                </svg>
+            </button>
         </div>
-        <div class="detail-content">
+        <div class="detail-content" tabindex="0" role="region" aria-label="Song lyrics">
             <div class="lyrics-content" x-text="selectedSong?.lyrics || selectedSong?.content || 'No lyrics available'">
             </div>
         </div>
@@ -1226,16 +1357,18 @@
     </div>
 
     <!-- Artist Detail View -->
-    <div class="detail-view" x-show="selectedArtist" x-cloak x-transition>
+    <div class="detail-view" x-show="selectedArtist" x-cloak x-transition x-ref="artistDetail" role="dialog"
+        aria-modal="true" aria-labelledby="artist-detail-title" :inert="selectedSong || hasFormModal"
+        @keydown.tab="trapModalFocus($event)" @keydown.escape.stop.prevent="selectedArtist = null">
         <div class="detail-header">
-            <button class="btn btn-ghost btn-icon" @click="selectedArtist = null">
+            <button class="btn btn-ghost btn-icon" @click="selectedArtist = null" aria-label="Back from artist">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M19 12H5" />
                     <polyline points="12 19 5 12 12 5" />
                 </svg>
             </button>
             <div class="detail-title">
-                <h1 x-text="selectedArtist?.name"></h1>
+                <h1 id="artist-detail-title" x-text="selectedArtist?.name"></h1>
                 <p x-text="(selectedArtist?.songCount || 0) + ' songs'"></p>
             </div>
             <button class="btn btn-ghost btn-icon" @click="openEditArtist(selectedArtist)" title="Edit">
@@ -1245,7 +1378,7 @@
                 </svg>
             </button>
         </div>
-        <div class="detail-content">
+        <div class="detail-content" tabindex="0" role="region" aria-label="Artist information and songs">
             <div class="artist-bio" x-html="selectedArtist?.bioHtml || selectedArtist?.bio || 'No biography available'">
             </div>
 
@@ -1254,7 +1387,9 @@
                     <h2 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Songs</h2>
                     <div class="list-container">
                         <template x-for="song in getArtistSongs(selectedArtist?.name)" :key="song.id">
-                            <div class="list-item" @click="selectedArtist = null; viewSong(song)">
+                            <div class="list-item" @click="viewSong(song)">
+                                <button type="button" class="list-item-open"
+                                    :aria-label="'View song: ' + song.title"></button>
                                 <div class="list-item-icon">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M9 18V5l12-2v13" />
@@ -1264,6 +1399,7 @@
                                 </div>
                                 <div class="list-item-content">
                                     <div class="list-item-title" x-text="song.title"></div>
+                                    <div class="list-item-genre" x-show="song.genre" x-text="song.genre"></div>
                                 </div>
                             </div>
                         </template>
@@ -1273,17 +1409,56 @@
         </div>
     </div>
 
-    <!-- Setlist Detail View -->
-    <div class="detail-view" x-show="selectedSetlist" x-cloak x-transition>
+    <!-- Genre Detail View -->
+    <div class="detail-view" x-show="selectedGenre" x-cloak x-transition x-ref="genreDetail" role="dialog"
+        aria-modal="true" aria-labelledby="genre-detail-title" :inert="selectedSong || hasFormModal"
+        @keydown.tab="trapModalFocus($event)" @keydown.escape.stop.prevent="selectedGenre = null">
         <div class="detail-header">
-            <button class="btn btn-ghost btn-icon" @click="selectedSetlist = null">
+            <button class="btn btn-ghost btn-icon" @click="selectedGenre = null" aria-label="Back from genre">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M19 12H5" />
                     <polyline points="12 19 5 12 12 5" />
                 </svg>
             </button>
             <div class="detail-title">
-                <h1 x-text="selectedSetlist?.name"></h1>
+                <h1 id="genre-detail-title" x-text="selectedGenre?.name"></h1>
+                <p x-text="genreSongs.length + (genreSongs.length === 1 ? ' song' : ' songs')"></p>
+            </div>
+        </div>
+        <div class="detail-content" tabindex="0" role="region" aria-label="Genre songs">
+            <div class="list-container">
+                <template x-for="song in genreSongs" :key="song.id">
+                    <div class="list-item" @click="viewSong(song)">
+                        <button type="button" class="list-item-open" :aria-label="'View song: ' + song.title"></button>
+                        <div class="list-item-content">
+                            <div class="list-item-title" x-text="song.title"></div>
+                            <div class="list-item-subtitle" x-text="song.artist || 'Unknown Artist'"></div>
+                            <div class="list-item-genre" x-show="song.genre" x-text="song.genre"></div>
+                        </div>
+                    </div>
+                </template>
+                <template x-if="genreSongs.length === 0">
+                    <div class="empty-state">
+                        <p>No songs in this genre.</p>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+
+    <!-- Setlist Detail View -->
+    <div class="detail-view" x-show="selectedSetlist" x-cloak x-transition x-ref="setlistDetail" role="dialog"
+        aria-modal="true" aria-labelledby="setlist-detail-title" :inert="selectedSong || hasFormModal"
+        @keydown.tab="trapModalFocus($event)" @keydown.escape.stop.prevent="selectedSetlist = null">
+        <div class="detail-header">
+            <button class="btn btn-ghost btn-icon" @click="selectedSetlist = null" aria-label="Back from setlist">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5" />
+                    <polyline points="12 19 5 12 12 5" />
+                </svg>
+            </button>
+            <div class="detail-title">
+                <h1 id="setlist-detail-title" x-text="selectedSetlist?.name"></h1>
                 <p x-text="(selectedSetlist?.songIds?.length || 0) + ' songs'"></p>
             </div>
             <button class="btn btn-ghost btn-icon" @click="openEditSetlist(selectedSetlist)" title="Edit setlist">
@@ -1293,7 +1468,7 @@
                 </svg>
             </button>
         </div>
-        <div class="detail-content">
+        <div class="detail-content" tabindex="0" role="region" aria-label="Setlist songs">
             <template x-if="selectedSetlist?.description">
                 <p class="artist-bio" style="margin-bottom: var(--spacing-lg);" x-text="selectedSetlist?.description">
                 </p>
@@ -1312,6 +1487,8 @@
             <div class="list-container">
                 <template x-for="(entry, index) in getSetlistSongs(selectedSetlist)" :key="index">
                     <div class="list-item" @click="entry.song && viewSetlistSong(index)">
+                        <button type="button" class="list-item-open" :disabled="!entry.song"
+                            :aria-label="entry.song ? 'View song: ' + entry.song.title : 'Song no longer in library'"></button>
                         <div class="list-item-icon">
                             <span x-text="index + 1" style="font-weight: 700; color: var(--color-accent);"></span>
                         </div>
@@ -1320,6 +1497,8 @@
                                 <div>
                                     <div class="list-item-title" x-text="entry.song.title"></div>
                                     <div class="list-item-subtitle" x-text="entry.song.artist || 'Unknown Artist'">
+                                    </div>
+                                    <div class="list-item-genre" x-show="entry.song.genre" x-text="entry.song.genre">
                                     </div>
                                 </div>
                             </template>
@@ -1460,11 +1639,13 @@
     </div>
 
     <!-- New/Edit Song Modal -->
-    <div class="modal-backdrop" x-show="showSongModal" x-cloak @click.self="showSongModal = false">
-        <div class="modal">
+    <div class="modal-backdrop" x-show="showSongModal" x-cloak @click.self="showSongModal = false"
+        @keydown.escape.stop.prevent="showSongModal = false">
+        <div class="modal" x-ref="songDialog" role="dialog" aria-modal="true" aria-labelledby="song-dialog-title"
+            @keydown.tab="trapModalFocus($event)">
             <div class="modal-header">
-                <h2 x-text="songForm.id ? 'Edit Song' : 'New Song'"></h2>
-                <button class="btn btn-ghost btn-icon" @click="showSongModal = false">
+                <h2 id="song-dialog-title" x-text="songForm.id ? 'Edit Song' : 'New Song'"></h2>
+                <button class="btn btn-ghost btn-icon" @click="showSongModal = false" aria-label="Close song dialog">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="6" x2="6" y2="18" />
                         <line x1="6" y1="6" x2="18" y2="18" />
@@ -1473,42 +1654,69 @@
             </div>
             <div class="modal-body">
                 <div style="margin-bottom: var(--spacing-md);">
-                    <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Title</label>
-                    <input type="text" class="search-input" style="padding-left: var(--spacing-md);"
-                        placeholder="Song title" x-model="songForm.title">
+                    <label for="song-title"
+                        style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Title</label>
+                    <input id="song-title" type="text" class="search-input" style="padding-left: var(--spacing-md);"
+                        placeholder="Song title" x-model="songForm.title" :aria-invalid="!!fieldError('title')"
+                        aria-describedby="song-title-count song-title-error">
+                    <div class="field-limit" :class="{ 'field-limit-over': !!fieldError('title') }">
+                        <span id="song-title-count" x-text="fieldCount('title')"></span>
+                        <span id="song-title-error" role="alert" x-text="fieldError('title')"></span>
+                    </div>
                 </div>
                 <div style="margin-bottom: var(--spacing-md);">
-                    <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Artist <span
+                    <label for="song-artist"
+                        style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Artist <span
                             style="color: var(--color-text-muted);">(optional)</span></label>
-                    <input type="text" class="search-input" style="padding-left: var(--spacing-md);"
-                        placeholder="Artist name" x-model="songForm.artist">
+                    <input id="song-artist" type="text" class="search-input" style="padding-left: var(--spacing-md);"
+                        placeholder="Artist name" x-model="songForm.artist" :aria-invalid="!!fieldError('artist')"
+                        aria-describedby="song-artist-count song-artist-error">
+                    <div class="field-limit" :class="{ 'field-limit-over': !!fieldError('artist') }">
+                        <span id="song-artist-count" x-text="fieldCount('artist')"></span>
+                        <span id="song-artist-error" role="alert" x-text="fieldError('artist')"></span>
+                    </div>
                 </div>
                 <div style="margin-bottom: var(--spacing-md);">
-                    <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Genre <span
+                    <label for="song-genre"
+                        style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Genre <span
                             style="color: var(--color-text-muted);">(optional)</span></label>
-                    <input type="text" class="search-input" style="padding-left: var(--spacing-md);"
-                        placeholder="e.g. Folk" x-model="songForm.genre">
+                    <input id="song-genre" type="text" class="search-input" style="padding-left: var(--spacing-md);"
+                        placeholder="e.g. Folk" x-model="songForm.genre" :aria-invalid="!!fieldError('genre')"
+                        aria-describedby="song-genre-count song-genre-error">
+                    <div class="field-limit" :class="{ 'field-limit-over': !!fieldError('genre') }">
+                        <span id="song-genre-count" x-text="fieldCount('genre')"></span>
+                        <span id="song-genre-error" role="alert" x-text="fieldError('genre')"></span>
+                    </div>
                 </div>
                 <div>
-                    <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Lyrics</label>
-                    <textarea class="form-textarea" placeholder="Enter song lyrics or chords"
-                        x-model="songForm.lyrics"></textarea>
+                    <label for="song-lyrics"
+                        style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Lyrics</label>
+                    <textarea id="song-lyrics" class="form-textarea" placeholder="Enter song lyrics or chords"
+                        x-model="songForm.lyrics" :aria-invalid="!!fieldError('lyrics')"
+                        aria-describedby="song-lyrics-count song-lyrics-error"></textarea>
+                    <div class="field-limit" :class="{ 'field-limit-over': !!fieldError('lyrics') }">
+                        <span id="song-lyrics-count" x-text="fieldCount('lyrics')"></span>
+                        <span id="song-lyrics-error" role="alert" x-text="fieldError('lyrics')"></span>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-ghost" @click="showSongModal = false">Cancel</button>
                 <button class="btn btn-primary" @click="saveSong()"
-                    :disabled="!songForm.title.trim()">Save</button>
+                    :disabled="!songForm.title.trim() || hasFieldErrors()">Save</button>
             </div>
         </div>
     </div>
 
     <!-- New/Edit Artist Modal -->
-    <div class="modal-backdrop" x-show="showArtistModal" x-cloak @click.self="showArtistModal = false">
-        <div class="modal">
+    <div class="modal-backdrop" x-show="showArtistModal" x-cloak @click.self="showArtistModal = false"
+        @keydown.escape.stop.prevent="showArtistModal = false">
+        <div class="modal" x-ref="artistDialog" role="dialog" aria-modal="true" aria-labelledby="artist-dialog-title"
+            @keydown.tab="trapModalFocus($event)">
             <div class="modal-header">
-                <h2 x-text="artistForm.id ? 'Edit Artist' : 'New Artist'"></h2>
-                <button class="btn btn-ghost btn-icon" @click="showArtistModal = false">
+                <h2 id="artist-dialog-title" x-text="artistForm.id ? 'Edit Artist' : 'New Artist'"></h2>
+                <button class="btn btn-ghost btn-icon" @click="showArtistModal = false"
+                    aria-label="Close artist dialog">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="6" x2="6" y2="18" />
                         <line x1="6" y1="6" x2="18" y2="18" />
@@ -1517,31 +1725,35 @@
             </div>
             <div class="modal-body">
                 <div style="margin-bottom: var(--spacing-md);">
-                    <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Name</label>
-                    <input type="text" class="search-input" style="padding-left: var(--spacing-md);"
+                    <label for="artist-name"
+                        style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Name</label>
+                    <input id="artist-name" type="text" class="search-input" style="padding-left: var(--spacing-md);"
                         placeholder="e.g. The Beatles" x-model="artistForm.name">
                 </div>
                 <div>
-                    <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Bio <span
+                    <label for="artist-bio"
+                        style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Bio <span
                             style="color: var(--color-text-muted);">(optional)</span></label>
-                    <textarea class="form-textarea" placeholder="Enter artist biography"
+                    <textarea id="artist-bio" class="form-textarea" placeholder="Enter artist biography"
                         x-model="artistForm.bio"></textarea>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-ghost" @click="showArtistModal = false">Cancel</button>
-                <button class="btn btn-primary" @click="saveArtist()"
-                    :disabled="!artistForm.name.trim()">Save</button>
+                <button class="btn btn-primary" @click="saveArtist()" :disabled="!artistForm.name.trim()">Save</button>
             </div>
         </div>
     </div>
 
     <!-- New/Edit Setlist Modal -->
-    <div class="modal-backdrop" x-show="showSetlistModal" x-cloak @click.self="showSetlistModal = false">
-        <div class="modal">
+    <div class="modal-backdrop" x-show="showSetlistModal" x-cloak @click.self="showSetlistModal = false"
+        @keydown.escape.stop.prevent="showSetlistModal = false">
+        <div class="modal" x-ref="setlistDialog" role="dialog" aria-modal="true" aria-labelledby="setlist-dialog-title"
+            @keydown.tab="trapModalFocus($event)">
             <div class="modal-header">
-                <h2 x-text="setlistForm.id ? 'Edit Setlist' : 'New Setlist'"></h2>
-                <button class="btn btn-ghost btn-icon" @click="showSetlistModal = false">
+                <h2 id="setlist-dialog-title" x-text="setlistForm.id ? 'Edit Setlist' : 'New Setlist'"></h2>
+                <button class="btn btn-ghost btn-icon" @click="showSetlistModal = false"
+                    aria-label="Close setlist dialog">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="6" x2="6" y2="18" />
                         <line x1="6" y1="6" x2="18" y2="18" />
@@ -1550,16 +1762,18 @@
             </div>
             <div class="modal-body">
                 <div style="margin-bottom: var(--spacing-md);">
-                    <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Name</label>
-                    <input type="text" class="search-input" style="padding-left: var(--spacing-md);"
+                    <label for="setlist-name"
+                        style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Name</label>
+                    <input id="setlist-name" type="text" class="search-input" style="padding-left: var(--spacing-md);"
                         placeholder="e.g. Saturday Gig" x-model="setlistForm.name" @keydown.enter="saveSetlist()">
                 </div>
                 <div>
-                    <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Description <span
+                    <label for="setlist-description"
+                        style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Description <span
                             style="color: var(--color-text-muted);">(optional)</span></label>
-                    <input type="text" class="search-input" style="padding-left: var(--spacing-md);"
-                        placeholder="Notes about this setlist" x-model="setlistForm.description"
-                        @keydown.enter="saveSetlist()">
+                    <input id="setlist-description" type="text" class="search-input"
+                        style="padding-left: var(--spacing-md);" placeholder="Notes about this setlist"
+                        x-model="setlistForm.description" @keydown.enter="saveSetlist()">
                 </div>
             </div>
             <div class="modal-footer">
@@ -1571,11 +1785,14 @@
     </div>
 
     <!-- Add Songs to Setlist Modal -->
-    <div class="modal-backdrop" x-show="showAddSongsModal" x-cloak @click.self="showAddSongsModal = false">
-        <div class="modal">
+    <div class="modal-backdrop" x-show="showAddSongsModal" x-cloak @click.self="showAddSongsModal = false"
+        @keydown.escape.stop.prevent="showAddSongsModal = false">
+        <div class="modal" x-ref="addSongsDialog" role="dialog" aria-modal="true"
+            aria-labelledby="add-songs-dialog-title" @keydown.tab="trapModalFocus($event)">
             <div class="modal-header">
-                <h2>Add Songs</h2>
-                <button class="btn btn-ghost btn-icon" @click="showAddSongsModal = false">
+                <h2 id="add-songs-dialog-title">Add Songs</h2>
+                <button class="btn btn-ghost btn-icon" @click="showAddSongsModal = false"
+                    aria-label="Close add songs dialog">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="6" x2="6" y2="18" />
                         <line x1="6" y1="6" x2="18" y2="18" />
@@ -1595,6 +1812,8 @@
                 <div class="list-container" style="max-height: 50vh; overflow-y: auto;">
                     <template x-for="song in addSongsFiltered" :key="song.id">
                         <div class="list-item" @click="toggleSongSelection(song.id)" style="cursor: pointer;">
+                            <button type="button" class="list-item-open" :aria-label="'Select song: ' + song.title"
+                                :aria-pressed="selectedSongIds.includes(song.id)"></button>
                             <div class="list-item-icon"
                                 :style="selectedSongIds.includes(song.id) ? 'background: var(--color-accent);' : ''">
                                 <svg x-show="selectedSongIds.includes(song.id)" viewBox="0 0 24 24" fill="none"
@@ -1634,10 +1853,18 @@
     </div>
 
     <!-- Toast Container -->
+    <div class="update-banner" x-show="updateAvailable" x-cloak role="status" data-testid="update-banner">
+        <span>Update available</span>
+        <button class="btn btn-primary" @click="applyUpdate()" data-testid="update-banner-btn">Reload to update</button>
+    </div>
+
     <div class="toast-container">
         <template x-for="toast in toasts" :key="toast.id">
-            <div class="toast" :class="toast.type" x-show="toast.visible" x-transition>
+            <div class="toast" :class="toast.type" :role="toast.type === 'error' ? 'alert' : 'status'"
+                x-show="toast.visible" x-transition>
                 <span x-text="toast.message"></span>
+                <button class="btn btn-ghost" x-show="toast.action" x-text="toast.actionLabel"
+                    @click="toast.action()"></button>
                 <button class="btn btn-ghost btn-icon" @click="removeToast(toast.id)" style="margin-left: auto;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         style="width: 16px; height: 16px;">
@@ -1826,6 +2053,33 @@
             return artist;
         }
 
+        function songKey(song) {
+            return `${(song.title || '').trim().toLowerCase()}\u0000${(song.artist || '').trim().toLowerCase()}`;
+        }
+
+        const SONG_LIMITS = { title: 100, artist: 100, genre: 50, lyrics: 20000 };
+        const SONG_FIELD_LABELS = { title: 'Title', artist: 'Artist', genre: 'Genre', lyrics: 'Lyrics' };
+
+        // Value as saved: line breaks normalized to LF; title, artist and genre trimmed.
+        function normalizeSongField(field, value) {
+            const text = String(value ?? '').replace(/\r\n?/g, '\n');
+            return field === 'lyrics' ? text : text.trim();
+        }
+
+        // Length in Unicode code points of the value as saved.
+        function songFieldLength(field, value) {
+            let count = 0;
+            for (const _ of normalizeSongField(field, value)) count++;
+            return count;
+        }
+
+        function songFieldError(field, value) {
+            const length = songFieldLength(field, value);
+            const max = SONG_LIMITS[field];
+            if (length <= max) return '';
+            return `${SONG_FIELD_LABELS[field]} must be ${max.toLocaleString('en-US')} characters or fewer (currently ${length.toLocaleString('en-US')}).`;
+        }
+
         function generateId() {
             return Date.now().toString(36) + Math.random().toString(36).substr(2);
         }
@@ -1859,6 +2113,7 @@
                 searchTerm: '',
                 selectedSong: null,
                 selectedArtist: null,
+                selectedGenre: null,
                 selectedSetlist: null,
                 showImportModal: false,
                 showSettingsModal: false,
@@ -1874,6 +2129,8 @@
                 performContext: null,
                 isDragging: false,
                 loading: false,
+                updateAvailable: false,
+                waitingWorker: null,
                 loadingMessage: '',
 
                 // Settings
@@ -1900,6 +2157,28 @@
                     );
                 },
 
+                // Genres stay in sync with song edits, imports, and deletions.
+                get genres() {
+                    const groups = new Map();
+                    for (const song of this.songs) {
+                        const name = (song.genre || '').trim();
+                        if (!name) continue;
+                        const key = name.toLowerCase();
+                        if (!groups.has(key)) groups.set(key, { key, name, songCount: 0 });
+                        groups.get(key).songCount++;
+                    }
+                    return [...groups.values()].sort((a, b) => a.name.localeCompare(b.name));
+                },
+
+                get filteredGenres() {
+                    const term = this.searchTerm.toLowerCase();
+                    return this.genres.filter(genre => genre.key.includes(term));
+                },
+
+                get genreSongs() {
+                    return this.songs.filter(song => (song.genre || '').trim().toLowerCase() === this.selectedGenre?.key);
+                },
+
                 get filteredSetlists() {
                     if (!this.searchTerm) return this.setlists;
                     const term = this.searchTerm.toLowerCase();
@@ -1919,6 +2198,15 @@
 
                 // Lifecycle
                 async init() {
+                    this.watchModalFocus('showSongModal', 'songDialog', '#song-title');
+                    this.watchModalFocus('showArtistModal', 'artistDialog', '#artist-name');
+                    this.watchModalFocus('showSetlistModal', 'setlistDialog', '#setlist-name');
+                    this.watchModalFocus('showAddSongsModal', 'addSongsDialog', 'input');
+                    this.watchModalFocus('selectedSong', 'songDetail', 'button');
+                    this.watchModalFocus('selectedArtist', 'artistDetail', 'button');
+                    this.watchModalFocus('selectedGenre', 'genreDetail', 'button');
+                    this.watchModalFocus('selectedSetlist', 'setlistDetail', 'button');
+
                     // Load settings
                     this.loadSettings();
 
@@ -1943,24 +2231,97 @@
 
                     this.loading = false;
 
-                    // Watch for detail view close to remove modal-open class
-                    this.$watch('selectedSong', (value) => {
-                        if (!value) document.body.classList.remove('modal-open');
-                    });
-                    this.$watch('selectedArtist', (value) => {
-                        if (!value) document.body.classList.remove('modal-open');
-                    });
-                    this.$watch('selectedSetlist', (value) => {
-                        if (!value) document.body.classList.remove('modal-open');
+                    this.$watch('selectedSong || selectedArtist || selectedGenre || selectedSetlist', (value) => {
+                        document.body.classList.toggle('modal-open', !!value);
                     });
 
-                    // Register service worker
-                    if ('serviceWorker' in navigator) {
-                        try {
-                            await navigator.serviceWorker.register('./sw.js');
-                        } catch (error) {
-                            console.log('Service worker registration skipped:', error);
+                    this.registerServiceWorker();
+                },
+
+                async registerServiceWorker() {
+                    if (!('serviceWorker' in navigator)) return;
+                    try {
+                        let hadController = !!navigator.serviceWorker.controller;
+                        let refreshing = false;
+                        navigator.serviceWorker.addEventListener('controllerchange', () => {
+                            const replacingController = hadController;
+                            hadController = !!navigator.serviceWorker.controller;
+                            // First activation can claim this page without interrupting it.
+                            if (!replacingController || !hadController || refreshing) return;
+                            refreshing = true;
+                            window.location.reload();
+                        });
+
+                        const registration = await navigator.serviceWorker.register('./sw.js');
+
+                        const watch = (worker) => {
+                            worker.addEventListener('statechange', () => {
+                                if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    this.waitingWorker = worker;
+                                    this.updateAvailable = true;
+                                }
+                            });
+                        };
+                        if (registration.waiting && navigator.serviceWorker.controller) {
+                            this.waitingWorker = registration.waiting;
+                            this.updateAvailable = true;
                         }
+                        if (registration.installing) watch(registration.installing);
+                        registration.addEventListener('updatefound', () => watch(registration.installing));
+
+                        document.addEventListener('visibilitychange', () => {
+                            if (document.visibilityState === 'visible') {
+                                registration.update().catch(() => { });
+                            }
+                        });
+                    } catch (error) {
+                        console.log('Service worker registration skipped:', error);
+                    }
+                },
+
+                applyUpdate() {
+                    this.waitingWorker?.postMessage({ type: 'SKIP_WAITING' });
+                },
+
+                get hasFormModal() {
+                    return this.showSongModal || this.showArtistModal || this.showSetlistModal || this.showAddSongsModal;
+                },
+
+                // Move focus only when an overlay opens or closes, not when its data changes.
+                watchModalFocus(property, dialogRef, initialSelector) {
+                    let opener = null;
+                    this.$watch(property, (isOpen, wasOpen) => {
+                        if (!!isOpen === !!wasOpen) return;
+                        if (isOpen) {
+                            opener = document.activeElement;
+                            this.$nextTick(() => {
+                                if (this[property]) this.$refs[dialogRef].querySelector(initialSelector).focus();
+                            });
+                        } else {
+                            this.$nextTick(() => {
+                                if (this[property]) return;
+                                if (opener?.isConnected && opener.getClientRects().length && !opener.closest('[inert]')) {
+                                    opener.focus();
+                                } else if (!this.selectedSong && !this.selectedArtist && !this.selectedGenre && !this.selectedSetlist && !this.hasFormModal) {
+                                    this.$refs.appContainer.querySelector('main button')?.focus();
+                                }
+                            });
+                        }
+                    });
+                },
+
+                trapModalFocus(event) {
+                    const controls = [...event.currentTarget.querySelectorAll(
+                        'button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled), a[href], [tabindex="0"]'
+                    )].filter(element => element.getClientRects().length > 0 && !element.closest('[inert]'));
+                    const first = controls[0];
+                    const last = controls[controls.length - 1];
+                    if (event.shiftKey && document.activeElement === first) {
+                        event.preventDefault();
+                        last.focus();
+                    } else if (!event.shiftKey && document.activeElement === last) {
+                        event.preventDefault();
+                        first.focus();
                     }
                 },
 
@@ -2007,6 +2368,8 @@
 
                     let songsAdded = 0;
                     let artistsAdded = 0;
+                    const rejected = [];
+                    const overLimit = [];
 
                     for (const file of mdFiles) {
                         try {
@@ -2015,8 +2378,10 @@
 
                             if (fileType === 'song') {
                                 const song = parseSongMarkdown(content, file.name);
-                                await dbPut('songs', song);
-                                songsAdded++;
+                                const result = await this.importSongs([song], file.name);
+                                songsAdded += result.added + result.updated;
+                                rejected.push(...result.rejected);
+                                overLimit.push(...result.overLimit);
                             } else {
                                 const artist = parseArtistMarkdown(content, file.name);
                                 await dbPut('artists', artist);
@@ -2038,6 +2403,8 @@
 
                     this.loading = false;
                     this.showToast(`Imported ${songsAdded} songs and ${artistsAdded} artists`, 'success');
+                    if (rejected.length) this.reportDuplicates(rejected);
+                    if (overLimit.length) this.reportOverLimit(overLimit);
                 },
 
                 // Export/Import Collection
@@ -2080,9 +2447,7 @@
                         }
 
                         // Import songs
-                        for (const song of collection.songs) {
-                            await dbPut('songs', song);
-                        }
+                        const songResult = await this.importSongs(collection.songs, file.name);
 
                         // Import artists (backward-compatible: may be absent if export has none)
                         if (Array.isArray(collection.artists)) {
@@ -2111,7 +2476,9 @@
 
                         this.loading = false;
                         const artistCount = Array.isArray(collection.artists) ? collection.artists.length : 0;
-                        this.showToast(`Imported ${collection.songs.length} songs and ${artistCount} artists`, 'success');
+                        this.showToast(`Imported ${songResult.added + songResult.updated} songs and ${artistCount} artists`, 'success');
+                        if (songResult.rejected.length) this.reportDuplicates(songResult.rejected);
+                        if (songResult.overLimit.length) this.reportOverLimit(songResult.overLimit);
                     } catch (error) {
                         console.error('Import error:', error);
                         this.loading = false;
@@ -2133,15 +2500,29 @@
                 },
 
                 async deleteSong(id) {
-                    if (!confirm('Delete this song?')) return;
+                    const containing = this.setlists.filter(l => (l.songIds || []).includes(id));
+                    if (containing.length > 0) {
+                        const names = containing.map(l => `"${l.name}"`).join(', ');
+                        this.showToast(`This song is in ${containing.length === 1 ? 'a setlist' : 'setlists'} and can't be deleted. Remove it from: ${names}`, 'error');
+                        return false;
+                    }
+
+                    if (!confirm('Delete this song?')) return false;
 
                     try {
                         await dbDelete('songs', id);
                         this.songs = this.songs.filter(s => s.id !== id);
                         this.showToast('Song deleted', 'success');
+                        return true;
                     } catch (error) {
                         this.showToast('Error deleting song', 'error');
+                        return false;
                     }
+                },
+
+                async deleteSelectedSong() {
+                    if (!this.selectedSong) return;
+                    if (await this.deleteSong(this.selectedSong.id)) this.closeSong();
                 },
 
                 async deleteArtist(id) {
@@ -2202,18 +2583,41 @@
                     this.showSongModal = true;
                 },
 
+                // Only fields the user changed are checked, so an existing over-limit value can stay.
+                fieldError(field) {
+                    const editing = this.songForm.id ? this.songs.find(s => s.id === this.songForm.id) : null;
+                    if (editing && normalizeSongField(field, this.songForm[field]) === normalizeSongField(field, editing[field])) return '';
+                    return songFieldError(field, this.songForm[field]);
+                },
+
+                fieldCount(field) {
+                    return `${songFieldLength(field, this.songForm[field]).toLocaleString('en-US')} / ${SONG_LIMITS[field].toLocaleString('en-US')}`;
+                },
+
+                hasFieldErrors() {
+                    return Object.keys(SONG_LIMITS).some(f => this.fieldError(f));
+                },
+
                 async saveSong() {
                     const title = this.songForm.title.trim();
-                    if (!title) return;
+                    if (!title || this.hasFieldErrors()) return;
+
+                    const candidate = { title, artist: this.songForm.artist };
+                    const editing = this.songForm.id ? this.songs.find(s => s.id === this.songForm.id) : null;
+                    const unchanged = editing && songKey(editing) === songKey(candidate);
+                    if (!unchanged && this.songs.some(s => s.id !== this.songForm.id && songKey(s) === songKey(candidate))) {
+                        this.showToast('A song with this title and artist already exists', 'error');
+                        return;
+                    }
 
                     try {
                         if (this.songForm.id) {
-                            const song = this.songs.find(s => s.id === this.songForm.id);
+                            const song = editing;
                             if (song) {
                                 song.title = title;
                                 song.artist = this.songForm.artist.trim();
                                 song.genre = this.songForm.genre.trim();
-                                song.lyrics = this.songForm.lyrics;
+                                song.lyrics = normalizeSongField('lyrics', this.songForm.lyrics);
                                 song.updatedAt = new Date().toISOString();
                                 await dbPut('songs', JSON.parse(JSON.stringify(song)));
                                 if (this.selectedSong?.id === song.id) {
@@ -2227,7 +2631,7 @@
                                 title: title,
                                 artist: this.songForm.artist.trim(),
                                 genre: this.songForm.genre.trim(),
-                                lyrics: this.songForm.lyrics,
+                                lyrics: normalizeSongField('lyrics', this.songForm.lyrics),
                                 createdAt: new Date().toISOString(),
                                 updatedAt: new Date().toISOString()
                             };
@@ -2490,6 +2894,11 @@
                     if (next < 0 || next >= entries.length) return;
                     this.performContext = { ...this.performContext, index: next, total: entries.length };
                     this.selectedSong = entries[next].song;
+                    // At either end, move off the navigation button that just became disabled.
+                    const focusedControl = document.activeElement;
+                    this.$nextTick(() => {
+                        if (focusedControl?.disabled) this.$refs.songDetail.querySelector('button').focus();
+                    });
                 },
 
                 closeSong() {
@@ -2498,13 +2907,83 @@
                 },
 
                 // Toast Notifications
-                showToast(message, type = 'success') {
-                    const id = Date.now();
-                    this.toasts.push({ id, message, type, visible: true });
+                showToast(message, type = 'success', action = null, actionLabel = '') {
+                    const id = Date.now() + Math.random();
+                    this.toasts.push({ id, message, type, visible: true, action, actionLabel });
 
                     setTimeout(() => {
                         this.removeToast(id);
-                    }, 4000);
+                    }, action ? 15000 : (type === 'error' ? 10000 : 4000));
+                },
+
+                downloadImportReport(rejected) {
+                    const report = {
+                        generatedAt: new Date().toISOString(),
+                        reason: 'Songs were rejected as duplicates (same title and artist, ignoring case and surrounding spaces) or because a field is over its length limit (see "fields")',
+                        rejected
+                    };
+                    const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `songbook-import-errors-${new Date().toISOString().split('T')[0]}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                },
+
+                // Import songs, rejecting duplicates. Returns { added, updated, rejected }.
+                async importSongs(incoming, source) {
+                    const keys = new Map();
+                    const byId = new Map();
+                    for (const s of await dbGetAll('songs')) {
+                        byId.set(s.id, s);
+                        keys.set(songKey(s), s.id);
+                    }
+                    const result = { added: 0, updated: 0, rejected: [], overLimit: [] };
+                    for (const song of incoming) {
+                        const fields = Object.keys(SONG_LIMITS).filter(f => songFieldError(f, song[f]));
+                        if (fields.length) {
+                            result.overLimit.push({ id: song.id, title: song.title, artist: song.artist || '', source, fields });
+                            continue;
+                        }
+                        const key = songKey(song);
+                        const existing = byId.get(song.id);
+                        if (existing) {
+                            const newer = !existing.updatedAt || (song.updatedAt && song.updatedAt > existing.updatedAt);
+                            if (!newer) continue;
+                            const owner = keys.get(key);
+                            if (owner && owner !== song.id) {
+                                result.rejected.push({ id: song.id, title: song.title, artist: song.artist || '', source });
+                                continue;
+                            }
+                            if (songKey(existing) !== key) keys.delete(songKey(existing));
+                            result.updated++;
+                        } else {
+                            if (keys.has(key)) {
+                                result.rejected.push({ id: song.id, title: song.title, artist: song.artist || '', source });
+                                continue;
+                            }
+                            result.added++;
+                        }
+                        await dbPut('songs', song);
+                        byId.set(song.id, song);
+                        keys.set(key, song.id);
+                    }
+                    return result;
+                },
+
+                reportOverLimit(overLimit) {
+                    const names = overLimit.map(r => `"${r.title}" (${r.fields.map(f => SONG_FIELD_LABELS[f]).join(', ')})`).join(', ');
+                    this.showToast(`Songs over the length limits not imported: ${names}`, 'error',
+                        () => this.downloadImportReport(overLimit), 'Download report');
+                },
+
+                reportDuplicates(rejected) {
+                    const names = rejected.map(r => r.artist ? `"${r.title}" by ${r.artist}` : `"${r.title}"`).join(', ');
+                    this.showToast(`Duplicate songs not imported: ${names}`, 'error',
+                        () => this.downloadImportReport(rejected), 'Download report');
                 },
 
                 removeToast(id) {

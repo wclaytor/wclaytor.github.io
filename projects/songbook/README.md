@@ -42,7 +42,7 @@ The first time you open the app, the collection is empty. You can:
 
 1. **Import a collection file**: choose **Import Collection File** and pick a JSON export, such as one from [`songbook/export/`](./songbook/export/).
 2. **Import Markdown files**: drop `.md` files onto the drop zone, or click it to pick files. Song files live in [`songbook/songs/`](./songbook/songs/) and artist files in [`songbook/artists/`](./songbook/artists/).
-3. **Create songs by hand**: use **New Song** on the Songs tab.
+3. **Create songs by hand**: use **New Song** on the welcome screen. After you save the first song, the tabs and list appear.
 
 Later imports are done from the **Import** button in the header.
 
@@ -124,7 +124,9 @@ npx playwright show-report   # view the HTML report
 
 The tests also run in GitHub Actions on every push and pull request to `main` (see [`.github/workflows/playwright.yml`](./.github/workflows/playwright.yml)).
 
-> If you change `index.html` or other cached assets, bump `CACHE_NAME` in `sw.js` so installed clients pick up the new version.
+> If you change `index.html` or other cached assets, bump `CACHE` in `sw.js` so installed clients pick up the new version.
+
+The worker stays at `sw.js` so existing installations can discover updates. During migration from the old cached page, the new worker activates after all Songbook tabs and PWA windows close. If the update is first downloaded on reopening, close and reopen once more after it finishes downloading. Later updates offer the in-app reload prompt.
 
 ## 🎭 Development Methodology
 

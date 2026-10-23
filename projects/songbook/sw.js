@@ -1,5 +1,5 @@
 // Songbook PWA Service Worker
-const CACHE_NAME = 'songbook-v1';
+const CACHE = 'songbook-v2';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
@@ -7,86 +7,74 @@ const ASSETS_TO_CACHE = [
     'https://cdn.jsdelivr.net/npm/marked/marked.min.js'
 ];
 
-// Install event - cache assets
+// Install event - precache assets; wait for existing clients to close or SKIP_WAITING
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then((cache) => {
-                return cache.addAll(ASSETS_TO_CACHE);
-            })
-            .then(() => {
-                self.skipWaiting();
-            })
+        caches.open(CACHE).then((cache) => cache.addAll(ASSETS_TO_CACHE))
     );
 });
 
-// Activate event - clean up old caches
+// Activate event - delete old caches, then take control
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys()
-            .then((cacheNames) => {
-                return Promise.all(
-                    cacheNames
-                        .filter((name) => name !== CACHE_NAME)
-                        .map((name) => caches.delete(name))
-                );
-            })
-            .then(() => {
-                self.clients.claim();
-            })
+            .then((names) => Promise.all(
+                names.filter((name) => name !== CACHE).map((name) => caches.delete(name))
+            ))
+            .then(() => self.clients.claim())
     );
 });
 
-// Fetch event - serve from cache, fallback to network
+// Let the page activate a waiting worker before all existing clients close
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
+});
+
+// Fetch event
 self.addEventListener('fetch', (event) => {
-    // Skip non-GET requests
-    if (event.request.method !== 'GET') {
+    const request = event.request;
+    if (request.method !== 'GET') {
         return;
     }
 
+    // Navigations: network-first, revalidating past the 10-minute HTTP cache
+    if (request.mode === 'navigate') {
+        event.respondWith(
+            fetch(request.url, { cache: 'no-cache' })
+                .then((response) => {
+                    if (response.ok) {
+                        const copy = response.clone();
+                        caches.open(CACHE).then((cache) => cache.put(request, copy));
+                    }
+                    return response;
+                })
+                .catch(() =>
+                    caches.match(request).then((cached) => cached || caches.match('./index.html'))
+                )
+        );
+        return;
+    }
+
+    // Other assets: cache-first (up to ~10 minute delay on GitHub Pages is acceptable)
     event.respondWith(
-        caches.match(event.request)
-            .then((cachedResponse) => {
-                if (cachedResponse) {
-                    // Return cached response
-                    return cachedResponse;
-                }
-
-                // Clone the request
-                const fetchRequest = event.request.clone();
-
-                return fetch(fetchRequest)
-                    .then((response) => {
-                        // Check if valid response
-                        if (!response || response.status !== 200 || response.type !== 'basic') {
-                            // For CDN resources, cache them
-                            if (response && response.status === 200 && event.request.url.includes('cdn.jsdelivr.net')) {
-                                const responseToCache = response.clone();
-                                caches.open(CACHE_NAME)
-                                    .then((cache) => {
-                                        cache.put(event.request, responseToCache);
-                                    });
-                            }
-                            return response;
-                        }
-
-                        // Clone response and cache it
-                        const responseToCache = response.clone();
-                        caches.open(CACHE_NAME)
-                            .then((cache) => {
-                                cache.put(event.request, responseToCache);
-                            });
-
-                        return response;
-                    })
-                    .catch(() => {
-                        // Offline fallback for navigation requests
-                        if (event.request.mode === 'navigate') {
-                            return caches.match('./index.html');
-                        }
-                        return new Response('Offline', { status: 503 });
-                    });
-            })
+        caches.match(request).then((cached) => {
+            if (cached) {
+                return cached;
+            }
+            return fetch(request)
+                .then((response) => {
+                    const cacheable = response.ok &&
+                        (response.type === 'basic' || request.url.includes('cdn.jsdelivr.net'));
+                    if (cacheable) {
+                        const copy = response.clone();
+                        caches.open(CACHE).then((cache) => cache.put(request, copy));
+                    }
+                    return response;
+                })
+                .catch(() => new Response('Offline', { status: 503 }));
+        })
     );
 });
 
