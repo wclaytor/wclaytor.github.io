@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>William Claytor</title>
+  <style>
+    /* ====== Reset / base ====== */
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+      line-height:1.55;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+    a{color:inherit}
+    :focus{outline:none}
+    :focus-visible{outline:3px solid currentColor; outline-offset:3px; border-radius:10px}
+
+    /* ====== Theme ====== */
+    :root{
+      --bg:#ffffff;
+      --fg:#0b1220;
+      --muted:#5a6475;
+      --card:#f5f7fb;
+      --border:rgba(11,18,32,.12);
+      --shadow:0 10px 30px rgba(11,18,32,.12);
+      --accent:#2563eb;
+      --accent2:#7c3aed;
+      --mark-bg:rgba(37,99,235,.16);
+      --kbd-bg:rgba(11,18,32,.08);
+    }
+    [data-theme="dark"]{
+      --bg:#0b1220;
+      --fg:#eef2ff;
+      --muted:#a6b0c3;
+      --card:#121b2f;
+      --border:rgba(238,242,255,.14);
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+      --accent:#60a5fa;
+      --accent2:#a78bfa;
+      --mark-bg:rgba(96,165,250,.18);
+      --kbd-bg:rgba(238,242,255,.12);
+    }
+
+    /* ====== Layout ====== */
+    body{background:var(--bg); color:var(--fg)}
+    .skip{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+    .skip:focus{left:16px;top:16px;width:auto;height:auto;z-index:1000;background:var(--bg);color:var(--fg);
+      padding:10px 14px;border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow)}
+    .shell{display:grid;grid-template-columns:320px 1fr;min-height:100vh}
+    nav{position:sticky;top:0;height:100vh;padding:18px 14px;border-right:1px solid var(--border);background:linear-gradient(180deg,var(--card),transparent 60%)}
+    main{padding:28px 24px 60px;max-width:980px}
+    .brand{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:18px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow)}
+    .name{font-size:1.25rem;font-weight:800;letter-spacing:-0.02em}
+    .meta{color:var(--muted);font-size:.95rem}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .btn{appearance:none;border:1px solid var(--border);background:var(--bg);color:var(--fg);padding:10px 12px;border-radius:14px;
+      box-shadow:0 6px 16px rgba(0,0,0,.06);cursor:pointer;font-weight:650}
+    .btn:hover{transform:translateY(-1px)}
+    @media (prefers-reduced-motion: reduce){.btn:hover{transform:none}}
+    .btn[aria-pressed="true"]{border-color:rgba(37,99,235,.45); box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+    .search{display:flex;gap:10px;align-items:center;flex:1 1 220px}
+    .search input{width:100%;padding:10px 12px;border-radius:14px;border:1px solid var(--border);background:var(--bg);color:var(--fg)}
+    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:.85rem;background:var(--kbd-bg);
+      padding:3px 7px;border-radius:8px;color:var(--muted);border:1px solid var(--border)}
+    .navlinks{margin-top:16px;display:flex;flex-direction:column;gap:6px}
+    .navlinks a{display:flex;justify-content:space-between;gap:10px;text-decoration:none;padding:10px 12px;border-radius:14px;border:1px solid transparent;color:var(--muted)}
+    .navlinks a:hover{border-color:var(--border);background:rgba(127,127,127,.06);color:var(--fg)}
+    .navlinks a[aria-current="true"]{background:rgba(37,99,235,.10);border-color:rgba(37,99,235,.25);color:var(--fg)}
+    .pill{font-size:.75rem;color:var(--muted);border:1px solid var(--border);padding:2px 8px;border-radius:999px}
+    .mobilebar{display:none;position:sticky;top:0;z-index:999;background:rgba(0,0,0,0);backdrop-filter:saturate(120%) blur(10px)}
+    .mobilebar .inner{display:flex;gap:10px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--border);
+      background:color-mix(in oklab, var(--bg) 92%, transparent)}
+    .drawer{display:none;padding:12px;border-bottom:1px solid var(--border);background:var(--bg)}
+    .drawer.open{display:block}
+    .drawer .navlinks{margin-top:0}
+    @media (max-width: 940px){
+      .shell{grid-template-columns:1fr}
+      nav{display:none}
+      .mobilebar{display:block}
+      main{padding:18px 14px 52px}
+    }
+
+    /* ====== Content ====== */
+    section{margin:26px 0}
+    h2{font-size:1.25rem;margin:0 0 12px 0;letter-spacing:-0.02em}
+    h3{font-size:1.05rem;margin:18px 0 6px;letter-spacing:-0.01em}
+    p{margin:10px 0;color:var(--fg)}
+    ul{margin:10px 0 10px 20px}
+    li{margin:6px 0}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px 16px;box-shadow:var(--shadow)}
+
+    /* Header card */
+    .pagehead{margin:0 0 14px}
+    .headcard{padding:18px 18px}
+    .headgrid{display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:flex-start}
+    .h1{margin:0;font-size:clamp(26px, 3.2vw, 40px);letter-spacing:-0.02em;line-height:1.08}
+    .contact{margin-top:8px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;color:var(--muted);font-weight:650}
+    .contact a{color:inherit}
+    .dot{opacity:.65}
+    .headlinks{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,0.02);text-decoration:none;color:var(--fg);font-weight:750}
+    .pill:hover{box-shadow:0 0 0 4px var(--ring);outline:none}
+    @media (max-width: 720px){
+      .headlinks{justify-content:flex-start}
+    }
+
+    /* Headshot with theme switching */
+    .headshot-wrap{flex-shrink:0}
+    .headshot{width:90px;height:120px;border-radius:12px;object-fit:cover;object-position:center top;border:3px solid var(--border);box-shadow:var(--shadow);transition:opacity 0.3s ease}
+    /* Default: light headshot visible, dark hidden */
+    .headshot-light{display:block}
+    .headshot-dark{display:none}
+    /* Explicit dark theme override */
+    [data-theme="dark"] .headshot-light{display:none}
+    [data-theme="dark"] .headshot-dark{display:block}
+    /* System dark preference ONLY when in auto mode (no explicit theme set) */
+    @media (prefers-color-scheme: dark){
+      html:not([data-theme]) .headshot-light,
+      html[data-theme="system"] .headshot-light{display:none}
+      html:not([data-theme]) .headshot-dark,
+      html[data-theme="system"] .headshot-dark{display:block}
+    }
+    @media (max-width: 720px){
+      .headshot{width:70px;height:93px}
+    }
+
+    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline}
+    .row .right{margin-left:auto;color:var(--muted);font-weight:650}
+    .small{color:var(--muted);font-size:.95rem}
+    .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    .tag{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:rgba(127,127,127,.06);color:var(--muted);font-weight:650;font-size:.9rem}
+    details{border:1px solid var(--border);border-radius:16px;padding:10px 12px;background:rgba(127,127,127,.05)}
+    summary{cursor:pointer;font-weight:750}
+    summary::-webkit-details-marker{display:none}
+    summary::after{content:"▾";float:right;color:var(--muted)}
+    details[open] summary::after{content:"▴"}
+    mark{background:var(--mark-bg);color:inherit;padding:0 .15em;border-radius:.3em}
+
+    /* ====== View switch animation ====== */
+    .viewwrap{position:relative}
+    .viewpanel{transition:opacity .22s ease, transform .22s ease; will-change:transform,opacity}
+    .viewpanel.exit{opacity:0;transform:translateY(6px)}
+    .viewpanel.enter{opacity:0;transform:translateY(-6px)}
+    .viewpanel.enter.active{opacity:1;transform:translateY(0)}
+    @media (prefers-reduced-motion: reduce){
+      .viewpanel{transition:none}
+    }
+
+    /* ====== Print ====== */
+    @media print{
+      .mobilebar, nav, .toolbar, .drawer{display:none !important}
+      main{max-width:none;padding:0}
+      body{background:#fff;color:#000}
+      .card, details{box-shadow:none}
+      a{text-decoration:none}
+      mark{background:transparent}
+      /* Always show light headshot for print */
+      .headshot-light{display:block !important}
+      .headshot-dark{display:none !important}
+    }
+  </style>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+
+<div class="mobilebar" role="banner">
+  <div class="inner">
+    <button class="btn" id="mobileMenuBtn" aria-expanded="false" aria-controls="mobileDrawer">Menu</button>
+    <div style="font-weight:800;letter-spacing:-0.02em">William Claytor</div>
+    <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
+      <button class="btn" id="themeBtnMobile" title="Toggle theme" aria-pressed="false">Theme</button>
+    </div>
+  </div>
+  <div class="drawer" id="mobileDrawer"></div>
+</div>
+
+<div class="shell">
+  <nav aria-label="Sections">
+    <div class="brand">
+      <div class="name" id="brandName">Navigation</div>
+<div class="toolbar" aria-label="Toolbar">
+
+        <div class="search" id="searchWrap">
+          <input id="searchInput" type="search" placeholder="Search (press /)" aria-label="Search resume" />
+          <span class="kbd">/</span>
+        </div>
+
+        <button class="btn" id="themeBtn" aria-pressed="false" title="Toggle theme">Theme</button>
+        <button class="btn" id="printBtn" title="Download PDF">Download PDF</button>
+      </div>
+
+      <div class="navlinks" id="navLinks"></div>
+    </div>
+  </nav>
+
+  <main id="content" tabindex="-1">
+    <header class="pagehead" id="pageHead" aria-label="Resume header"></header>
+    <div class="viewwrap">
+      <div class="viewpanel" id="viewPanel"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+/** ====== Embedded data ====== */
+const RESUME = {"name": "William Claytor", "headline": "Senior Quality Engineer and Automation Leader", "location": "Baltimore, MD", "email": "claytor1@gmail.com", "phone": "", "links": [{"label": "Website", "url": "https://wclaytor.github.io/"}, {"label": "LinkedIn", "url": "https://www.linkedin.com/in/billclaytor"}, {"label": "GitHub", "url": "https://github.com/wclaytor"}], "sections": [{"title": "Summary", "kind": "text", "html": "\u003cp\u003eSenior Quality Engineer and automation leader with 25+ years of experience transforming manual QA into scalable automated systems, currently specializing in AI-assisted QA workflows and testing generative AI applications. Proven track record of building and modernizing test frameworks (Playwright, Selenium), leading globally distributed QA teams, and embedding quality into CI/CD pipelines across SaaS, enterprise, public-sector, and regulated environments.\u003c/p\u003e\n", "items": []}, {"title": "Skills", "kind": "text", "html": "\u003cp\u003e\u003cstrong\u003eQuality Engineering:\u003c/strong\u003e Test automation architecture, test strategy, generative AI testing, AI-assisted QA workflows, API testing, performance testing, cross-platform testing, requirements traceability, QA team leadership\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003eTest Automation Tools:\u003c/strong\u003e Playwright, Selenium, Nightwatch.js, Appium, JMeter, Gatling, RSpec\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003eQuality Management Tools:\u003c/strong\u003e Jira, Xray, Testiny, TestRail\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003eLanguages:\u003c/strong\u003e TypeScript, JavaScript, Python, Ruby, C#, Java, PowerShell, SQL\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003eCI/CD \u0026amp; Infrastructure:\u003c/strong\u003e AWS, Azure, GitHub Actions, Jenkins, Docker\u003c/p\u003e\n", "items": []}, {"title": "Experience", "kind": "text", "html": "\u003ch3\u003eCloud Applications Test Engineer | Cloudforce\u003c/h3\u003e\n\u003cp class=\"small\"\u003eNational Harbor, MD | Feb 2026 – Oct 2026\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eDesigned and executed detailed test plans and test cases for nebulaONE, an Azure-hosted generative AI platform for public-sector and higher-education organizations\u003c/li\u003e\n\u003cli\u003eModernized the Playwright/TypeScript end-to-end test automation suite with page objects, shared helpers, consistent locators, state-based assertions, and context-based tags for targeted execution\u003c/li\u003e\n\u003cli\u003eAutomated tests for AI agents using retrieval-augmented generation (RAG), API and Model Context Protocol (MCP) connections, web search, and multi-agent collaboration\u003c/li\u003e\n\u003cli\u003eValidated LLM responses for knowledge-grounded agents, asserting source usage, citations, and expected content\u003c/li\u003e\n\u003cli\u003eBuilt a requirements traceability matrix linking feature areas and sub-features to Jira tickets, Testiny cases, and Playwright tests to establish measurable feature coverage\u003c/li\u003e\n\u003cli\u003eImplemented AI-assisted QA workflows with Claude Code and GitHub Copilot for requirements analysis, test generation, and pull request review, supported by PowerShell scripts integrating Jira, Testiny, and GitHub APIs\u003c/li\u003e\n\u003cli\u003eTrained and mentored QA and engineering team members in Playwright and AI-assisted test automation\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003eSenior QA Automation Engineer and QA Lead | insightsoftware\u003c/h3\u003e\n\u003cp class=\"small\"\u003eRemote | May 2023 – Dec 2025\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eExecuted sprint release verification testing across multiple product lines using Azure Pipelines with an in-house C#/Selenium automation framework\u003c/li\u003e\n\u003cli\u003eBuilt a daily Azure test-results reporting tool that reduced report preparation from 10+ minutes to under 30 seconds\u003c/li\u003e\n\u003cli\u003eBuilt a pipeline migrating 5,000+ automated test cases from Team Foundation Server into Jira/Xray\u003c/li\u003e\n\u003cli\u003eImplemented an AI-assisted QA workflow using GitHub Copilot and PowerShell to automate Jira/Xray operations across requirements analysis, test execution, and reporting\u003c/li\u003e\n\u003cli\u003eServed as a QA Lead for distributed QA teams, establishing onshore/offshore processes and guiding manual testers into automation\u003c/li\u003e\n\u003cli\u003eCoordinated customer-facing disaster recovery testing and release test reporting across distributed teams\u003c/li\u003e\n\u003cli\u003eEstablished performance testing capability by leading the initial development of a JMeter/Grafana framework and helping hire and onboard Principal and Senior Performance Engineers\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003eProfessional Development Sabbatical | Independent Work\u003c/h3\u003e\n\u003cp class=\"small\"\u003eJul 2022 – May 2023\u003c/p\u003e\n\u003cp\u003eBuilt and deployed Songbook, a Rails setlist organizer, using Dokku and DigitalOcean; evaluated Playwright and Cypress through Page Object Model implementations.\u003c/p\u003e\n\u003ch3\u003eSenior QA Engineer and QA Manager | Active911\u003c/h3\u003e\n\u003cp class=\"small\"\u003eCorvallis, OR | Mar 2020 – Jul 2022\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eEstablished end-to-end QA coverage for first-responder alerting and scheduling applications across web, Android, and iOS\u003c/li\u003e\n\u003cli\u003eArchitected a Nightwatch.js framework with page objects and reusable modules to accelerate test development\u003c/li\u003e\n\u003cli\u003eBuilt a real-time test automation dashboard integrating Jenkins Job DSL with the TestRail API for live execution status and reporting\u003c/li\u003e\n\u003cli\u003eGrew and mentored the QA team through hiring, internal promotions from Customer Support, and automation training\u003c/li\u003e\n\u003cli\u003eEmbedded quality in development processes by collaborating with product and engineering during backlog review and design sessions\u003c/li\u003e\n\u003cli\u003eCoordinated UAT with product managers, ensuring customer requirements were validated before releases\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003eSenior Software Engineer | Puppet\u003c/h3\u003e\n\u003cp class=\"small\"\u003ePortland, OR | Jan 2018 – Mar 2020\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eExtended the Gatling-based Puppet load-test framework with scale testing, HTML comparison reports, and system tuning integration, backed by RSpec unit tests\u003c/li\u003e\n\u003cli\u003eBuilt a Ruby-based provisioning utility to automate infrastructure node deployment through the Puppet Automated Build System API\u003c/li\u003e\n\u003cli\u003eContributed to the Reference Architecture Setup CLI using Ruby and Puppet Bolt, implementing Docker-based acceptance tests with RSpec coverage\u003c/li\u003e\n\u003cli\u003eDrove performance testing standards through the Reference Architectures Working Group, collaborating with the Customer Success, Installer, and PuppetDB teams on the architecture definition and test roadmap\u003c/li\u003e\n\u003cli\u003eServed as Scrum Master for the Installer and System Level Verification teams, establishing the Puppet Operating Model implementation and facilitating continuous process improvement\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003eSenior Quality Engineer | National Public Radio\u003c/h3\u003e\n\u003cp class=\"small\"\u003eWashington, DC | May 2014 – Jan 2018\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eLed a cross-team JavaScript framework evaluation and implemented Nightwatch.js cross-browser testing in the CMS CI pipeline\u003c/li\u003e\n\u003cli\u003eArchitected a keyword-based data-driven Java/Selenium framework for cross-platform testing\u003c/li\u003e\n\u003cli\u003eDeveloped automated tests for Android and iOS using Appium with a Jenkins-based simulator and emulator infrastructure\u003c/li\u003e\n\u003cli\u003eEstablished Jenkins automation dashboards using Job DSL across the Publishing, TechOps, and NPR One teams\u003c/li\u003e\n\u003cli\u003eModernized the API test suite with modular architecture, adding coverage for new endpoints and improving maintainability\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003eQA Automation Manager | American Public University System\u003c/h3\u003e\n\u003cp class=\"small\"\u003eCharles Town, WV | Mar 2012 – May 2014\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eDesigned a full-stack test automation architecture in .NET / C# including a keyword-driven UI framework (Coded UI + Selenium) plus data-driven back-end framework verifying student registration and payment transactions\u003c/li\u003e\n\u003cli\u003eBuilt the QA Automation team through recruiting for engineer and specialist roles and training team members in automation tools, development practices, and organizational processes\u003c/li\u003e\n\u003cli\u003eEstablished an Agile test management workflow using HP ALM / Quality Center for workload planning and execution tracking\u003c/li\u003e\n\u003cli\u003eDrove automation adoption organization-wide through stakeholder engagement and active participation in design, requirements, and test plan reviews\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003eLead QA Analyst | FINRA\u003c/h3\u003e\n\u003cp class=\"small\"\u003eRockville, MD | Sep 2003 – Mar 2012\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eEnsured the quality of Web CRD (the central registration and licensing system for the U.S. securities industry) and IAPD (Investment Adviser Public Disclosure)\u003c/li\u003e\n\u003cli\u003eEvolved the test automation platform from WinRunner to QTP, architecting improved dependency management for multi-application, multi-release, multi-environment testing\u003c/li\u003e\n\u003cli\u003eDesigned a no-code test framework (QTP / VBScript + Excel parameterization) enabling manual testers to create and execute automated tests without programming knowledge\u003c/li\u003e\n\u003cli\u003ePioneered CI adoption, implementing automated test execution pipelines using CruiseControl and later Hudson (now Jenkins) with Ant scripting\u003c/li\u003e\n\u003cli\u003eEstablished a requirements-based automation process with HP Quality Center for traceability, test organization, and defect management\u003c/li\u003e\n\u003c/ul\u003e\n", "items": []}, {"title": "Earlier Experience", "kind": "text", "html": "\u003cp\u003eTest Automation Specialist, Fannie Mae — Washington, DC | 2002 – 2003\u003c/p\u003e\n\u003cp\u003eTest Automation Specialist, MedContrax — Gaithersburg, MD | 2001 – 2002\u003c/p\u003e\n\u003cp\u003eTest Automation Specialist, US Census Bureau — Suitland, MD | 1998 – 2001\u003c/p\u003e\n", "items": []}, {"title": "Education", "kind": "text", "html": "\u003ch3\u003eTowson University — English Studies\u003c/h3\u003e\n\u003cp class=\"small\"\u003eTowson, MD | 1992 – 1994\u003c/p\u003e\n\u003ch3\u003eHarford Community College — Business Management\u003c/h3\u003e\n\u003cp class=\"small\"\u003eChurchville, MD | 1990 – 1991\u003c/p\u003e\n", "items": []}]};
+const CONFIG = {"meta": {"generator": "resume-cleanroom", "version": "1.1"}, "ui": {"defaultTheme": "system", "enableThemeToggle": true, "enableSearch": false, "enableNav": true, "enableViewToggle": false, "defaultView": "full", "rememberView": false, "rememberTheme": true, "collapseCompanyDescriptionsByDefault": true, "smoothScroll": true}, "shortView": {"workExperience": {"jobsToKeep": 3, "bulletsPerJob": 3, "keepRoleHeadings": true, "keepCompanyLine": true, "keepDatesLine": true}, "sections": {"include": ["Summary", "Work Experience", "Skills", "Education", "Links"], "exclude": []}, "earlierExperience": {"enabled": true, "label": "Earlier Experience", "format": "inline", "maxCompanies": 8}}, "search": {"minQueryLength": 2, "highlightMatches": true, "fields": ["Summary", "Work Experience", "Skills", "Education"]}, "accessibility": {"reduceMotionRespectsPreference": true, "focusVisible": true, "skipLink": true}};
+
+/** ====== Helpers ====== */
+const $ = (sel, el=document) => el.querySelector(sel);
+const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
+const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function slugify(s){
+  return (s||'')
+    .toLowerCase()
+    .replace(/&/g,'and')
+    .replace(/[^a-z0-9]+/g,'-')
+    .replace(/(^-|-$)/g,'');
+}
+
+function setTheme(theme){
+  // theme: 'light' | 'dark' | 'system'
+  const root = document.documentElement;
+  if(theme === 'system'){
+    root.removeAttribute('data-theme');
+  }else{
+    root.setAttribute('data-theme', theme);
+  }
+  if(CONFIG.ui.rememberTheme){
+    localStorage.setItem('resume_theme', theme);
+  }
+  syncThemeButtons(theme);
+}
+
+function getSystemTheme(){
+  const dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  return dark ? 'dark' : 'light';
+}
+
+function getInitialTheme(){
+  const saved = CONFIG.ui.rememberTheme ? localStorage.getItem('resume_theme') : null;
+  return saved || CONFIG.ui.defaultTheme || 'system';
+}
+
+function toggleTheme(){
+  const cur = document.documentElement.getAttribute('data-theme') || 'system';
+  // Cycle: system -> dark -> light -> system
+  const next = (cur === 'system') ? 'dark' : (cur === 'dark' ? 'light' : 'system');
+  setTheme(next);
+}
+
+function syncThemeButtons(theme){
+  const label = theme === 'system' ? `Theme: Auto` : `Theme: ${theme[0].toUpperCase()+theme.slice(1)}`;
+  const pressed = theme !== 'system';
+  const btns = [$('#themeBtn'), $('#themeBtnMobile')].filter(Boolean);
+  btns.forEach(b => { b.textContent = label; b.setAttribute('aria-pressed', pressed ? 'true' : 'false'); });
+}
+
+function setView(view){
+  // view: 'short' | 'full'
+  if(CONFIG.ui.rememberView){
+    localStorage.setItem('resume_view', view);
+  }
+  renderWithTransition(view);
+  syncViewButton(view);
+}
+
+function getInitialView(){
+  const saved = CONFIG.ui.rememberView ? localStorage.getItem('resume_view') : null;
+  return CONFIG.ui.enableViewToggle ? (saved || CONFIG.ui.defaultView || 'full') : 'full';
+}
+
+function syncViewButton(view){
+  const btn = $('#viewBtn');
+  if(!btn) return;
+  const label = (view === 'short') ? 'Content: Short' : 'Content: Full';
+  btn.textContent = label;
+  btn.setAttribute('aria-pressed', 'true');
+}
+
+function scrollHome(){
+  window.scrollTo({ top: 0, behavior: (CONFIG.ui.smoothScroll && !prefersReducedMotion) ? 'smooth' : 'auto' });
+  const content = $('#content');
+  if(content) content.focus({ preventScroll: true });
+}
+
+function escapeHtml(s){
+  return (s||'')
+    .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
+    .replaceAll('"','&quot;').replaceAll("'",'&#39;');
+}
+
+function buildPageHeader(model){
+  const name = escapeHtml(model.name || '');
+  const headline = escapeHtml(model.headline || '');
+  const location = escapeHtml(model.location || '');
+  const email = escapeHtml(model.email || '');
+  const phone = escapeHtml(model.phone || '');
+  const links = (model.links || []).map(link => `<a class="pill" href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(link.label)}</a>`).join('');
+
+  const contactParts = [];
+  if(location) contactParts.push(`<span>${location}</span>`);
+  if(email) contactParts.push(`<a href="mailto:${email}">${email}</a>`);
+  if(phone) contactParts.push(`<span>${phone}</span>`);
+
+  // Headshot images - light version for light theme, dark version for dark theme
+  const headshotHtml = `
+    <div class="headshot-wrap">
+      <img src="assets/img/headshot-light.jpg" alt="${name}" class="headshot headshot-light" loading="lazy" />
+      <img src="assets/img/headshot-dark.jpg" alt="${name}" class="headshot headshot-dark" loading="lazy" />
+    </div>
+  `;
+
+  return `
+    <section class="card headcard" aria-labelledby="resumeName">
+      <div class="headgrid">
+        ${headshotHtml}
+        <div>
+          <h1 id="resumeName" class="h1">${name}</h1>
+          ${headline ? `<p class="small">${headline}</p>` : ''}
+          <div class="contact" aria-label="Contact information">${contactParts.join('<span class="dot" aria-hidden="true">•</span>')}</div>
+        </div>
+        <div class="headlinks">${links}</div>
+      </div>
+    </section>
+  `;
+}
+
+
+function highlight(text, q){
+  if(!CONFIG.search.highlightMatches || !q || q.length < (CONFIG.search.minQueryLength||2)) return escapeHtml(text);
+  const re = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'ig');
+  return escapeHtml(text).replace(re, '<mark>$1</mark>');
+}
+
+/** ====== Short view derivation ====== */
+function buildShortModel(full){
+  const out = JSON.parse(JSON.stringify(full)); // deep copy
+  // Determine which sections to include
+  const include = new Set((CONFIG.shortView.sections.include||[]).map(s => s.toLowerCase()));
+  const exclude = new Set((CONFIG.shortView.sections.exclude||[]).map(s => s.toLowerCase()));
+  out.sections = out.sections.filter(sec => {
+    const name = (sec.title||'').toLowerCase();
+    if(exclude.has(name)) return false;
+    if(include.size && !include.has(name)) return false;
+    return true;
+  });
+
+  // Work Experience trimming
+  const we = out.sections.find(s => (s.title||'').toLowerCase() === 'work experience');
+  if(we && Array.isArray(we.items)){
+    const keepN = CONFIG.shortView.workExperience.jobsToKeep ?? 3;
+    const keepB = CONFIG.shortView.workExperience.bulletsPerJob ?? 3;
+    const kept = we.items.slice(0, keepN).map(job => {
+      const j = {...job};
+      if(Array.isArray(j.bullets)) j.bullets = j.bullets.slice(0, keepB);
+      return j;
+    });
+    const dropped = we.items.slice(keepN);
+    we.items = kept;
+
+    if(CONFIG.shortView.earlierExperience?.enabled && dropped.length){
+      const companies = dropped.map(d => d.company).filter(Boolean);
+      const uniq = Array.from(new Set(companies));
+      const maxC = CONFIG.shortView.earlierExperience.maxCompanies ?? 8;
+      const shown = uniq.slice(0, maxC);
+      const more = uniq.length > maxC ? ` +${uniq.length - maxC} more` : '';
+      const label = CONFIG.shortView.earlierExperience.label || 'Earlier Experience';
+
+      we.items.push({
+        kind: 'earlier',
+        role: label,
+        company: shown.join(' • ') + more,
+        location: '',
+        dates: '',
+        description: '',
+        bullets: []
+      });
+    }
+  }
+
+  return out;
+}
+
+/** ====== Rendering ====== */
+function render(model){
+  // Sidebar title (keep minimal; main header shows full contact)
+  $('#brandName').textContent = (CONFIG?.ui?.sidebarTitle) || '';
+
+  
+  // Main page header (name + contact)
+  $('#pageHead').innerHTML = buildPageHeader(model);
+
+// Build sections + ids
+  const sections = model.sections.map(sec => ({...sec, id: slugify(sec.title)}));
+
+  // Nav
+  if(CONFIG.ui.enableNav){
+    const nav = $('#navLinks');
+    nav.innerHTML = '';
+    // Add Home link first
+    const homeLink = document.createElement('a');
+    homeLink.href = '#';
+    homeLink.innerHTML = `<span>Home</span>`;
+    homeLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      scrollHome();
+    });
+    nav.appendChild(homeLink);
+    // Then add section links
+    sections.forEach(sec => {
+      const a = document.createElement('a');
+      a.href = `#${sec.id}`;
+      a.innerHTML = `<span>${escapeHtml(sec.title)}</span>`;
+      a.addEventListener('click', (e) => {
+        // Let anchor work, but adjust focus after.
+        setTimeout(() => {
+          const el = document.getElementById(sec.id);
+          if(el) el.focus({preventScroll:true});
+        }, 0);
+      });
+      nav.appendChild(a);
+    });
+  }else{
+    const nav = $('#navLinks');
+    if(nav) nav.innerHTML = '';
+  }
+
+  // Mobile drawer
+  const drawer = $('#mobileDrawer');
+  drawer.innerHTML = '';
+  const m = document.createElement('div');
+  m.className = 'brand';
+  m.style.boxShadow = 'none';
+  m.style.border = '1px solid var(--border)';
+  m.style.background = 'var(--card)';
+  m.innerHTML = `
+    <div class="name">${escapeHtml(model.name||'')}</div>
+    <div class="meta">${escapeHtml([model.location, model.email].filter(Boolean).join(' · '))}</div>
+    <div class="navlinks" id="mNav"></div>
+  `;
+  drawer.appendChild(m);
+  const mNav = $('#mNav', drawer);
+  if(CONFIG.ui.enableNav){
+    // Add Home link first
+    const homeLink = document.createElement('a');
+    homeLink.href = '#';
+    homeLink.innerHTML = `<span>Home</span>`;
+    homeLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      scrollHome();
+      closeMobileDrawer();
+    });
+    mNav.appendChild(homeLink);
+    // Then add section links
+    sections.forEach(sec => {
+      const a = document.createElement('a');
+      a.href = `#${sec.id}`;
+      a.innerHTML = `<span>${escapeHtml(sec.title)}</span>`;
+      a.addEventListener('click', () => closeMobileDrawer());
+      mNav.appendChild(a);
+    });
+  }
+
+  // Content
+  const panel = $('#viewPanel');
+  panel.innerHTML = '';
+
+  // Sections
+  sections.forEach(sec => {
+    const sEl = document.createElement('section');
+    sEl.id = sec.id;
+    sEl.tabIndex = -1;
+    sEl.innerHTML = `<h2>${escapeHtml(sec.title)}</h2>`;
+    if(sec.kind === 'text'){
+      sEl.innerHTML += sec.html || '';
+    }else if(sec.kind === 'work'){
+      (sec.items||[]).forEach(job => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        const title = job.kind === 'earlier' ? escapeHtml(job.role||'Earlier Experience')
+          : `${escapeHtml(job.role||'')}`;
+        const company = escapeHtml(job.company||'');
+        const loc = escapeHtml(job.location||'');
+        const dates = escapeHtml(job.dates||'');
+        const desc = job.description ? `<details ${CONFIG.ui.collapseCompanyDescriptionsByDefault ? '' : 'open'}>
+            <summary>About ${company || 'this company'}</summary>
+            <p class="small">${escapeHtml(job.description)}</p>
+          </details>` : '';
+        const bullets = (job.bullets||[]).length ? `<ul>${job.bullets.map(b => `<li>${b}</li>`).join('')}</ul>` : '';
+        card.innerHTML = `
+          <div class="row">
+            <div>
+              <div style="font-weight:850">${title}</div>
+              <div class="small">${company}${(loc||dates) ? ` · ${loc}${(loc&&dates)?' · ':''}${dates}` : ''}</div>
+            </div>
+          </div>
+          ${desc}
+          ${bullets}
+        `;
+        sEl.appendChild(card);
+        sEl.appendChild(document.createElement('div')).style.height = '10px';
+      });
+    }
+    panel.appendChild(sEl);
+  });
+
+  // Setup intersection observer for aria-current
+  if(CONFIG.ui.enableNav){
+    const links = $$('#navLinks a');
+    const map = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        const id = e.target.id;
+        const a = map.get(id);
+        if(!a) return;
+        if(e.isIntersecting){
+          links.forEach(x => x.setAttribute('aria-current','false'));
+          a.setAttribute('aria-current','true');
+        }
+      });
+    }, { rootMargin: '-30% 0px -60% 0px', threshold: 0.01 });
+    sections.forEach(sec => {
+      const el = document.getElementById(sec.id);
+      if(el) obs.observe(el);
+    });
+  }
+}
+
+function renderWithTransition(view){
+  const panel = $('#viewPanel');
+  const current = panel;
+  // exit
+  current.classList.add('exit');
+  const doRender = () => {
+    current.classList.remove('exit');
+    current.classList.add('enter');
+    const model = (view === 'short') ? buildShortModel(RESUME) : RESUME;
+    render(model);
+    // enter
+    requestAnimationFrame(() => {
+      current.classList.add('active');
+      setTimeout(() => {
+        current.classList.remove('enter','active');
+      }, prefersReducedMotion ? 0 : 240);
+    });
+  };
+  setTimeout(doRender, prefersReducedMotion ? 0 : 180);
+}
+
+/** ====== Mobile drawer ====== */
+function openMobileDrawer(){
+  const btn = $('#mobileMenuBtn');
+  const drawer = $('#mobileDrawer');
+  drawer.classList.add('open');
+  btn.setAttribute('aria-expanded','true');
+}
+function closeMobileDrawer(){
+  const btn = $('#mobileMenuBtn');
+  const drawer = $('#mobileDrawer');
+  drawer.classList.remove('open');
+  btn.setAttribute('aria-expanded','false');
+}
+function toggleMobileDrawer(){
+  const drawer = $('#mobileDrawer');
+  drawer.classList.contains('open') ? closeMobileDrawer() : openMobileDrawer();
+}
+
+/** ====== Wire up ====== */
+(function init(){
+  // Theme
+  const initialTheme = getInitialTheme();
+  setTheme(initialTheme);
+
+  // UI toggles
+  if(!CONFIG.ui.enableThemeToggle){
+    ['#themeBtn','#themeBtnMobile'].forEach(id => { const el=$(id); if(el) el.style.display='none'; });
+  }
+  if(!CONFIG.ui.enableSearch){
+    const sw = $('#searchWrap'); if(sw) sw.style.display='none';
+  }
+  if(!CONFIG.ui.enableViewToggle){
+    const vb = $('#viewBtn'); if(vb) vb.style.display='none';
+  }
+
+  // View
+  const initialView = getInitialView();
+  syncViewButton(initialView);
+  render((initialView === 'short') ? buildShortModel(RESUME) : RESUME);
+
+  // Buttons
+  $('#themeBtn')?.addEventListener('click', toggleTheme);
+  $('#themeBtnMobile')?.addEventListener('click', toggleTheme);
+  $('#printBtn')?.addEventListener('click', () => window.open('William-Claytor-Resume.pdf', '_blank', 'noopener'));
+  $('#viewBtn')?.addEventListener('click', () => {
+    const cur = getInitialView();
+    setView(cur === 'short' ? 'full' : 'short');
+  });
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    if(e.key.toLowerCase() === 'p' && (e.ctrlKey || e.metaKey)){
+      // let browser print
+      return;
+    }
+    if(e.key.toLowerCase() === 'p' && !e.ctrlKey && !e.metaKey && !e.altKey){
+      e.preventDefault(); window.open('William-Claytor-Resume.pdf', '_blank', 'noopener');
+    }
+    if(e.key.toLowerCase() === 'h' && !e.ctrlKey && !e.metaKey && !e.altKey){
+      e.preventDefault(); scrollHome();
+    }
+  });
+
+  // Mobile menu
+  $('#mobileMenuBtn')?.addEventListener('click', toggleMobileDrawer);
+})();
+</script>
+</body>
+</html>
