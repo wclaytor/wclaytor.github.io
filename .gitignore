@@ -143,3 +143,6 @@ tests/playwright/reports
 # ~ personal
 ~
 tmp
+
+# local
+.local

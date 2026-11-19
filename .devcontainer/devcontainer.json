@@ -1,54 +1,120 @@
 {
-  "name": "wclaytor.github.io - Playwright Testing",
-  "image": "mcr.microsoft.com/playwright/python:v1.49.0-jammy",
-  
-  "features": {
-    "ghcr.io/devcontainers/features/python:1": {
-      "version": "3.12"
-    },
-    "ghcr.io/devcontainers/features/node:2": {
-      "version": "lts"
-    },
-    "ghcr.io/devcontainers/features/github-cli:1": {
-      "version": "latest"
-    }
-  },
-
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "ms-python.python",
-        "ms-python.vscode-pylance",
-        "ms-playwright.playwright",
-        "bradlc.vscode-tailwindcss",
-        "esbenp.prettier-vscode",
-        "ritwickdey.LiveServer"
-      ],
-      "settings": {
-        "python.defaultInterpreterPath": "/usr/bin/python3",
-        "python.testing.pytestEnabled": true,
-        "python.testing.pytestArgs": ["tests/playwright"],
-        "editor.formatOnSave": true,
-        "liveServer.settings.port": 8000,
-        "liveServer.settings.root": "/"
-      }
-    }
-  },
-
-  "postCreateCommand": "cd tests/playwright && pip install uv && uv sync",
-  
-  "forwardPorts": [8000, 5500],
-  
-  "portsAttributes": {
-    "8000": {
-      "label": "Local Server",
-      "onAutoForward": "notify"
-    },
-    "5500": {
-      "label": "Live Server",
-      "onAutoForward": "notify"
-    }
-  },
-
-  "remoteUser": "pwuser"
+	"name": "wclaytor.github.io Dev Environment",
+	// Official Playwright image: git, browsers + OS deps baked into /ms-playwright. Its own Node.js is
+	// replaced on PATH by the `node` feature below.
+	// Keep this tag identical to the @playwright/test version in package-lock.json, or browser launches fail.
+	"image": "mcr.microsoft.com/playwright:v1.57.0-noble",
+	"features": {
+		// Run as the Ubuntu base image's `ubuntu` user (UID 1000), not `pwuser` (UID 1001). UID 1000 is taken,
+		// so Dev Containers can't remap pwuser to the host UID and it can't write to the workspace bind mount.
+		// This adds sudo and basic shell tooling for that user.
+		"ghcr.io/devcontainers/features/common-utils:2": {
+			"username": "ubuntu",
+			"installZsh": false,
+			"installOhMyZsh": false,
+			"installOhMyZshConfig": false,
+			"upgradePackages": false
+		},
+		"ghcr.io/devcontainers/features/github-cli:1": {
+			"version": "latest"
+		},
+		// Match the Node.js (and bundled npm) that CI uses. A different npm can write a package-lock.json
+		// that CI's `npm ci` rejects. Keep this version equal to .nvmrc, which CI reads.
+		"ghcr.io/devcontainers/features/node:2": {
+			"version": "24.22.2",
+			// The project uses npm only
+			"pnpmVersion": "none"
+		}
+	},
+	// Fail fast if the host can't spare this (helps when two containers are running)
+	"hostRequirements": {
+		"memory": "2gb"
+	},
+	"containerEnv": {
+		"NODE_OPTIONS": "--max-old-space-size=512",
+		"npm_config_fund": "false",
+		"npm_config_audit": "false",
+		// Keep the model CLIs on a version listed in checked_clis.json (see model-clis.md).
+		"COPILOT_AUTO_UPDATE": "false",
+		"DISABLE_AUTOUPDATER": "1"
+	},
+	"customizations": {
+		"vscode": {
+			// Every extension here runs in a per-container extension host, so keep this list lean.
+			"extensions": [
+				"ms-playwright.playwright"
+			],
+			"settings": {
+				"editor.formatOnSave": true,
+				"editor.codeActionsOnSave": {
+					"source.organizeImports": "explicit"
+				},
+				// Cut file watcher / search / git overhead
+				"files.exclude": {
+					"**/__pycache__": true
+				},
+				"files.watcherExclude": {
+					"**/.git/objects/**": true,
+					"**/.git/subtree-cache/**": true,
+					"**/node_modules/**": true,
+					"**/__pycache__/**": true,
+					"**/.venv/**": true,
+					"**/test-results/**": true,
+					"**/playwright-report/**": true
+				},
+				"search.exclude": {
+					"**/node_modules": true,
+					"**/.venv": true,
+					"**/test-results": true,
+					"**/playwright-report": true
+				},
+				"git.autofetch": false,
+				"git.autorefresh": false,
+				// Background work that isn't needed
+				"extensions.autoUpdate": false,
+				"extensions.autoCheckUpdates": false,
+				"telemetry.telemetryLevel": "off",
+				"typescript.disableAutomaticTypeAcquisition": true,
+				"npm.autoDetect": "off",
+				"task.autoDetect": "off",
+				"editor.minimap.enabled": false,
+				"workbench.enableExperiments": false
+			}
+		}
+	},
+	"postCreateCommand": "bash .devcontainer/setup.sh",
+	"remoteUser": "ubuntu",
+	"mounts": [
+		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.gitconfig,target=/home/ubuntu/.gitconfig,type=bind,consistency=cached"
+	],
+	// 4173: `npm run preview`, the local server for testing the built app from the host browser
+	// 9323: `npx playwright show-report --host 0.0.0.0` (see .devcontainer/alias.sh)
+	"forwardPorts": [
+		4173,
+		9323
+	],
+	"portsAttributes": {
+		"4173": {
+			"label": "Exam Prep PWA (preview)",
+			"onAutoForward": "notify"
+		},
+		"9323": {
+			"label": "Playwright report",
+			"onAutoForward": "silent"
+		}
+	},
+	// Stop the container when its VS Code window closes so it doesn't keep eating RAM
+	"shutdownAction": "stopContainer",
+	"runArgs": [
+		// Reaps zombie browser/Node processes left behind by heavy test runs
+		"--init",
+		// Share the host IPC namespace (incl. /dev/shm) so Chromium doesn't crash; replaces --shm-size
+		"--ipc=host",
+		// Hard cap per container: two containers = ~5 GB max, leaving ~11 GB for the host and browsers
+		"--memory=2500m",
+		"--memory-reservation=1g",
+		// Swap equal to memory limit disables extra swap use inside the container, avoiding host thrash
+		"--memory-swap=2500m",
+		"--cpus=2"
+	]
 }
